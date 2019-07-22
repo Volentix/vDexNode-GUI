@@ -116,25 +116,13 @@
     },
     methods: {
       getNodes () {
-        this.nodes.push({ id: 'a244653d362a9ad9da10fc6b3c1f5c908ccbc259', address: '' })
-        this.nodes.push({ id: 'ab1295139bcdfc66f1ffcaedd3da1e1b4f384cf1', address: 'EOS8NjuXrscdrVVCJg4wix278VzZo4nWDxY9kw7Te1YfJjsLaQUy7' })
-        this.nodes.push({ id: '46076d8d1f9a2517ddc62f88d5efd7d58230852e', address: '' })
-        this.nodes.push({ id: 'Result', address: 'Success' })
-        this.nodes.push({ id: '3659bc767113038e889c5c498eb3f7245048ca1f', address: '' })
-        this.nodes.push({ id: '75492f86f6728eca83db8975d5e060a3fb55b6b0', address: '' })
-        this.nodes.push({ id: '6c145d01280d47df9d0032041103417d1b2559f8', address: 'ChainsHelsinki1231234567890123456789012' })
-        this.nodes.push({ id: '079f320b274de8eb4184a001964b968a4ae85c8c', address: 'EOS8mjtXqyD5bSaTajPriUMRAbSsGNRKqKX2s8mJyaxFLRhZ7ecZx' })
-        // CORS policy on the server doesn't allow to get data
-        // var config = {
-        //   headers: {'Access-Control-Allow-Origin': 'http://127.0.0.1:9080',
-        //     'Access-Control-Allow-Methods': 'POST',
-        //     'Access-Control-Allow-Headers': 'Content-Type, Authorization'}
-        // }
-        // this.$http.get(process.env.NODES_API + '/getConnectedNodes', config).then((result) => {
-        //   console.log(result)
-        // }).catch((error) => {
-        //   console.log(error)
-        // })
+        this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
+          for (var key in result.data) {
+            this.nodes.push({ id: key, address: result.data[key] })
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
       },
       async runNode (evt) {
         evt.preventDefault()
