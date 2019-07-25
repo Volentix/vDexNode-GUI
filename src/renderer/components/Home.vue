@@ -1,31 +1,43 @@
 <template>
   <b-container fluid>
-    <h3 class="text-center text-white">Run the node</h3>
-    <b-form inline @submit="runNode">
-      <b-input
+    <h3 class="text-center text-white">Get the node (Ubuntu)</h3>
+    <b-button squared v-on:click=getInstaller>Get the installer</b-button>
+    <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
+      Make sure you run your node and remember your public key and account name
+    </b-alert>
+    <!-- <b-list-group class="m-2">
+      <b-list-group-item class="py-0" v-bind:variant=node_running.is_running_variant>Node: {{ node_running.is_running }} </b-list-group-item>
+    </b-list-group> -->
+    <p class="text-white" v-if="node_running.addNode_show">Add the node account to the distribution contract: </p>
+    <b-form inline @submit="addNode" v-if="node_running.addNode_show" class="m-2">
+      <b-form-input
+        id="input-1"
         size="sm"
-        v-model="node_running.public_key"
+        v-model="node_running.addNode_account_name"
         class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter EOS public key"
+        placeholder="Enter account name"
         required
-      ></b-input>
-      <b-input
-        size="sm"
-        v-model="node_running.account_name"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter related account name"
-        required
-      ></b-input>
-      <b-button type="submit" variant="secondary" size="sm">Run node</b-button>
+      ></b-form-input>
+      <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
+      <b-list-group class="m-2">
+        <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
+      </b-list-group>
     </b-form>
-    <b-list-group class="m-2">
-      <b-list-group-item class="py-0" v-bind:variant=node_running.installation_variant>Dependencies: {{ node_running.installation }} </b-list-group-item>
-      <b-list-group-item class="py-0" v-bind:variant=node_running.cloning_variant>Clone repo: {{ node_running.cloning }} </b-list-group-item>
-      <b-list-group-item class="py-0" v-bind:variant=node_running.building_variant>Build docker image: {{ node_running.building }} </b-list-group-item>
-      <b-list-group-item class="py-0" v-bind:variant=node_running.running_variant>Run docker image:  {{ node_running.running }} </b-list-group-item>
-      <b-list-group-item class="py-0" v-bind:variant=node_running.adding_variant>Add node into distribution contract: {{ node_running.adding }} </b-list-group-item>
-      <b-list-group-item class="py-0" v-bind:variant=node_running.registrating_variant>Register node to voting contract: {{ node_running.registrating }} </b-list-group-item>
-    </b-list-group>
+    <p class="text-white" v-if="node_running.registerNode_show">Register the node account to the voting contract: </p>
+    <b-form inline @submit="registerNode" v-if="node_running.registerNode_show" class="m-2">
+      <b-form-input
+        id="input-1"
+        size="sm"
+        v-model="node_running.registerNode_account_name"
+        class="mb-2 mr-sm-2 mb-sm-0 w-25"
+        placeholder="Enter account name"
+        required
+      ></b-form-input>
+      <b-button type="submit" squared size="sm" variant="primary">Register</b-button>
+      <b-list-group class="m-2">
+        <b-list-group-item class="py-0" v-bind:variant=node_running.registerNode_variant>{{ node_running.registerNode_status }} </b-list-group-item>
+      </b-list-group>
+    </b-form>
     <hr>
 
     <h3 class="text-center text-white">List of nodes</h3>
@@ -66,14 +78,14 @@
         v-model="voting.voter"
         required
       ></b-input>
-      <b-button type="submit" variant="secondary" size="sm">Vote</b-button>
+      <b-button type="submit" squared variant="secondary" size="sm">Vote</b-button>
+      <b-list-group class="m-2">
+        <b-list-group-item class="py-0" v-bind:variant=voting.vote_variant>Voting: {{ voting.vote }} </b-list-group-item>
+      </b-list-group>
     </b-form>
     <p class="text-white text-center">
       cleos push action vtxvoting555 voteproducer '{"<font color="green">{{voting.public_key}}</font>": "<font color="green">{{voting.voter}}</font>", "producers": ["<font color="green">{{voting.producer}}</font>"]}' -p <font color="green">{{voting.voter}}</font>
     </p>
-    <b-list-group class="m-2">
-      <b-list-group-item class="py-0" v-bind:variant=voting.vote_variant>Voting: {{ voting.vote }} </b-list-group-item>
-    </b-list-group>
   </b-container>
 </template>
 
@@ -85,22 +97,21 @@
     components: { SystemInformation },
     data () {
       return {
+        flag: '',
         nodes: [],
         node_running: {
           public_key: '',
-          account_name: '',
-          installation: 'Not executed',
-          installation_variant: 'danger',
-          cloning: 'Not executed',
-          cloning_variant: 'danger',
-          building: 'Not executed',
-          building_variant: 'danger',
-          running: 'Not executed',
-          running_variant: 'danger',
-          adding: 'Not executed',
-          adding_variant: 'danger',
-          registrating: 'Not executed',
-          registrating_variant: 'danger'
+          addNode_account_name: '',
+          registerNode_account_name: '',
+          is_running: 'Not running',
+          is_running_variant: 'danger',
+          runningAlert: false,
+          addNode_show: false,
+          addNode_variant: 'danger',
+          addNode_status: 'Not executed',
+          registerNode_show: false,
+          registerNode_variant: 'danger',
+          registerNode_status: 'Not executed'
         },
         voting: {
           public_key: '',
@@ -111,8 +122,14 @@
         }
       }
     },
+    // created () {
+    //   this.flag = true
+    // },
     mounted () {
       this.getNodes()
+      // if (this.flag === true) {
+      //   this.interval = setInterval(() => console.log('hello world'), 1000)
+      // }
     },
     methods: {
       getNodes () {
@@ -124,133 +141,65 @@
           console.log(error)
         })
       },
-      async runNode (evt) {
-        evt.preventDefault()
-        let install = await this.install()
-        if (install) {
-          this.node_running.installation = install
-          this.node_running.installation_variant = 'success'
-        }
-        let clone = await this.clone()
-        if (clone) {
-          this.node_running.cloning = clone
-          this.node_running.cloning_variant = 'success'
-        }
-        let build = await this.build()
-        if (build) {
-          this.node_running.building = build
-          this.node_running.building_variant = 'success'
-        }
-        let run = await this.run()
-        if (run) {
-          this.node_running.running = build
-          this.node_running.running_variant = 'success'
-        }
-        let add = await this.add()
-        if (add) {
-          this.node_running.adding = add
-          this.node_running.adding_variant = 'success'
-        }
-        let register = await this.register()
-        if (register) {
-          this.node_running.registrating = register
-          this.node_running.registrating_variant = 'success'
-        }
+      getInstaller () {
+        this.$http({
+          method: 'get',
+          url: process.env.INSTALLER,
+          responseType: 'arraybuffer'
+        }).then(response => {
+          this.forceFileDownload(response)
+        }).catch(() => console.log('error occured'))
       },
-      install () {
-        return new Promise(resolve => {
-          let sudo = require('sudo-js')
-          sudo.setPassword(process.env.SUDO_PASSWORD)
-          var installCommand = ['apt-get', '-y', 'install', 'docker', 'git']
-          // var installCommand = ['ls', '-a']
-          sudo.exec(installCommand, (err, pid, result) => {
-            if (err) {
-              console.log(err)
-            }
-            console.log(result)
-            resolve('Done')
-          })
-        })
+      forceFileDownload (response) {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'installer.sh')
+        document.body.appendChild(link)
+        link.click()
+        this.node_running.runningAlert = true
+        this.node_running.addNode_show = true
+        this.node_running.registerNode_show = true
       },
-      clone () {
-        return new Promise(resolve => {
-          let exec = require('child_process').exec
-          var cloneCommand = 'cd ~ && git clone git@github.com:Volentix/vDexNode.git'
-          // var cloneCommand = 'ls -a'
-          let clone = exec(cloneCommand)
-          clone.stdout.on('data', data => {
-            console.log(data)
-            resolve('Done')
-          })
-          clone.stderr.on('data', data => {
-            console.log('error' + data)
-          })
-        })
+      addNode () {
+        this.node_running.addNode_variant = 'success'
+        this.node_running.addNode_status = 'Executed'
+        console.log('Added')
+        // return new Promise(resolve => {
+        //   let exec = require('child_process').exec
+        //   let accountName = this.node_running.account_name
+        //   var addCommand = 'cleos push action volentixdstr addnode \'{"account": "' + accountName + '"}\' -p ' + accountName
+        //   console.log('addcommand: ', addCommand)
+        //   // var addCommand = 'ls -a'
+        //   let add = exec(addCommand)
+        //   add.stdout.on('data', data => {
+        //     console.log(data)
+        //     resolve('Done')
+        //   })
+        //   add.stderr.on('data', data => {
+        //     console.log('error' + data)
+        //   })
+        // })
       },
-      build () {
-        return new Promise(resolve => {
-          let exec = require('child_process').exec
-          var buildCommand = 'cd ~/vDexNode && docker build -t volentix/node .'
-          // var buildCommand = 'ls -a'
-          let build = exec(buildCommand)
-          build.stdout.on('data', data => {
-            console.log(data)
-            resolve('Done')
-          })
-          build.stderr.on('data', data => {
-            console.log('error' + data)
-          })
-        })
-      },
-      run () {
-        return new Promise(resolve => {
-          let exec = require('child_process').exec
-          let publicKey = this.node_running.public_key
-          var runCommand = 'cd ~/vDexNode && docker run -d --name volentixnode -e "IP=95.216.0.79:9080" -e "EOSKEY=' + publicKey + '" -p 9080:9080 -p 8100:8100 -p 4222:4222/udp volentix/node'
-          // var runCommand = 'ls -a'
-          let run = exec(runCommand)
-          run.stdout.on('data', data => {
-            console.log(data)
-            resolve('Done')
-          })
-          run.stderr.on('data', data => {
-            console.log('error' + data)
-          })
-        })
-      },
-      add () {
-        return new Promise(resolve => {
-          let exec = require('child_process').exec
-          let accountName = this.node_running.account_name
-          var addCommand = 'cleos push action volentixdstr addnode \'{"account": "' + accountName + '"}\' -p ' + accountName
-          console.log('addcommand: ', addCommand)
-          // var addCommand = 'ls -a'
-          let add = exec(addCommand)
-          add.stdout.on('data', data => {
-            console.log(data)
-            resolve('Done')
-          })
-          add.stderr.on('data', data => {
-            console.log('error' + data)
-          })
-        })
-      },
-      register () {
-        return new Promise(resolve => {
-          let exec = require('child_process').exec
-          let accountName = this.node_running.account_name
-          var registerCommand = 'cleos push action vtxvoting555 regproducer \'{"producer": "' + accountName + '", "producer_name": "test", "url":"test", "key": "test", "node_id": "test_node_1"}\' -p ' + accountName
-          console.log('register: ', registerCommand)
-          // let registerCommand = 'ls -a'
-          let register = exec(registerCommand)
-          register.stdout.on('data', data => {
-            console.log(data)
-            resolve('Done')
-          })
-          register.stderr.on('data', data => {
-            console.log('error' + data)
-          })
-        })
+      registerNode () {
+        this.node_running.registerNode_variant = 'success'
+        this.node_running.registerNode_status = 'Executed'
+        console.log('registered')
+        // return new Promise(resolve => {
+        //   let exec = require('child_process').exec
+        //   let accountName = this.node_running.account_name
+        //   var registerCommand = 'cleos push action vtxvoting555 regproducer \'{"producer": "' + accountName + '", "producer_name": "test", "url":"test", "key": "test", "node_id": "test_node_1"}\' -p ' + accountName
+        //   console.log('register: ', registerCommand)
+        //   // let registerCommand = 'ls -a'
+        //   let register = exec(registerCommand)
+        //   register.stdout.on('data', data => {
+        //     console.log(data)
+        //     resolve('Done')
+        //   })
+        //   register.stderr.on('data', data => {
+        //     console.log('error' + data)
+        //   })
+        // })
       },
       vote () {
         let exec = require('child_process').exec
