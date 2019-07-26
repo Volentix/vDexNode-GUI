@@ -13,9 +13,9 @@
       <b-form-input
         id="input-1"
         size="sm"
-        v-model="node_running.addNode_account_name"
+        v-model="node_running.addNode_public_key"
         class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter account name"
+        placeholder="Enter your public key"
         required
       ></b-form-input>
       <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
@@ -28,9 +28,9 @@
       <b-form-input
         id="input-1"
         size="sm"
-        v-model="node_running.registerNode_account_name"
+        v-model="node_running.registerNode_public_key"
         class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter account name"
+        placeholder="Enter your public key"
         required
       ></b-form-input>
       <b-button type="submit" squared size="sm" variant="primary">Register</b-button>
@@ -46,8 +46,9 @@
         <b-list-group>
           <b-list-group-item href="#" v-for="node in nodes" :key="node.id">
             <b-row>
-              <b-col>{{ node.id }}</b-col>
-              <b-col>{{ node.address }}</b-col>
+              <b-col>{{ node.key }}</b-col>
+              <b-col>{{ node.account }}</b-col>
+              <b-button squared size="sm" variant="primary">Button</b-button>
             </b-row>
             </b-list-group-item>
         </b-list-group>
@@ -100,16 +101,15 @@
         flag: '',
         nodes: [],
         node_running: {
-          public_key: '',
-          addNode_account_name: '',
-          registerNode_account_name: '',
+          addNode_public_key: '',
+          registerNode_public_key: '',
           is_running: 'Not running',
           is_running_variant: 'danger',
           runningAlert: false,
-          addNode_show: false,
+          addNode_show: true,
           addNode_variant: 'danger',
           addNode_status: 'Not executed',
-          registerNode_show: false,
+          registerNode_show: true,
           registerNode_variant: 'danger',
           registerNode_status: 'Not executed'
         },
@@ -126,20 +126,44 @@
     //   this.flag = true
     // },
     mounted () {
-      this.getNodes()
+      this.getListOfNodes()
       // if (this.flag === true) {
       //   this.interval = setInterval(() => console.log('hello world'), 1000)
       // }
     },
     methods: {
-      getNodes () {
-        this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
-          for (var key in result.data) {
-            this.nodes.push({ id: key, address: result.data[key] })
+      async getAccountByKey (id, publicKey) {
+        return new Promise(resolve => {
+          var headers = {
+            'Content-Type': 'application/json'
           }
-        }).catch((error) => {
-          console.log(error)
+          this.$http.post(process.env.EOS_RPC + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
+            this.nodes[id].account = result.data.account_names
+            resolve()
+          }).catch((error) => {
+            console.log(error)
+          })
         })
+      },
+      async getNodes () {
+        return new Promise(resolve => {
+          this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
+            for (var key in result.data) {
+              if (result.data[key].length >= 53 && result.data[key].includes('EOS')) {
+                this.nodes.push({ id: key, key: result.data[key], account: '' })
+              }
+            }
+            resolve()
+          }).catch((error) => {
+            console.log(error)
+          })
+        })
+      },
+      async getListOfNodes () {
+        await this.getNodes()
+        for (var id in this.nodes) {
+          this.getAccountByKey(id, this.nodes[id].key)
+        }
       },
       getInstaller () {
         this.$http({
