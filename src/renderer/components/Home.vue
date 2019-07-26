@@ -1,13 +1,31 @@
 <template>
   <b-container fluid>
+    <!-- Enter private key - get the public key and associated account name -->
+    <h3 class="text-center text-white">Private key</h3>
+    <b-form inline @submit="identify" class="m-2">
+      <b-form-input
+        size="sm"
+        v-model="identity.private_key"
+        class="mb-2 mr-sm-2 mb-sm-0 w-25"
+        placeholder="Enter your private key"
+        required
+      ></b-form-input>
+      <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
+      <b-list-group class="m-2">
+        <b-list-group-item class="py-0">public key: {{ identity.public_key }}</b-list-group-item>
+      </b-list-group>
+      <b-list-group class="m-2">
+        <b-list-group-item class="py-0">account name: {{ identity.account_name }} </b-list-group-item>
+      </b-list-group>
+    </b-form>
+    <hr>
+
+    <!-- Get the node installer, run action to add account into distribution contract -->
     <h3 class="text-center text-white">Get the node (Ubuntu)</h3>
     <b-button squared v-on:click=getInstaller>Get the installer</b-button>
     <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
       Make sure you run your node and remember your public key and account name
     </b-alert>
-    <!-- <b-list-group class="m-2">
-      <b-list-group-item class="py-0" v-bind:variant=node_running.is_running_variant>Node: {{ node_running.is_running }} </b-list-group-item>
-    </b-list-group> -->
     <p class="text-white" v-if="node_running.addNode_show">Add the node account to the distribution contract: </p>
     <b-form inline @submit="addNode" v-if="node_running.addNode_show" class="m-2">
       <b-form-input
@@ -40,6 +58,7 @@
     </b-form>
     <hr>
 
+    <!-- Print list of nodes public keys and its associated accounts -->
     <h3 class="text-center text-white">List of nodes</h3>
     <b-row>
       <b-col>
@@ -56,6 +75,7 @@
     </b-row>
     <hr>
 
+    <!-- Voting for the node -->
     <h3 class="text-center text-white">Vote for node</h3>
     <b-form inline @submit="vote">
       <b-input
@@ -92,13 +112,13 @@
 
 <script>
   import SystemInformation from './Home/SystemInformation'
+  import EosWrapper from '@/util/EosWrapper'
 
   export default {
     name: 'home',
     components: { SystemInformation },
     data () {
       return {
-        flag: '',
         nodes: [],
         node_running: {
           addNode_public_key: '',
@@ -119,19 +139,28 @@
           voter: '',
           vote: 'Not executed',
           vote_variant: 'danger'
+        },
+        identity: {
+          private_key: '',
+          public_key: 'empty',
+          account_name: 'empty'
         }
       }
     },
-    // created () {
-    //   this.flag = true
-    // },
     mounted () {
       this.getListOfNodes()
-      // if (this.flag === true) {
-      //   this.interval = setInterval(() => console.log('hello world'), 1000)
-      // }
     },
     methods: {
+      identify () {
+        console.log(this.identity.private_key)
+        const eos = new EosWrapper()
+        this.identity.public_key = eos.fromPrivToPub(this.identity.private_key)
+        // var self = this
+        // eos.getAccountNamesFromPubKeyP(this.identity.public_key)
+        //   .then(function (result) {
+        //     self.identity.account_name = result
+        //   })
+      },
       async getAccountByKey (id, publicKey) {
         return new Promise(resolve => {
           var headers = {
@@ -189,41 +218,11 @@
         this.node_running.addNode_variant = 'success'
         this.node_running.addNode_status = 'Executed'
         console.log('Added')
-        // return new Promise(resolve => {
-        //   let exec = require('child_process').exec
-        //   let accountName = this.node_running.account_name
-        //   var addCommand = 'cleos push action volentixdstr addnode \'{"account": "' + accountName + '"}\' -p ' + accountName
-        //   console.log('addcommand: ', addCommand)
-        //   // var addCommand = 'ls -a'
-        //   let add = exec(addCommand)
-        //   add.stdout.on('data', data => {
-        //     console.log(data)
-        //     resolve('Done')
-        //   })
-        //   add.stderr.on('data', data => {
-        //     console.log('error' + data)
-        //   })
-        // })
       },
       registerNode () {
         this.node_running.registerNode_variant = 'success'
         this.node_running.registerNode_status = 'Executed'
         console.log('registered')
-        // return new Promise(resolve => {
-        //   let exec = require('child_process').exec
-        //   let accountName = this.node_running.account_name
-        //   var registerCommand = 'cleos push action vtxvoting555 regproducer \'{"producer": "' + accountName + '", "producer_name": "test", "url":"test", "key": "test", "node_id": "test_node_1"}\' -p ' + accountName
-        //   console.log('register: ', registerCommand)
-        //   // let registerCommand = 'ls -a'
-        //   let register = exec(registerCommand)
-        //   register.stdout.on('data', data => {
-        //     console.log(data)
-        //     resolve('Done')
-        //   })
-        //   register.stderr.on('data', data => {
-        //     console.log('error' + data)
-        //   })
-        // })
       },
       vote () {
         let exec = require('child_process').exec

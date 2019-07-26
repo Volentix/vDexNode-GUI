@@ -57,13 +57,14 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.26",
     "dotenv": "^8.0.0",
-    "eosjs": "^20.0.0",
     "sudo-js": "^1.0.2",
     "vue": "^2.6.10",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "eosjs": "^16.0.9",
+    "eosjs-ecc": "4.0.4"
   },
   "devDependencies": {
     "ajv": "^6.5.0",
@@ -82,7 +83,7 @@
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
-    "electron": "^5.0.7",
+    "electron": "^4.0.5",
     "electron-builder": "^20.19.2",
     "electron-debug": "^1.5.0",
     "electron-devtools-installer": "^2.2.4",
