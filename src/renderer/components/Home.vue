@@ -1,7 +1,13 @@
 <template>
   <b-container fluid>
+    <!-- Get the node installer, run action to add account into distribution contract -->
+    <h3 class="text-center text-white">1. Get the node (Ubuntu) and run it</h3>
+    <b-button squared v-on:click=getInstaller>Get the installer</b-button>
+    <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
+      Make sure your node is running
+    </b-alert>
     <!-- Enter private key - get the public key and associated account name -->
-    <h3 class="text-center text-white">Private key</h3>
+    <h3 class="text-center text-white">2. Add your Private and public keys</h3>
     <b-form inline @submit="identify" class="m-2">
       <b-form-input
         size="sm"
@@ -10,31 +16,32 @@
         placeholder="Enter your private key"
         required
       ></b-form-input>
+      <b-form-input
+        size="sm"
+        v-model="identity.public_key"
+        class="mb-2 mr-sm-2 mb-sm-0 w-25"
+        placeholder="Enter your public key"
+        required
+      ></b-form-input>
       <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
-      <b-list-group class="m-2">
-        <b-list-group-item class="py-0">public key: {{ identity.public_key }}</b-list-group-item>
-      </b-list-group>
       <b-list-group class="m-2">
         <b-list-group-item class="py-0">account name: {{ identity.account_name }} </b-list-group-item>
       </b-list-group>
     </b-form>
     <hr>
 
-    <!-- Get the node installer, run action to add account into distribution contract -->
-    <h3 class="text-center text-white">Get the node (Ubuntu)</h3>
-    <b-button squared v-on:click=getInstaller>Get the installer</b-button>
-    <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
-      Make sure you run your node and remember your public key and account name
-    </b-alert>
+    <!-- Add and register your node -->
+    <h3 class="text-center text-white">3. Add and register your node in the network</h3>
     <p class="text-white" v-if="node_running.addNode_show">Add the node account to the distribution contract: </p>
     <b-form inline @submit="addNode" v-if="node_running.addNode_show" class="m-2">
       <b-form-input
         id="input-1"
         size="sm"
-        v-model="node_running.addNode_public_key"
+        v-model="node_running.addNode_account_name"
         class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter your public key"
+        placeholder="Account name"
         required
+        disabled
       ></b-form-input>
       <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
       <b-list-group class="m-2">
@@ -46,10 +53,11 @@
       <b-form-input
         id="input-1"
         size="sm"
-        v-model="node_running.registerNode_public_key"
+        v-model="node_running.registerNode_account_name"
         class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter your public key"
+        placeholder="Account name"
         required
+        disabled
       ></b-form-input>
       <b-button type="submit" squared size="sm" variant="primary">Register</b-button>
       <b-list-group class="m-2">
@@ -60,59 +68,33 @@
 
     <!-- Print list of nodes public keys and its associated accounts -->
     <h3 class="text-center text-white">List of nodes</h3>
+    <b-button squared class="m-2" v-on:click=refresh>Refresh</b-button>
+    <b-list-group class="m-2">
+      <b-list-group-item class="py-0">List of voted: {{ this.vote }} </b-list-group-item>
+    </b-list-group>
     <b-row>
       <b-col>
         <b-list-group>
           <b-list-group-item href="#" v-for="node in nodes" :key="node.id">
             <b-row>
-              <b-col>{{ node.key }}</b-col>
-              <b-col>{{ node.account }}</b-col>
-              <b-button squared size="sm" variant="primary">Button</b-button>
+              <b-col cols="6">{{ node.key }}</b-col>
+              <b-col cols="4">{{ node.account }}</b-col>
+              <b-col>
+                <b-button squared class="py-0" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</b-button>
+              </b-col>
             </b-row>
             </b-list-group-item>
         </b-list-group>
       </b-col>
     </b-row>
     <hr>
-
-    <!-- Voting for the node -->
-    <h3 class="text-center text-white">Vote for node</h3>
-    <b-form inline @submit="vote">
-      <b-input
-        size="sm"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter EOS public key"
-        v-model="voting.public_key"
-        required
-      ></b-input>
-      <b-input
-        size="sm"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter producer account"
-        v-model="voting.producer"
-        required
-      ></b-input>
-      <b-input
-        size="sm"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter voter account"
-        v-model="voting.voter"
-        required
-      ></b-input>
-      <b-button type="submit" squared variant="secondary" size="sm">Vote</b-button>
-      <b-list-group class="m-2">
-        <b-list-group-item class="py-0" v-bind:variant=voting.vote_variant>Voting: {{ voting.vote }} </b-list-group-item>
-      </b-list-group>
-    </b-form>
-    <p class="text-white text-center">
-      cleos push action vtxvoting555 voteproducer '{"<font color="green">{{voting.public_key}}</font>": "<font color="green">{{voting.voter}}</font>", "producers": ["<font color="green">{{voting.producer}}</font>"]}' -p <font color="green">{{voting.voter}}</font>
-    </p>
   </b-container>
 </template>
 
 <script>
   import SystemInformation from './Home/SystemInformation'
-  import EosWrapper from '@/util/EosWrapper'
+  // import EosWrapper from '@/util/EosWrapper'
+  import EosWrapper2 from '@/util/EosWrapper2'
 
   export default {
     name: 'home',
@@ -121,29 +103,21 @@
       return {
         nodes: [],
         node_running: {
-          addNode_public_key: '',
-          registerNode_public_key: '',
-          is_running: 'Not running',
-          is_running_variant: 'danger',
+          addNode_account_name: '',
+          registerNode_account_name: '',
           runningAlert: false,
           addNode_show: true,
-          addNode_variant: 'danger',
+          addNode_variant: 'warning',
           addNode_status: 'Not executed',
           registerNode_show: true,
-          registerNode_variant: 'danger',
+          registerNode_variant: 'warning',
           registerNode_status: 'Not executed'
         },
-        voting: {
-          public_key: '',
-          producer: '',
-          voter: '',
-          vote: 'Not executed',
-          vote_variant: 'danger'
-        },
+        vote: [],
         identity: {
           private_key: '',
-          public_key: 'empty',
-          account_name: 'empty'
+          public_key: '',
+          account_name: 'none'
         }
       }
     },
@@ -151,23 +125,32 @@
       this.getListOfNodes()
     },
     methods: {
-      identify () {
-        console.log(this.identity.private_key)
-        const eos = new EosWrapper()
-        this.identity.public_key = eos.fromPrivToPub(this.identity.private_key)
-        // var self = this
-        // eos.getAccountNamesFromPubKeyP(this.identity.public_key)
-        //   .then(function (result) {
-        //     self.identity.account_name = result
-        //   })
+      async identify () {
+        // console.log('private: ', this.identity.private_key)
+        // console.log('public: ', this.identity.public_key)
+        var headers = {
+          'Content-Type': 'application/json'
+        }
+        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: this.identity.public_key }, { headers: headers }).then((result) => {
+          this.identity.account_name = result.data.account_names[0]
+          this.node_running.addNode_account_name = this.identity.account_name
+          this.node_running.registerNode_account_name = this.identity.account_name
+        }).catch((error) => {
+          console.log(error)
+        })
       },
       async getAccountByKey (id, publicKey) {
         return new Promise(resolve => {
           var headers = {
             'Content-Type': 'application/json'
           }
-          this.$http.post(process.env.EOS_RPC + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
-            this.nodes[id].account = result.data.account_names
+          this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
+            let name = result.data.account_names[0]
+            if (name) {
+              this.nodes[id].account = name
+            } else {
+              this.nodes[id].account = 'No account found'
+            }
             resolve()
           }).catch((error) => {
             console.log(error)
@@ -194,6 +177,10 @@
           this.getAccountByKey(id, this.nodes[id].key)
         }
       },
+      refresh () {
+        this.nodes = []
+        this.getListOfNodes()
+      },
       getInstaller () {
         this.$http({
           method: 'get',
@@ -214,32 +201,95 @@
         this.node_running.addNode_show = true
         this.node_running.registerNode_show = true
       },
-      addNode () {
-        this.node_running.addNode_variant = 'success'
-        this.node_running.addNode_status = 'Executed'
-        console.log('Added')
+      async addNode () {
+        const eos = new EosWrapper2(this.identity.private_key)
+
+        try {
+          const result = await eos.api.transact({
+            actions: [{
+              account: 'volentixdstr',
+              name: 'addnode',
+              authorization: [{
+                actor: this.node_running.addNode_account_name,
+                permission: 'active'
+              }],
+              data: {
+                account: this.node_running.addNode_account_name
+              }
+            }]
+          }, {
+            blocksBehind: 3,
+            expireSeconds: 30
+          })
+          console.log(JSON.stringify(result, null, 2))
+          this.node_running.addNode_variant = 'success'
+          this.node_running.addNode_status = 'Executed'
+        } catch (e) {
+          console.log(e)
+          this.node_running.addNode_variant = 'danger'
+          this.node_running.addNode_status = 'ERROR'
+        }
       },
-      registerNode () {
-        this.node_running.registerNode_variant = 'success'
-        this.node_running.registerNode_status = 'Executed'
-        console.log('registered')
+      async registerNode () {
+        const eos = new EosWrapper2(this.identity.private_key)
+        // console.log(await eos.rpc.get_currency_balance('eosio.token', this.node_running.addNode_account_name, 'EOS'))
+
+        try {
+          const result = await eos.api.transact({
+            actions: [{
+              account: 'vtxvoting555',
+              name: 'regproducer',
+              authorization: [{
+                actor: this.node_running.registerNode_account_name,
+                permission: 'active'
+              }],
+              data: {
+                producer: this.node_running.registerNode_account_name,
+                producer_name: 'test',
+                url: 'test',
+                key: 'test',
+                node_id: 'test_node_1'
+              }
+            }]
+          }, {
+            blocksBehind: 3,
+            expireSeconds: 30
+          })
+          console.log(JSON.stringify(result, null, 2))
+          this.node_running.registerNode_variant = 'success'
+          this.node_running.registerNode_status = 'Executed'
+        } catch (e) {
+          console.log(e)
+          this.node_running.registerNode_variant = 'danger'
+          this.node_running.registerNode_status = 'ERROR'
+        }
       },
-      vote () {
-        let exec = require('child_process').exec
-        let publicKey = this.voting.public_key
-        let voter = this.voting.voter
-        let producer = this.voting.producer
-        var votingCommand = 'cleos push action vtxvoting555 voteproducer \'{"' + publicKey + '": "' + voter + '", "producers": ["' + producer + '"]}\' -p ' + voter
-        // var votingCommand = 'ls -a'
-        let vote = exec(votingCommand)
-        vote.stdout.on('data', data => {
-          this.voting.vote = 'Done'
-          this.voting.vote_variant = 'success'
-          console.log(data)
-        })
-        vote.stderr.on('data', data => {
-          console.log('error' + data)
-        })
+      async voter (account) {
+        const eos = new EosWrapper2(this.identity.private_key)
+        console.log(await eos.rpc.get_currency_balance('eosio.token', this.node_running.addNode_account_name, 'EOS'))
+        try {
+          const result = await eos.api.transact({
+            actions: [{
+              account: 'vtxvoting555',
+              name: 'voteproducer',
+              authorization: [{
+                actor: this.identity.account_name,
+                permission: 'active'
+              }],
+              data: {
+                EOSKEY: this.identity.account_name,
+                producers: [account]
+              }
+            }]
+          }, {
+            blocksBehind: 3,
+            expireSeconds: 30
+          })
+          console.log(JSON.stringify(result, null, 2))
+          this.vote.push(account)
+        } catch (e) {
+          console.log(e)
+        }
       }
     }
   }

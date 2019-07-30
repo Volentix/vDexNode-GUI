@@ -3,12 +3,16 @@ import axios from 'axios'
 import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import dotenv from 'dotenv'
 
 import App from './App'
 import router from './router'
 import store from './store'
 
-require('dotenv').config()
+const config = dotenv.config()
+if (config.error) {
+  console.log('Could not load env file', config.error)
+}
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
