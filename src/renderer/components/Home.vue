@@ -32,8 +32,8 @@
 
     <!-- Add and register your node -->
     <h3 class="text-center text-white">3. Add and register your node in the network</h3>
-    <p class="text-white" v-if="node_running.addNode_show">Add the node account to the distribution contract: </p>
-    <b-form inline @submit="addNode" v-if="node_running.addNode_show" class="m-2">
+    <p class="text-white">Add the node account to the distribution contract: </p>
+    <b-form inline @submit="addNode" class="m-2">
       <b-form-input
         id="input-1"
         size="sm"
@@ -48,8 +48,8 @@
         <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
       </b-list-group>
     </b-form>
-    <p class="text-white" v-if="node_running.registerNode_show">Register the node account to the voting contract: </p>
-    <b-form inline @submit="registerNode" v-if="node_running.registerNode_show" class="m-2">
+    <p class="text-white" >Register the node account to the voting contract: </p>
+    <b-form inline @submit="registerNode" class="m-2">
       <b-form-input
         id="input-1"
         size="sm"
@@ -88,6 +88,9 @@
       </b-col>
     </b-row>
     <hr>
+
+    <h3 class="text-center text-white">Temporary error console</h3>
+    <p class="text-white">{{ this.console }}</p>
   </b-container>
 </template>
 
@@ -106,13 +109,12 @@
           addNode_account_name: '',
           registerNode_account_name: '',
           runningAlert: false,
-          addNode_show: true,
           addNode_variant: 'warning',
           addNode_status: 'Not executed',
-          registerNode_show: true,
           registerNode_variant: 'warning',
           registerNode_status: 'Not executed'
         },
+        console: '',
         vote: [],
         identity: {
           private_key: '',
@@ -198,8 +200,6 @@
         document.body.appendChild(link)
         link.click()
         this.node_running.runningAlert = true
-        this.node_running.addNode_show = true
-        this.node_running.registerNode_show = true
       },
       async addNode () {
         const eos = new EosWrapper2(this.identity.private_key)
@@ -224,10 +224,12 @@
           console.log(JSON.stringify(result, null, 2))
           this.node_running.addNode_variant = 'success'
           this.node_running.addNode_status = 'Executed'
+          this.console = JSON.stringify(result, null, 2)
         } catch (e) {
           console.log(e)
           this.node_running.addNode_variant = 'danger'
           this.node_running.addNode_status = 'ERROR'
+          this.console = e
         }
       },
       async registerNode () {
@@ -258,10 +260,12 @@
           console.log(JSON.stringify(result, null, 2))
           this.node_running.registerNode_variant = 'success'
           this.node_running.registerNode_status = 'Executed'
+          this.console = JSON.stringify(result, null, 2)
         } catch (e) {
           console.log(e)
           this.node_running.registerNode_variant = 'danger'
           this.node_running.registerNode_status = 'ERROR'
+          this.console = e
         }
       },
       async voter (account) {
@@ -286,9 +290,11 @@
             expireSeconds: 30
           })
           console.log(JSON.stringify(result, null, 2))
+          this.console = JSON.stringify(result, null, 2)
           this.vote.push(account)
         } catch (e) {
           console.log(e)
+          this.console = e
         }
       }
     }
