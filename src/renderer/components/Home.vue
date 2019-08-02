@@ -207,7 +207,7 @@
         try {
           const result = await eos.api.transact({
             actions: [{
-              account: 'volentixdstr',
+              account: 'vtxdistribut',
               name: 'addnode',
               authorization: [{
                 actor: this.node_running.addNode_account_name,
@@ -239,7 +239,7 @@
         try {
           const result = await eos.api.transact({
             actions: [{
-              account: 'vtxvoting555',
+              account: 'vtxvotingacc',
               name: 'regproducer',
               authorization: [{
                 actor: this.node_running.registerNode_account_name,
@@ -274,14 +274,14 @@
         try {
           const result = await eos.api.transact({
             actions: [{
-              account: 'vtxvoting555',
+              account: 'vtxvotingacc',
               name: 'voteproducer',
               authorization: [{
                 actor: this.identity.account_name,
                 permission: 'active'
               }],
               data: {
-                EOSKEY: this.identity.account_name,
+                voter_name: this.identity.account_name,
                 producers: [account]
               }
             }]
