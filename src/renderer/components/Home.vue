@@ -64,53 +64,42 @@
         </b-modal>
       </b-col>
     </b-row>
-
-
-
     <hr>
-
-    <!-- Add and register your node -->
-    <h3 class="text-center text-white">3. Add and register your node in the network</h3>
-    <p class="text-white">Add the node account to the distribution contract: </p>
-    <b-form inline @submit="addNode" class="m-2">
-      <b-form-input
-        id="input-1"
-        size="sm"
-        v-model="node_running.addNode_account_name"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Account name"
-        required
-        disabled
-      ></b-form-input>
-      <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
-      <b-list-group class="m-2">
-        <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
-      </b-list-group>
-    </b-form>
-    <p class="text-white" >Register the node account to the voting contract: </p>
-    <b-form inline @submit="registerNode" class="m-2">
-      <b-form-input
-        id="input-1"
-        size="sm"
-        v-model="node_running.registerNode_account_name"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Account name"
-        required
-        disabled
-      ></b-form-input>
-      <b-button type="submit" squared size="sm" variant="primary">Register</b-button>
-      <b-list-group class="m-2">
-        <b-list-group-item class="py-0" v-bind:variant=node_running.registerNode_variant>{{ node_running.registerNode_status }} </b-list-group-item>
-      </b-list-group>
-    </b-form>
+    <b-row>
+      <b-col cols="5">
+        <!-- Add your node into distribution contract -->
+        <p class="text-white">Add the account under which you launched the node into the distribution contract: </p>
+        <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
+          <b-button class="mt-3" block @click=addNode>Add: {{identity.account_name}}</b-button>
+          <b-list-group class="m-2">
+            <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
+          </b-list-group>
+        </span>
+      </b-col>
+      <b-col cols="5">
+        <p class="text-white">Register the account under which you launched the node to the voting contract: </p>
+        <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
+          <b-button class="mt-3" block @click=registerNode>Register: {{identity.account_name}}</b-button>
+          <b-list-group class="m-2">
+            <b-list-group-item class="py-0" v-bind:variant=node_running.registerNode_variant>{{ node_running.registerNode_status }} </b-list-group-item>
+          </b-list-group>
+        </span>
+      </b-col>
+    </b-row>
     <hr>
-
     <!-- Print list of nodes public keys and its associated accounts -->
-    <h3 class="text-center text-white">List of nodes</h3>
-    <b-button squared class="m-2" v-on:click=refresh>Refresh</b-button>
-    <b-list-group class="m-2">
-      <b-list-group-item class="py-0">List of voted: {{ this.vote }} </b-list-group-item>
-    </b-list-group>
+    <h5 class="text-center text-white">List of nodes</h5>
+    <b-row class="mb-2">
+      <b-col cols="1">
+        <b-button squared v-on:click=refresh>Refresh</b-button>
+      </b-col>
+      <b-col cols="11">
+        <b-list-group >
+          <b-list-group-item class="py-2">List of voted: {{ this.vote }} </b-list-group-item>
+        </b-list-group>
+      </b-col>
+    </b-row>
+
     <b-row>
       <b-col>
         <b-list-group>
@@ -128,8 +117,6 @@
     </b-row>
     <hr>
 
-    <h3 class="text-center text-white">Temporary error console</h3>
-    <p class="text-white">{{ this.console }}</p>
   </b-container>
 </template>
 
@@ -145,25 +132,22 @@
     components: { SystemInformation },
     data () {
       return {
-        nodes: [],
-        node_running: {
-          addNode_account_name: '',
-          registerNode_account_name: '',
-          runningAlert: false,
-          addNode_variant: 'warning',
-          addNode_status: 'Not executed',
-          registerNode_variant: 'warning',
-          registerNode_status: 'Not executed'
-        },
-        console: '',
-        vote: [],
         identity: {
           private_key: '',
           public_key: '',
           account_name: 'none',
           installer: '',
           sudo: ''
-        }
+        },
+        nodes: [],
+        node_running: {
+          runningAlert: false,
+          addNode_variant: 'warning',
+          addNode_status: 'Not executed',
+          registerNode_variant: 'warning',
+          registerNode_status: 'Not executed'
+        },
+        vote: []
       }
     },
     mounted () {
@@ -259,7 +243,7 @@
         this.$bvModal.hide('publicKey')
         this.identify(this.identity.public_key)
       },
-      installNode () {
+      installNode () { // Finish the method
         this.$bvModal.hide('install')
         this.identify(this.identity.public_key)
         console.log('running the installer file')
@@ -273,11 +257,11 @@
               account: 'vtxdistribut',
               name: 'addnode',
               authorization: [{
-                actor: this.node_running.addNode_account_name,
+                actor: this.identity.account_name,
                 permission: 'active'
               }],
               data: {
-                account: this.node_running.addNode_account_name
+                account: this.identity.account_name
               }
             }]
           }, {
@@ -287,12 +271,10 @@
           console.log(JSON.stringify(result, null, 2))
           this.node_running.addNode_variant = 'success'
           this.node_running.addNode_status = 'Executed'
-          this.console = JSON.stringify(result, null, 2)
         } catch (e) {
           console.log(e)
           this.node_running.addNode_variant = 'danger'
           this.node_running.addNode_status = 'ERROR'
-          this.console = e
         }
       },
       async registerNode () {
@@ -305,11 +287,11 @@
               account: 'vtxvotingacc',
               name: 'regproducer',
               authorization: [{
-                actor: this.node_running.registerNode_account_name,
+                actor: this.identity.account_name,
                 permission: 'active'
               }],
               data: {
-                producer: this.node_running.registerNode_account_name,
+                producer: this.identity.account_name,
                 producer_name: 'test',
                 url: 'test',
                 key: 'test',
@@ -323,17 +305,15 @@
           console.log(JSON.stringify(result, null, 2))
           this.node_running.registerNode_variant = 'success'
           this.node_running.registerNode_status = 'Executed'
-          this.console = JSON.stringify(result, null, 2)
         } catch (e) {
           console.log(e)
           this.node_running.registerNode_variant = 'danger'
           this.node_running.registerNode_status = 'ERROR'
-          this.console = e
         }
       },
-      async voter (account) {
+      async voter (account) { // Finish the method
         const eos = new EosWrapper2(this.identity.private_key)
-        console.log(await eos.rpc.get_currency_balance('eosio.token', this.node_running.addNode_account_name, 'EOS'))
+        console.log(await eos.rpc.get_currency_balance('eosio.token', this.identity.account_name, 'EOS'))
         try {
           const result = await eos.api.transact({
             actions: [{
@@ -353,11 +333,9 @@
             expireSeconds: 30
           })
           console.log(JSON.stringify(result, null, 2))
-          this.console = JSON.stringify(result, null, 2)
           this.vote.push(account)
         } catch (e) {
           console.log(e)
-          this.console = e
         }
       }
     }
