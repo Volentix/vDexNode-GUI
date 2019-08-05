@@ -3,8 +3,9 @@
     <!-- Get the node installer, run action to add account into distribution contract -->
     <h3 class="text-center text-white">1. Get the node (Ubuntu) and run it</h3>
     <b-button squared v-on:click=getInstaller>Get the installer</b-button>
+    <b-button squared v-if="node_running.runningAlert" v-on:click=installNode>Install the node</b-button>
     <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
-      Make sure your node is running
+      Installer path: {{ identity.installer }}
     </b-alert>
     <!-- Enter private key - get the public key and associated account name -->
     <h3 class="text-center text-white">2. Add your Private and public keys</h3>
@@ -98,6 +99,8 @@
   import SystemInformation from './Home/SystemInformation'
   // import EosWrapper from '@/util/EosWrapper'
   import EosWrapper2 from '@/util/EosWrapper2'
+  const {dialog} = require('electron').remote
+  var fs = require('fs')
 
   export default {
     name: 'home',
@@ -119,7 +122,8 @@
         identity: {
           private_key: '',
           public_key: '',
-          account_name: 'none'
+          account_name: 'none',
+          installer: ''
         }
       }
     },
@@ -193,13 +197,21 @@
         }).catch(() => console.log('error occured'))
       },
       forceFileDownload (response) {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'installer.sh')
-        document.body.appendChild(link)
-        link.click()
-        this.node_running.runningAlert = true
+        var options = {
+          title: 'Save installer',
+          defaultPath: 'installer',
+          buttonLabel: 'Save',
+
+          filters: [
+            {name: 'sh', extensions: ['sh']}
+          ]
+        }
+
+        dialog.showSaveDialog(options, (filename) => {
+          fs.writeFileSync(filename, response.data, 'utf-8')
+          this.identity.installer = filename
+          this.node_running.runningAlert = true
+        })
       },
       async addNode () {
         const eos = new EosWrapper2(this.identity.private_key)
