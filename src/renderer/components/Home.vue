@@ -1,34 +1,72 @@
 <template>
   <b-container fluid>
-    <!-- Get the node installer, run action to add account into distribution contract -->
-    <h3 class="text-center text-white">1. Get the node (Ubuntu) and run it</h3>
-    <b-button squared v-on:click=getInstaller>Get the installer</b-button>
-    <b-button squared v-if="node_running.runningAlert" v-on:click=installNode>Install the node</b-button>
-    <b-alert class="m-2" v-model="node_running.runningAlert" variant="primary" dismissible>
-      Installer path: {{ identity.installer }}
-    </b-alert>
-    <!-- Enter private key - get the public key and associated account name -->
-    <h3 class="text-center text-white">2. Add your Private and public keys</h3>
-    <b-form inline @submit="identify" class="m-2">
-      <b-form-input
-        size="sm"
-        v-model="identity.private_key"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter your private key"
-        required
-      ></b-form-input>
-      <b-form-input
-        size="sm"
-        v-model="identity.public_key"
-        class="mb-2 mr-sm-2 mb-sm-0 w-25"
-        placeholder="Enter your public key"
-        required
-      ></b-form-input>
-      <b-button type="submit" squared size="sm" variant="primary">Add</b-button>
-      <b-list-group class="m-2">
-        <b-list-group-item class="py-0">account name: {{ identity.account_name }} </b-list-group-item>
-      </b-list-group>
-    </b-form>
+    <b-row>
+      <b-col cols="9">
+        <!-- Enter private key - get the public key and associated account name -->
+        <h5 class="text-center text-white">User identity (Updates automatically)</h5>
+        <b-list-group>
+          <b-list-group-item>
+            <b-row>
+              <b-col cols="11">
+                User private key: <code>{{identity.private_key}}</code>
+              </b-col>
+              <b-col cols="1">
+                <b-button squared class="py-0 pl-2 pr-2" v-b-modal.privateKey>Update</b-button>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+          <b-list-group-item>
+            <b-row>
+              <b-col cols="11">
+                User public key: <code>{{identity.public_key}}</code>
+              </b-col>
+              <b-col cols="1">
+                <b-button squared class="py-0 pl-2 pr-2" v-b-modal.publicKey>Update</b-button>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+          <b-list-group-item>
+            <b-row>
+              <b-col cols="12">
+                User account name: <code>{{identity.account_name}}</code>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+          <b-list-group-item>
+            <b-row>
+              <b-col cols="12">
+                User sudo password: <code>{{identity.sudo}}</code>
+              </b-col>
+            </b-row>
+          </b-list-group-item>
+        </b-list-group>
+        <b-modal id="privateKey" title="Update private key" hide-footer>
+          <p>For signing any contract action, you need to provide the private key</p>
+          <b-form-input class="mb-2" v-model="identity.private_key" placeholder="Enter your private key"></b-form-input>
+          <b-button class="mt-3" block @click="$bvModal.hide('privateKey')">Update</b-button>
+        </b-modal>
+        <b-modal id="publicKey" title="Update public key" hide-footer>
+          <b-form-input class="mb-2" v-model="identity.public_key" placeholder="Enter your EOS public key"></b-form-input>
+          <b-button class="mt-3" block @click=updatePublic>Update</b-button>
+        </b-modal>
+      </b-col>
+      <b-col cols="3">
+        <!-- Get the node installer, run action to add account into distribution contract -->
+        <h5 class="text-center text-white">Get the node (Ubuntu) and run it</h5>
+        <b-button squared v-on:click=getInstaller>Get the installer</b-button>
+        <b-button squared v-b-modal.install v-if="node_running.runningAlert">Install the node</b-button>
+        <b-modal id="install" title="Installation" hide-footer>
+          <p>Installer path:<code>{{ identity.installer }}</code></p>
+          <p>For running the node, you have to insert your <code>sudo</code> password and <code>EOS public key</code></p>
+          <b-form-input class="mb-2" v-model="identity.sudo" placeholder="Enter your sudo password"></b-form-input>
+          <b-form-input class="mb-2" v-model="identity.public_key" placeholder="Enter your EOS public key"></b-form-input>
+          <b-button class="mt-3" block @click=installNode>Install</b-button>
+        </b-modal>
+      </b-col>
+    </b-row>
+
+
+
     <hr>
 
     <!-- Add and register your node -->
@@ -123,7 +161,8 @@
           private_key: '',
           public_key: '',
           account_name: 'none',
-          installer: ''
+          installer: '',
+          sudo: ''
         }
       }
     },
@@ -131,17 +170,20 @@
       this.getListOfNodes()
     },
     methods: {
-      async identify () {
-        // console.log('private: ', this.identity.private_key)
-        // console.log('public: ', this.identity.public_key)
+      async identify (key) {
         var headers = {
           'Content-Type': 'application/json'
         }
-        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: this.identity.public_key }, { headers: headers }).then((result) => {
+        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
           this.identity.account_name = result.data.account_names[0]
-          this.node_running.addNode_account_name = this.identity.account_name
-          this.node_running.registerNode_account_name = this.identity.account_name
+          // this.node_running.addNode_account_name = this.identity.account_name
+          // this.node_running.registerNode_account_name = this.identity.account_name
         }).catch((error) => {
+          if (key.length < 52 || !key.includes('EOS')) {
+            this.identity.account_name = 'WRONG KEY'
+          } else {
+            this.identity.account_name = 'none'
+          }
           console.log(error)
         })
       },
@@ -212,6 +254,15 @@
           this.identity.installer = filename
           this.node_running.runningAlert = true
         })
+      },
+      updatePublic () {
+        this.$bvModal.hide('publicKey')
+        this.identify(this.identity.public_key)
+      },
+      installNode () {
+        this.$bvModal.hide('install')
+        this.identify(this.identity.public_key)
+        console.log('running the installer file')
       },
       async addNode () {
         const eos = new EosWrapper2(this.identity.private_key)
