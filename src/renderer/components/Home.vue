@@ -93,11 +93,11 @@
       <b-col cols="1">
         <b-button squared v-on:click=refresh>Refresh</b-button>
       </b-col>
-      <b-col cols="11">
+      <!-- <b-col cols="11">
         <b-list-group >
           <b-list-group-item class="py-2">List of voted: {{ this.vote }} </b-list-group-item>
         </b-list-group>
-      </b-col>
+      </b-col> -->
     </b-row>
 
     <b-row>
@@ -116,7 +116,6 @@
       </b-col>
     </b-row>
     <hr>
-
   </b-container>
 </template>
 
@@ -337,7 +336,7 @@
             expireSeconds: 30
           })
           console.log(JSON.stringify(result, null, 2))
-          this.vote.push(account)
+          // this.vote.push(account)
         } catch (e) {
           console.log(e)
         }
