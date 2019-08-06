@@ -274,7 +274,11 @@
         } catch (e) {
           console.log(e)
           this.node_running.addNode_variant = 'danger'
-          this.node_running.addNode_status = 'ERROR'
+          if (e.message.includes('node already registired')) {
+            this.node_running.addNode_status = 'Node already registered'
+          } else {
+            this.node_running.addNode_status = 'ERROR'
+          }
         }
       },
       async registerNode () {
@@ -284,7 +288,7 @@
         try {
           const result = await eos.api.transact({
             actions: [{
-              account: 'vtxvotingacc',
+              account: 'vdexdposvote',
               name: 'regproducer',
               authorization: [{
                 actor: this.identity.account_name,
@@ -311,13 +315,13 @@
           this.node_running.registerNode_status = 'ERROR'
         }
       },
-      async voter (account) { // Finish the method
+      async voter (account) {
         const eos = new EosWrapper2(this.identity.private_key)
-        console.log(await eos.rpc.get_currency_balance('eosio.token', this.identity.account_name, 'EOS'))
+        // console.log(await eos.rpc.get_currency_balance('eosio.token', this.identity.account_name, 'EOS'))
         try {
           const result = await eos.api.transact({
             actions: [{
-              account: 'vtxvotingacc',
+              account: 'vdexdposvote',
               name: 'voteproducer',
               authorization: [{
                 actor: this.identity.account_name,

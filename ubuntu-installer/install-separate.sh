@@ -1,6 +1,8 @@
 #!/bin/bash
 #######################################
 # Installing the vDexNode
+# Separate installer that can be run by
+# the user with prompt for public key
 #######################################
 
 ## Update packages and Upgrade system
