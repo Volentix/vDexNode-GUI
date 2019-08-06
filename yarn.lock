@@ -4908,6 +4908,11 @@ ini@^1.3.4, ini@^1.3.5, ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
 
+inpath@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/inpath/-/inpath-1.0.2.tgz#4ac219710ec7a72f460ff94bf424dd3ef0e52817"
+  integrity sha1-SsIZcQ7Hpy9GD/lL9CTdPvDlKBc=
+
 inquirer@^3.0.6:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.3.0.tgz#9dd2f2ad765dcab1ff0443b491442a20ba227dc9"
@@ -6881,6 +6886,11 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
+pidof@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/pidof/-/pidof-1.0.2.tgz#fba0eae1c8335a11eb8099f5d0f3efbc45cb4e90"
+  integrity sha1-+6Dq4cgzWhHrgJn10PPvvEXLTpA=
+
 pify@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
@@ -8521,6 +8531,14 @@ style-loader@^0.21.0:
   dependencies:
     loader-utils "^1.1.0"
     schema-utils "^0.4.5"
+
+sudo-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/sudo-js/-/sudo-js-1.0.2.tgz#b676d706753a9a23ba78628cb8a23f7d4561d913"
+  integrity sha1-tnbXBnU6miO6eGKMuKI/fUVh2RM=
+  dependencies:
+    inpath "^1.0.2"
+    pidof "^1.0.2"
 
 sumchecker@^2.0.2:
   version "2.0.2"

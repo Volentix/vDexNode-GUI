@@ -55,12 +55,23 @@
         <h5 class="text-center text-white">Get the node (Ubuntu) and run it</h5>
         <b-button squared v-on:click=getInstaller>Get the installer</b-button>
         <b-button squared v-b-modal.install v-if="node_running.runningAlert">Install the node</b-button>
-        <b-modal id="install" title="Installation" hide-footer>
+        <b-modal id="install" title="Installation" hide-footer size="lg">
           <p>Installer path:<code>{{ identity.installer }}</code></p>
           <p>For running the node, you have to insert your <code>sudo</code> password and <code>EOS public key</code></p>
           <b-form-input class="mb-2" v-model="identity.sudo" placeholder="Enter your sudo password"></b-form-input>
           <b-form-input class="mb-2" v-model="identity.public_key" placeholder="Enter your EOS public key"></b-form-input>
           <b-button class="mt-3" block @click=installNode>Install</b-button>
+          <br>
+          <b-form-textarea v-if="console.show"
+            class="mb-2"
+            v-model="console.console"
+            rows="8"
+            max-rows="8"
+          ></b-form-textarea>
+          <span v-if="console.reboot">
+            <p>Please, reboot your computer to finish installation</p>
+            <b-button class="mt-3" block @click=reboot>Reboot</b-button>
+          </span>
         </b-modal>
       </b-col>
     </b-row>
@@ -99,7 +110,6 @@
         </b-list-group>
       </b-col> -->
     </b-row>
-
     <b-row>
       <b-col>
         <b-list-group>
@@ -125,6 +135,7 @@
   import EosWrapper2 from '@/util/EosWrapper2'
   const {dialog} = require('electron').remote
   var fs = require('fs')
+  var sudo = require('sudo-js')
 
   export default {
     name: 'home',
@@ -145,6 +156,11 @@
           addNode_status: 'Not executed',
           registerNode_variant: 'warning',
           registerNode_status: 'Not executed'
+        },
+        console: {
+          show: false,
+          console: '',
+          reboot: false
         },
         vote: []
       }
@@ -242,11 +258,6 @@
         this.$bvModal.hide('publicKey')
         this.identify(this.identity.public_key)
       },
-      installNode () { // Finish the method
-        this.$bvModal.hide('install')
-        this.identify(this.identity.public_key)
-        console.log('running the installer file')
-      },
       async addNode () {
         const eos = new EosWrapper2(this.identity.private_key)
 
@@ -340,6 +351,42 @@
         } catch (e) {
           console.log(e)
         }
+      },
+      installNode () {
+        // this.$bvModal.hide('install')
+        var self = this
+        this.identify(this.identity.public_key)
+        this.console.show = true
+        this.console.console += this.identity.installer + '\n'
+        // Execution permissions (Have no idea how it works without asking the password)
+        sudo.setPassword(this.identity.sudo)
+        sudo.exec(['chmod', '+x', this.identity.installer], function (err, pid, stdout) {
+          if (err) throw err
+          console.log('stdout: ', stdout)
+        })
+        // Run the script
+        // sudo.exec([this.identity.installer], function (err, pid, stdout) {
+        //   if (err) throw err
+        //   console.log('stdout: ', stdout)
+        // })
+
+        // var spawn = require('child_process').spawn
+        // var run = spawn(this.identity.installer)
+
+        // run.stdout.on('data', (data) => {
+        //   run.stdin.write('011010' + '\n')
+        // })
+        // run.stderr.on('data', (data) => {
+        //   console.log(`stderr: ${data}`)
+        // })
+        // run.on('close', (code) => {
+        //   console.log(`child process exited with code ${code}`)
+        // })
+        // Reboot the computer
+
+        // console.log('running the installer file')
+        // console.log('reboot')
+        // console.log('run the desktop file')
       }
     }
   }
