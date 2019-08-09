@@ -32,13 +32,6 @@
               </b-col>
             </b-row>
           </b-list-group-item>
-          <b-list-group-item>
-            <b-row>
-              <b-col cols="12">
-                User sudo password: <code>{{identity.sudo}}</code>
-              </b-col>
-            </b-row>
-          </b-list-group-item>
         </b-list-group>
         <b-modal id="privateKey" title="Update private key" hide-footer>
           <p>For signing any contract action, you need to provide the private key</p>
@@ -51,36 +44,17 @@
         </b-modal>
       </b-col>
       <b-col cols="3">
-        <!-- Get the node installer, run action to add account into distribution contract -->
+        <!-- Get the node installer -->
         <h5 class="text-center text-white">Get the node (Ubuntu) and run it</h5>
         <b-button squared v-on:click=getInstaller>Get the installer</b-button>
-        <b-button squared v-b-modal.install v-if="node_running.runningAlert">Install the node</b-button>
-        <b-modal id="install" title="Installation" hide-footer size="lg">
-          <p>Installer path:<code>{{ identity.installer }}</code></p>
-          <p>For running the node, you have to insert your <code>sudo</code> password and <code>EOS public key</code></p>
-          <b-form-input class="mb-2" v-model="identity.sudo" placeholder="Enter your sudo password"></b-form-input>
-          <b-form-input class="mb-2" v-model="identity.public_key" placeholder="Enter your EOS public key"></b-form-input>
-          <b-button class="mt-3" block @click=installNode>Install</b-button>
-          <br>
-          <b-form-textarea v-if="console.show"
-            class="mb-2"
-            v-model="console.console"
-            rows="8"
-            max-rows="8"
-          ></b-form-textarea>
-          <span v-if="console.reboot">
-            <p>Please, reboot your computer to finish installation</p>
-            <b-button class="mt-3" block @click=reboot>Reboot</b-button>
-          </span>
-        </b-modal>
       </b-col>
     </b-row>
     <hr>
     <b-row>
       <b-col cols="5">
         <!-- Add your node into distribution contract -->
-        <p class="text-white">Add the account under which you launched the node into the distribution contract: </p>
         <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
+          <p class="text-white">Add the account under which you launched the node into the distribution contract: </p>
           <b-button class="mt-3" block @click=addNode>Add: {{identity.account_name}}</b-button>
           <b-list-group class="m-2">
             <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
@@ -88,8 +62,8 @@
         </span>
       </b-col>
       <b-col cols="5">
-        <p class="text-white">Register the account under which you launched the node to the voting contract: </p>
         <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
+          <p class="text-white">Register the account under which you launched the node to the voting contract: </p>
           <b-button class="mt-3" block @click=registerNode>Register: {{identity.account_name}}</b-button>
           <b-list-group class="m-2">
             <b-list-group-item class="py-0" v-bind:variant=node_running.registerNode_variant>{{ node_running.registerNode_status }} </b-list-group-item>
@@ -104,11 +78,6 @@
       <b-col cols="1">
         <b-button squared v-on:click=refresh>Refresh</b-button>
       </b-col>
-      <!-- <b-col cols="11">
-        <b-list-group >
-          <b-list-group-item class="py-2">List of voted: {{ this.vote }} </b-list-group-item>
-        </b-list-group>
-      </b-col> -->
     </b-row>
     <b-row>
       <b-col>
@@ -135,7 +104,6 @@
   import EosWrapper2 from '@/util/EosWrapper2'
   const {dialog} = require('electron').remote
   var fs = require('fs')
-  var sudo = require('sudo-js')
 
   export default {
     name: 'home',
@@ -146,21 +114,14 @@
           private_key: '',
           public_key: '',
           account_name: 'none',
-          installer: '',
-          sudo: ''
+          installer: ''
         },
         nodes: [],
         node_running: {
-          runningAlert: false,
           addNode_variant: 'warning',
           addNode_status: 'Not executed',
           registerNode_variant: 'warning',
           registerNode_status: 'Not executed'
-        },
-        console: {
-          show: false,
-          console: '',
-          reboot: false
         },
         vote: []
       }
@@ -175,8 +136,6 @@
         }
         this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
           this.identity.account_name = result.data.account_names[0]
-          // this.node_running.addNode_account_name = this.identity.account_name
-          // this.node_running.registerNode_account_name = this.identity.account_name
         }).catch((error) => {
           if (key.length < 52 || !key.includes('EOS')) {
             this.identity.account_name = 'WRONG KEY'
@@ -251,7 +210,6 @@
         dialog.showSaveDialog(options, (filename) => {
           fs.writeFileSync(filename, response.data, 'utf-8')
           this.identity.installer = filename
-          this.node_running.runningAlert = true
         })
       },
       updatePublic () {
@@ -351,42 +309,6 @@
         } catch (e) {
           console.log(e)
         }
-      },
-      installNode () {
-        // this.$bvModal.hide('install')
-        var self = this
-        this.identify(this.identity.public_key)
-        this.console.show = true
-        this.console.console += this.identity.installer + '\n'
-        // Execution permissions (Have no idea how it works without asking the password)
-        sudo.setPassword(this.identity.sudo)
-        sudo.exec(['chmod', '+x', this.identity.installer], function (err, pid, stdout) {
-          if (err) throw err
-          console.log('stdout: ', stdout)
-        })
-        // Run the script
-        // sudo.exec([this.identity.installer], function (err, pid, stdout) {
-        //   if (err) throw err
-        //   console.log('stdout: ', stdout)
-        // })
-
-        // var spawn = require('child_process').spawn
-        // var run = spawn(this.identity.installer)
-
-        // run.stdout.on('data', (data) => {
-        //   run.stdin.write('011010' + '\n')
-        // })
-        // run.stderr.on('data', (data) => {
-        //   console.log(`stderr: ${data}`)
-        // })
-        // run.on('close', (code) => {
-        //   console.log(`child process exited with code ${code}`)
-        // })
-        // Reboot the computer
-
-        // console.log('running the installer file')
-        // console.log('reboot')
-        // console.log('run the desktop file')
       }
     }
   }
