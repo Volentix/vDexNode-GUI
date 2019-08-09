@@ -128,6 +128,7 @@
     },
     mounted () {
       this.getListOfNodes()
+      this.interval = setInterval(() => this.refresh(), 60000)
     },
     methods: {
       async identify (key) {
@@ -184,6 +185,7 @@
         }
       },
       refresh () {
+        console.log('update')
         this.nodes = []
         this.getListOfNodes()
       },
