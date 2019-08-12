@@ -39,20 +39,38 @@ echo '###Create desktop shortcut...'
 echo ''
 PUBKEY=$(zenity --entry --title="Public key" --text="Enter your public key")
 
-COMMAND='(cd ~/vDexNode/docker && docker run -d --name volentixnode -e "IP=95.216.0.79:9080" -e "EOSKEY=$PUBKEY" -p 9080:9080 -p 8100:8100 -p 4222:4222/udp volentix/node)'
+echo ''
+echo '###Create container...'
+echo ''
+(cd ~/vDexNode/docker && sudo docker run -d --name volentixnode -e "IP=95.216.0.79:9080" -e "EOSKEY=$PUBKEY" -p 9080:9080 -p 8100:8100 -p 4222:4222/udp volentix/node)
 
-touch ~/Desktop/vDexNode.desktop
-sudo chmod +x ~/Desktop/vDexNode.desktop
+START_COMMAND='(docker start volentixnode)'
+STOP_COMMAND='(docker stop volentixnode)'
+
+touch ~/Desktop/vDexNode-start.desktop
+sudo chmod +x ~/Desktop/vDexNode-start.desktop
+touch ~/Desktop/vDexNode-stop.desktop
+sudo chmod +x ~/Desktop/vDexNode-stop.desktop
 
 echo "#!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
 Type=Application
 Terminal=false
-Exec=bash -c '$COMMAND'
-Name=vDexNode
-Comment=vDexNode
-Icon=/usr/share/icons/Adwaita/256x256/devices/drive-multidisk.png" > ~/Desktop/vDexNode.desktop
+Exec=bash -c '$START_COMMAND'
+Name=vDexNode-start
+Comment=vDexNode-start
+Icon=/usr/share/icons/Adwaita/256x256/devices/drive-multidisk.png" > ~/Desktop/vDexNode-start.desktop
+
+echo "#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=bash -c '$STOP_COMMAND'
+Name=vDexNode-stop
+Comment=vDexNode-stop
+Icon=/usr/share/icons/Adwaita/256x256/devices/drive-multidisk.png" > ~/Desktop/vDexNode-stop.desktop
 
 echo ''
 echo ''
