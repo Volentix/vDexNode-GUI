@@ -99,7 +99,6 @@
 </template>
 
 <script>
-  import SystemInformation from './Home/SystemInformation'
   // import EosWrapper from '@/util/EosWrapper'
   import EosWrapper2 from '@/util/EosWrapper2'
   const {dialog} = require('electron').remote
@@ -107,7 +106,6 @@
 
   export default {
     name: 'home',
-    components: { SystemInformation },
     data () {
       return {
         identity: {
