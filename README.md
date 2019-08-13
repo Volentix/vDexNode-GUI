@@ -17,3 +17,10 @@ yarn run dev (recommended)
 npm run dev
 
 ```
+
+Quasar Branch
+```bash
+$ cd vdexnode-gui
+$ yarn install # (DO NOT USE NPM!)
+$ quasar dev -m electron
+```
