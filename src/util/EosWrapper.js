@@ -12,8 +12,4 @@ class EosWrapper {
   }
 }
 
-export default ({ Vue }) => {
-  Vue.use.$EosWrapper = EosWrapper
-}
-
-export { EosWrapper }
+export default EosWrapper

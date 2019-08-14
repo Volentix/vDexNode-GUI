@@ -3,129 +3,186 @@
     <q-page-container>
       <q-page>
         <div class="row">
-          <div class="col-9">
+          <div class="col-6 q-pa-md">
             <!-- Enter private key - get the public key and associated account name -->
-            <h5 class="text-center text-white">User identity (Updates automatically)</h5>
-            <b-list-group>
-              <b-list-group-item>
-                <b-row>
-                  <div class="col-11">
-                    User private key: <code>{{identity.private_key}}</code>
-                  </div>
-                  <b-col cols="1">
-                    <q-btn squared class="py-0 pl-2 pr-2" v-b-modal.privateKey>Update</q-btn>
-                  </b-col>
-                </b-row>
-              </b-list-group-item>
-              <b-list-group-item>
-                <b-row>
-                  <b-col cols="11">
-                    User public key: <code>{{identity.public_key}}</code>
-                  </b-col>
-                  <b-col cols="1">
-                    <q-btn squared class="py-0 pl-2 pr-2" v-b-modal.publicKey>Update</q-btn>
-                  </b-col>
-                </b-row>
-              </b-list-group-item>
-              <b-list-group-item>
-                <b-row>
-                  <b-col cols="12">
-                    User account name: <code>{{identity.account_name}}</code>
-                  </b-col>
-                </b-row>
-              </b-list-group-item>
-            </b-list-group>
-            <b-modal id="privateKey" title="Update private key" hide-footer>
-              <p>For signing any contract action, you need to provide the private key</p>
-              <b-form-input class="mb-2" v-model="identity.private_key" placeholder="Enter your private key"></b-form-input>
-              <q-btn class="mt-3" block @click="$bvModal.hide('privateKey')">Update</q-btn>
-            </b-modal>
-            <b-modal id="publicKey" title="Update public key" hide-footer>
-              <b-form-input class="mb-2" v-model="identity.public_key" placeholder="Enter your EOS public key"></b-form-input>
-              <q-btn class="mt-3" block @click=updatePublic>Update</q-btn>
-            </b-modal>
+            <q-list bordered separator>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Private key</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ identity.private_key }}</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn label="Update" color="primary" @click="privateDialog = true" />
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Public key</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ identity.public_key }}</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn label="Update" color="primary" @click="publicDialog = true" />
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Account name</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
           </div>
-          <b-col cols="3">
-            <!-- Get the node installer -->
-            <h5 class="text-center text-white">Get the node (Ubuntu) and run it</h5>
-            <q-btn squared v-on:click=getInstaller>Get the installer</q-btn>
-          </b-col>
+          <!-- Button field -->
+          <div class="col-3 q-pa-md">
+            <q-list >
+              <q-item>
+                <q-btn color="primary" label="Get the vDex node installer" @click=getInstaller />
+              </q-item>
+              <q-item>
+                <q-btn color="primary" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
+                  Add: {{ identity.account_name }}
+                </q-btn>
+              </q-item>
+              <q-item>
+                <q-btn color="primary" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
+                  Register: {{ identity.account_name }}
+                </q-btn>
+              </q-item>
+            </q-list>
+          </div>
         </div>
-        <hr>
-        <b-row>
-          <b-col cols="5">
-            <!-- Add your node into distribution contract -->
-            <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
-              <p class="text-white">Add the account under which you launched the node into the distribution contract: </p>
-              <q-btn class="mt-3" block @click=addNode>Add: {{identity.account_name}}</q-btn>
-              <b-list-group class="m-2">
-                <b-list-group-item class="py-0" v-bind:variant=node_running.addNode_variant>{{ node_running.addNode_status }} </b-list-group-item>
-              </b-list-group>
-            </span>
-          </b-col>
-          <b-col cols="5">
-            <span v-if="identity.private_key && identity.account_name && identity.account_name !='none' && identity.account_name !='WRONG KEY'">
-              <p class="text-white">Register the account under which you launched the node to the voting contract: </p>
-              <q-btn class="mt-3" block @click=registerNode>Register: {{identity.account_name}}</q-btn>
-              <b-list-group class="m-2">
-                <b-list-group-item class="py-0" v-bind:variant=node_running.registerNode_variant>{{ node_running.registerNode_status }} </b-list-group-item>
-              </b-list-group>
-            </span>
-          </b-col>
-        </b-row>
-        <hr>
         <!-- Print list of nodes public keys and its associated accounts -->
-        <h5 class="text-center text-white">List of nodes</h5>
-        <b-row class="mb-2">
-          <b-col cols="1">
-            <q-btn squared v-on:click=refresh>Refresh</q-btn>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col>
-            <b-list-group>
-              <b-list-group-item href="#" v-for="node in nodes" :key="node.id">
-                <b-row>
-                  <b-col cols="6">{{ node.key }}</b-col>
-                  <b-col cols="4">{{ node.account }}</b-col>
-                  <b-col>
-                    <q-btn squared class="py-0" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
-                  </b-col>
-                </b-row>
-                </b-list-group-item>
-            </b-list-group>
-          </b-col>
-        </b-row>
-        <hr>
+        <div class="row q-pa-md">
+          <div class="col-1">
+            <q-btn color="primary" v-on:click=refresh>Refresh</q-btn>
+          </div>
+        </div>
+        <div class="row q-pa-md">
+          <div class="col-5">
+            <q-list bordered separator>
+              <q-item v-for="node in nodes" :key="node.id">
+                <q-item-section>
+                  <q-item-label class="code"> {{ node.key }}</q-item-label>
+                  <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                    <q-btn color="primary" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
+                  </q-item-section>
+                </q-item>
+            </q-list>
+          </div>
+        </div>
+
+        <!-- Error dialog -->
+        <q-dialog v-model="errorDialog">
+          <q-card style="min-width: 500px" class="bg-negative text-white">
+            <q-card-section>
+              <div class="text-h6">Error occured</div>
+            </q-card-section>
+            <q-card-section>
+              {{ errorMessage }}
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- Add node dialog -->
+        <q-dialog v-model="addNodeDialog">
+          <q-card style="min-width: 500px">
+            <q-card-section>
+              <div class="text-h6">Add the node into the distribution contract</div>
+            </q-card-section>
+            <q-card-section>
+              Your account is: {{ identity.account_name }}
+            </q-card-section>
+            <q-card-section style="max-height: 50vh" class="scroll">
+              {{ addNodeMessage }}
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn flat label="Add" @click=addNode />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- register node dialog -->
+        <q-dialog v-model="registerNodeDialog">
+          <q-card style="min-width: 500px">
+            <q-card-section>
+              <div class="text-h6">Register the node into the voting contract</div>
+            </q-card-section>
+            <q-card-section>
+              Your account is: {{ identity.account_name }}
+            </q-card-section>
+            <q-card-section style="max-height: 50vh" class="scroll">
+              {{ registerNodeMessage }}
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup />
+              <q-btn flat label="Add" @click=registerNode />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- Private key update dialog -->
+        <q-dialog v-model="privateDialog">
+          <q-card style="min-width: 500px">
+            <q-card-section>
+              <div class="text-h6">Enter your private key</div>
+            </q-card-section>
+            <q-card-section>
+              <q-input dense v-model="identity.private_key" autofocus @keyup.enter="privateDialog = false" />
+            </q-card-section>
+            <q-card-actions align="right" class="text-primary">
+              <q-btn flat label="Cancel" v-close-popup />
+              <q-btn flat label="Update private key" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- Public key update dialog -->
+        <q-dialog v-model="publicDialog">
+          <q-card style="min-width: 500px">
+            <q-card-section>
+              <div class="text-h6">Enter your public key</div>
+            </q-card-section>
+            <q-card-section>
+              <q-input dense v-model="identity.public_key" autofocus @keyup.enter="updatePublic" />
+            </q-card-section>
+            <q-card-actions align="right" class="text-primary">
+              <q-btn flat label="Cancel" v-close-popup />
+              <q-btn flat label="Update public key" @click=updatePublic v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-// import SystemInformation from './Home/SystemInformation'
+import EosWrapper from '@/util/EosWrapper'
 const { dialog } = require('electron').remote
 const fs = require('fs')
 
 export default {
   name: 'index',
-  // components: { SystemInformation },
   data () {
     return {
       identity: {
-        private_key: '',
-        public_key: '',
+        private_key: 'none',
+        public_key: 'none',
         account_name: 'none',
         installer: ''
       },
       nodes: [],
-      node_running: {
-        addNode_variant: 'warning',
-        addNode_status: 'Not executed',
-        registerNode_variant: 'warning',
-        registerNode_status: 'Not executed'
-      },
-      vote: []
+      privateDialog: false,
+      publicDialog: false,
+      addNodeDialog: false,
+      addNodeMessage: '',
+      registerNodeDialog: false,
+      registerNodeMessage: '',
+      errorDialog: false,
+      errorMessage: ''
     }
   },
   mounted () {
@@ -134,19 +191,23 @@ export default {
   },
   methods: {
     async identify (key) {
-      var headers = {
-        'Content-Type': 'application/json'
-      }
-      this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
-        this.identity.account_name = result.data.account_names[0]
-      }).catch((error) => {
-        if (key.length < 52 || !key.includes('EOS')) {
-          this.identity.account_name = 'WRONG KEY'
-        } else {
-          this.identity.account_name = 'none'
+      if (key.length < 52 || !key.includes('EOS')) {
+        this.identity.account_name = 'none'
+        this.errorDialog = true
+        this.errorMessage = 'Invalid key format'
+      } else {
+        var headers = {
+          'Content-Type': 'application/json'
         }
-        console.log(error)
-      })
+        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
+          this.identity.account_name = result.data.account_names[0]
+        }).catch((error) => {
+          this.identity.account_name = 'none'
+          this.errorDialog = true
+          this.errorMessage = error
+          console.log(error)
+        })
+      }
     },
     async getAccountByKey (id, publicKey) {
       return new Promise(resolve => {
@@ -163,6 +224,8 @@ export default {
           resolve()
         }).catch((error) => {
           console.log(error)
+          this.errorDialog = true
+          this.errorMessage = error
         })
       })
     },
@@ -170,13 +233,15 @@ export default {
       return new Promise(resolve => {
         this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
           for (var key in result.data) {
-            if (result.data[key].length >= 53 && result.data[key].includes('EOS')) {
+            if (result.data[key].includes('EOS')) {
               this.nodes.push({ id: key, key: result.data[key], account: '' })
             }
           }
           resolve()
         }).catch((error) => {
           console.log(error)
+          this.errorDialog = true
+          this.errorMessage = error
         })
       })
     },
@@ -187,7 +252,6 @@ export default {
       }
     },
     refresh () {
-      console.log('update')
       this.nodes = []
       this.getListOfNodes()
     },
@@ -198,7 +262,10 @@ export default {
         responseType: 'arraybuffer'
       }).then(response => {
         this.forceFileDownload(response)
-      }).catch(() => console.log('error occured'))
+      }).catch((error) => {
+        this.errorMessage = error
+        this.errorDialog = true
+      })
     },
     forceFileDownload (response) {
       var options = {
@@ -217,11 +284,11 @@ export default {
       })
     },
     updatePublic () {
-      this.$bvModal.hide('publicKey')
+      this.publicDialog = false
       this.identify(this.identity.public_key)
     },
     async addNode () {
-      const eos = new this.$EosWrapper(this.identity.private_key)
+      const eos = new EosWrapper(this.identity.private_key)
 
       try {
         const result = await eos.api.transact({
@@ -241,20 +308,18 @@ export default {
           expireSeconds: 30
         })
         console.log(JSON.stringify(result, null, 2))
-        this.node_running.addNode_variant = 'success'
-        this.node_running.addNode_status = 'Executed'
+        this.addNodeMessage = 'Executed'
       } catch (e) {
         console.log(e)
-        this.node_running.addNode_variant = 'danger'
         if (e.message.includes('node already registired')) {
-          this.node_running.addNode_status = 'Node already registered'
+          this.addNodeMessage = 'Node already registered: ' + e
         } else {
-          this.node_running.addNode_status = 'ERROR'
+          this.addNodeMessage = e
         }
       }
     },
     async registerNode () {
-      const eos = new this.$EosWrapper(this.identity.private_key)
+      const eos = new EosWrapper(this.identity.private_key)
       // console.log(await eos.rpc.get_currency_balance('eosio.token', this.node_running.addNode_account_name, 'EOS'))
 
       try {
@@ -279,16 +344,14 @@ export default {
           expireSeconds: 30
         })
         console.log(JSON.stringify(result, null, 2))
-        this.node_running.registerNode_variant = 'success'
-        this.node_running.registerNode_status = 'Executed'
+        this.registerNodeMessage = result
       } catch (e) {
         console.log(e)
-        this.node_running.registerNode_variant = 'danger'
-        this.node_running.registerNode_status = 'ERROR'
+        this.registerNodeMessage = e
       }
     },
     async voter (account) {
-      const eos = new this.$EosWrapper(this.identity.private_key)
+      const eos = new EosWrapper(this.identity.private_key)
       // console.log(await eos.rpc.get_currency_balance('eosio.token', this.identity.account_name, 'EOS'))
       try {
         const result = await eos.api.transact({
@@ -312,6 +375,8 @@ export default {
         // this.vote.push(account)
       } catch (e) {
         console.log(e)
+        this.errorDialog = true
+        this.errorMessage = e
       }
     }
   }
@@ -319,5 +384,8 @@ export default {
 </script>
 
 <style>
-
+  @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap');
+  .code {
+    font-family: 'Source Code Pro', monospace;
+  }
 </style>
