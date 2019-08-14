@@ -1,19 +1,26 @@
-# vdexnode-gui
+# Quasar App (vdexnode-gui)
 
-> vDexNode GUI
+A Quasar Framework app
 
-#### Preparation
-Rename the .env.template file into .env and fill the variables
-
-#### Build Setup
-
-``` bash
-# install dependencies
-yarn install (recommended)
-npm install
-
-# serve with hot reload at localhost:9080
-yarn run dev (recommended)
-npm run dev
-
+## Install the dependencies
+```bash
+yarn
 ```
+
+### Start the app in development mode (hot-code reloading, error reporting, etc.)
+```bash
+quasar dev -m electron
+```
+
+### Lint the files
+```bash
+yarn run lint
+```
+
+### Build the app for production
+```bash
+quasar build
+```
+
+### Customize the configuration
+See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
