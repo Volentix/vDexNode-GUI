@@ -9,7 +9,7 @@ yarn
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
-yarn quasar dev -m electron
+quasar dev -m electron
 ```
 
 ### Lint the files
