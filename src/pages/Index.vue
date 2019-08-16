@@ -20,9 +20,9 @@
                     <q-item-label>Public key</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ identity.public_key }}</q-item-label>
                 </q-item-section>
-                <q-item-section avatar>
+                <!-- <q-item-section avatar>
                   <q-btn label="Update" color="primary" @click="publicDialog = true" />
-                </q-item-section>
+                </q-item-section> -->
               </q-item>
               <q-item>
                 <q-item-section>
@@ -87,6 +87,20 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <!-- Result dialog -->
+        <q-dialog v-model="resultDialog">
+          <q-card style="min-width: 500px" class="bg-positive text-white">
+            <q-card-section>
+              <div class="text-h6">Result</div>
+            </q-card-section>
+            <q-card-section>
+              {{ resultMessage }}
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
         <!-- Add node dialog -->
         <q-dialog v-model="addNodeDialog">
           <q-card style="min-width: 500px">
@@ -119,7 +133,7 @@
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn flat label="Add" @click=registerNode />
+              <q-btn flat label="Register" @click=registerNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -130,16 +144,16 @@
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense v-model="identity.private_key" autofocus @keyup.enter="privateDialog = false" />
+              <q-input dense v-model="identity.private_key" autofocus @keyup.enter="updatePrivate" />
             </q-card-section>
             <q-card-actions align="right" class="text-primary">
               <q-btn flat label="Cancel" v-close-popup />
-              <q-btn flat label="Update private key" v-close-popup />
+              <q-btn flat label="Update private key" @click="updatePrivate" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- Public key update dialog -->
-        <q-dialog v-model="publicDialog">
+        <!-- <q-dialog v-model="publicDialog">
           <q-card style="min-width: 500px">
             <q-card-section>
               <div class="text-h6">Enter your public key</div>
@@ -152,7 +166,7 @@
               <q-btn flat label="Update public key" @click=updatePublic v-close-popup />
             </q-card-actions>
           </q-card>
-        </q-dialog>
+        </q-dialog> -->
 
       </q-page>
     </q-page-container>
@@ -176,13 +190,15 @@ export default {
       },
       nodes: [],
       privateDialog: false,
-      publicDialog: false,
+      // publicDialog: false,
       addNodeDialog: false,
       addNodeMessage: '',
       registerNodeDialog: false,
       registerNodeMessage: '',
       errorDialog: false,
-      errorMessage: ''
+      errorMessage: '',
+      resultDialog: false,
+      resultMessage: ''
     }
   },
   mounted () {
@@ -190,25 +206,168 @@ export default {
     this.interval = setInterval(() => this.refresh(), 60000)
   },
   methods: {
+    // async identify (key) {
+    //   if (key.length < 52 || !key.includes('EOS')) {
+    //     this.identity.account_name = 'none'
+    //     this.errorDialog = true
+    //     this.errorMessage = 'Invalid key format'
+    //   } else {
+    //     var headers = {
+    //       'Content-Type': 'application/json'
+    //     }
+    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
+    //       this.identity.account_name = result.data.account_names[0]
+    //     }).catch((error) => {
+    //       this.identity.account_name = 'none'
+    //       this.errorDialog = true
+    //       this.errorMessage = error
+    //       console.log(error)
+    //     })
+    //   }
+    // },
     async identify (key) {
-      if (key.length < 52 || !key.includes('EOS')) {
+      const eos = new EosWrapper()
+      try {
+        let accounts = await eos.getAccounts(key)
+        this.identity.account_name = accounts.account_names[0]
+      } catch (error) {
         this.identity.account_name = 'none'
+        this.errorMessage = error
         this.errorDialog = true
-        this.errorMessage = 'Invalid key format'
-      } else {
-        var headers = {
-          'Content-Type': 'application/json'
-        }
-        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
-          this.identity.account_name = result.data.account_names[0]
-        }).catch((error) => {
-          this.identity.account_name = 'none'
-          this.errorDialog = true
-          this.errorMessage = error
-          console.log(error)
-        })
       }
     },
+    updatePrivate () {
+      this.privateDialog = false
+      const eos = new EosWrapper()
+      try {
+        let publicKey = eos.privateToPublic(this.identity.private_key)
+        this.identity.public_key = publicKey
+        this.identify(this.identity.public_key)
+      } catch (error) {
+        this.identity.public_key = 'none'
+        this.errorMessage = error
+        this.errorDialog = true
+      }
+    },
+    // updatePublic () {
+    //   this.publicDialog = false
+    //   this.identify(this.identity.public_key)
+    // },
+    refresh () {
+      this.nodes = []
+      this.getListOfNodes()
+    },
+    getInstaller () {
+      this.$http({
+        method: 'get',
+        url: process.env.INSTALLER,
+        responseType: 'arraybuffer'
+      }).then(response => {
+        this.forceFileDownload(response)
+      }).catch((error) => {
+        this.errorMessage = error
+        this.errorDialog = true
+      })
+    },
+    forceFileDownload (response) {
+      var options = {
+        title: 'Save installer',
+        defaultPath: 'installer',
+        buttonLabel: 'Save',
+
+        filters: [
+          { name: 'sh', extensions: ['sh'] }
+        ]
+      }
+
+      dialog.showSaveDialog(options, (filename) => {
+        fs.writeFileSync(filename, response.data, 'utf-8')
+        this.identity.installer = filename
+      })
+    },
+    async addNode () {
+      const eos = new EosWrapper(this.identity.private_key)
+
+      try {
+        const result = await eos.api.transact({
+          actions: [{
+            account: 'vtxdistribut',
+            name: 'addnode',
+            authorization: [{
+              actor: this.identity.account_name,
+              permission: 'active'
+            }],
+            data: {
+              account: this.identity.account_name
+            }
+          }]
+        }, {
+          blocksBehind: 3,
+          expireSeconds: 30
+        })
+        this.addNodeMessage = JSON.stringify(result, null, 2)
+      } catch (error) {
+        this.addNodeMessage = error
+      }
+    },
+    async registerNode () {
+      const eos = new EosWrapper(this.identity.private_key)
+
+      try {
+        const result = await eos.api.transact({
+          actions: [{
+            account: 'vdexdposvote',
+            name: 'regproducer',
+            authorization: [{
+              actor: this.identity.account_name,
+              permission: 'active'
+            }],
+            data: {
+              producer: this.identity.account_name,
+              producer_name: 'test',
+              url: 'test',
+              key: 'test',
+              node_id: 'test_node_1'
+            }
+          }]
+        }, {
+          blocksBehind: 3,
+          expireSeconds: 30
+        })
+        this.registerNodeMessage = JSON.stringify(result, null, 2)
+      } catch (error) {
+        this.registerNodeMessage = error
+      }
+    },
+    async voter (account) {
+      const eos = new EosWrapper(this.identity.private_key)
+
+      try {
+        const result = await eos.api.transact({
+          actions: [{
+            account: 'vdexdposvote',
+            name: 'voteproducer',
+            authorization: [{
+              actor: this.identity.account_name,
+              permission: 'active'
+            }],
+            data: {
+              voter_name: this.identity.account_name,
+              producers: [account]
+            }
+          }]
+        }, {
+          blocksBehind: 3,
+          expireSeconds: 30
+        })
+        this.resultDialog = true
+        this.resultMessage = JSON.stringify(result, null, 2)
+      } catch (e) {
+        this.errorDialog = true
+        this.errorMessage = e
+      }
+    },
+    // Need to refactor below
     async getAccountByKey (id, publicKey) {
       return new Promise(resolve => {
         var headers = {
@@ -249,134 +408,6 @@ export default {
       await this.getNodes()
       for (var id in this.nodes) {
         this.getAccountByKey(id, this.nodes[id].key)
-      }
-    },
-    refresh () {
-      this.nodes = []
-      this.getListOfNodes()
-    },
-    getInstaller () {
-      this.$http({
-        method: 'get',
-        url: process.env.INSTALLER,
-        responseType: 'arraybuffer'
-      }).then(response => {
-        this.forceFileDownload(response)
-      }).catch((error) => {
-        this.errorMessage = error
-        this.errorDialog = true
-      })
-    },
-    forceFileDownload (response) {
-      var options = {
-        title: 'Save installer',
-        defaultPath: 'installer',
-        buttonLabel: 'Save',
-
-        filters: [
-          { name: 'sh', extensions: ['sh'] }
-        ]
-      }
-
-      dialog.showSaveDialog(options, (filename) => {
-        fs.writeFileSync(filename, response.data, 'utf-8')
-        this.identity.installer = filename
-      })
-    },
-    updatePublic () {
-      this.publicDialog = false
-      this.identify(this.identity.public_key)
-    },
-    async addNode () {
-      const eos = new EosWrapper(this.identity.private_key)
-
-      try {
-        const result = await eos.api.transact({
-          actions: [{
-            account: 'vtxdistribut',
-            name: 'addnode',
-            authorization: [{
-              actor: this.identity.account_name,
-              permission: 'active'
-            }],
-            data: {
-              account: this.identity.account_name
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        console.log(JSON.stringify(result, null, 2))
-        this.addNodeMessage = 'Executed'
-      } catch (e) {
-        console.log(e)
-        if (e.message.includes('node already registired')) {
-          this.addNodeMessage = 'Node already registered: ' + e
-        } else {
-          this.addNodeMessage = e
-        }
-      }
-    },
-    async registerNode () {
-      const eos = new EosWrapper(this.identity.private_key)
-      // console.log(await eos.rpc.get_currency_balance('eosio.token', this.node_running.addNode_account_name, 'EOS'))
-
-      try {
-        const result = await eos.api.transact({
-          actions: [{
-            account: 'vdexdposvote',
-            name: 'regproducer',
-            authorization: [{
-              actor: this.identity.account_name,
-              permission: 'active'
-            }],
-            data: {
-              producer: this.identity.account_name,
-              producer_name: 'test',
-              url: 'test',
-              key: 'test',
-              node_id: 'test_node_1'
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        console.log(JSON.stringify(result, null, 2))
-        this.registerNodeMessage = result
-      } catch (e) {
-        console.log(e)
-        this.registerNodeMessage = e
-      }
-    },
-    async voter (account) {
-      const eos = new EosWrapper(this.identity.private_key)
-      // console.log(await eos.rpc.get_currency_balance('eosio.token', this.identity.account_name, 'EOS'))
-      try {
-        const result = await eos.api.transact({
-          actions: [{
-            account: 'vdexdposvote',
-            name: 'voteproducer',
-            authorization: [{
-              actor: this.identity.account_name,
-              permission: 'active'
-            }],
-            data: {
-              voter_name: this.identity.account_name,
-              producers: [account]
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        console.log(JSON.stringify(result, null, 2))
-        // this.vote.push(account)
-      } catch (e) {
-        console.log(e)
-        this.errorDialog = true
-        this.errorMessage = e
       }
     }
   }
