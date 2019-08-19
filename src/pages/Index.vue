@@ -20,9 +20,6 @@
                     <q-item-label>Public key</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ identity.public_key }}</q-item-label>
                 </q-item-section>
-                <!-- <q-item-section avatar>
-                  <q-btn label="Update" color="primary" @click="publicDialog = true" />
-                </q-item-section> -->
               </q-item>
               <q-item>
                 <q-item-section>
@@ -150,22 +147,6 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <!-- Public key update dialog -->
-        <!-- <q-dialog v-model="publicDialog">
-          <q-card style="min-width: 500px">
-            <q-card-section>
-              <div class="text-h6">Enter your public key</div>
-            </q-card-section>
-            <q-card-section>
-              <q-input dense v-model="identity.public_key" autofocus @keyup.enter="updatePublic" />
-            </q-card-section>
-            <q-card-actions align="right" class="text-primary">
-              <q-btn flat label="Cancel" v-close-popup />
-              <q-btn flat label="Update public key" @click=updatePublic v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog> -->
-
       </q-page>
     </q-page-container>
   </q-layout>
@@ -188,7 +169,6 @@ export default {
       },
       nodes: [],
       privateDialog: false,
-      // publicDialog: false,
       addNodeDialog: false,
       addNodeMessage: '',
       registerNodeDialog: false,
@@ -247,10 +227,6 @@ export default {
         this.errorDialog = true
       }
     },
-    // updatePublic () {
-    //   this.publicDialog = false
-    //   this.identify(this.identity.public_key)
-    // },
     refresh () {
       this.nodes = []
       this.getListOfNodes()
@@ -365,27 +341,40 @@ export default {
         this.errorMessage = e
       }
     },
-    // Need to refactor below
-    async getAccountByKey (id, publicKey) {
-      return new Promise(resolve => {
-        var headers = {
-          'Content-Type': 'application/json'
+    async getAccountName (id, key, eos) {
+      try {
+        let accounts = await eos.getAccounts(key)
+        let name = accounts.account_names[0]
+        if (name) {
+          this.nodes[id].account = name
+        } else {
+          this.nodes[id].account = 'No account found'
         }
-        this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
-          let name = result.data.account_names[0]
-          if (name) {
-            this.nodes[id].account = name
-          } else {
-            this.nodes[id].account = 'No account found'
-          }
-          resolve()
-        }).catch((error) => {
-          console.log(error)
-          this.errorDialog = true
-          this.errorMessage = error
-        })
-      })
+      } catch (error) {
+        this.errorMessage = error
+        this.errorDialog = true
+      }
     },
+    // async getAccountByKey (id, publicKey) {
+    //   return new Promise(resolve => {
+    //     var headers = {
+    //       'Content-Type': 'application/json'
+    //     }
+    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
+    //       let name = result.data.account_names[0]
+    //       if (name) {
+    //         this.nodes[id].account = name
+    //       } else {
+    //         this.nodes[id].account = 'No account found'
+    //       }
+    //       resolve()
+    //     }).catch((error) => {
+    //       console.log(error)
+    //       this.errorDialog = true
+    //       this.errorMessage = error
+    //     })
+    //   })
+    // },
     async getNodes () {
       return new Promise(resolve => {
         this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
@@ -404,8 +393,10 @@ export default {
     },
     async getListOfNodes () {
       await this.getNodes()
+      const eos = new EosWrapper()
       for (var id in this.nodes) {
-        this.getAccountByKey(id, this.nodes[id].key)
+        // this.getAccountByKey(id, this.nodes[id].key)
+        this.getAccountName(id, this.nodes[id].key, eos)
       }
     }
   }
