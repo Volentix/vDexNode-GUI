@@ -1,18 +1,18 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page>
+      <q-page class="bg-blue-grey-9 text-white">
         <div class="row">
-          <div class="col-6 q-pa-md">
+          <div class="col-5 q-pa-sm">
             <!-- Enter private key - get the public key and associated account name -->
-            <q-list bordered separator>
+            <q-list bordered separator class="bg-blue-grey-10 inset-shadow">
               <q-item>
                 <q-item-section>
                     <q-item-label>Private key</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ identity.private_key }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Update" color="primary" @click="privateDialog = true" />
+                  <q-btn label="Update" color="blue-grey-14" @click="privateDialog = true" />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -31,45 +31,43 @@
                 </q-item-section>
               </q-item>
             </q-list>
-          </div>
-          <!-- Button field -->
-          <div class="col-3 q-pa-md">
-            <q-list >
-              <q-item>
-                <q-btn color="primary" label="Get the vDex node installer" @click=getInstaller />
-              </q-item>
-              <q-item>
-                <q-btn color="primary" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
-                  Add: {{ identity.account_name }}
+
+            <!-- Button field -->
+            <div class="q-py-sm">
+              <div class="row q-py-sm justify-between">
+                <div class="col-5">
+                  <q-btn color="blue-grey-14" label="Get the vDex node installer" @click=getInstaller />
+                </div>
+                <div class="col-3">
+                  <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
+                </div>
+              </div>
+              <div class="row q-py-sm">
+                <q-btn color="blue-grey-14" class="q-mr-sm" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
+                  Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
                 </q-btn>
-              </q-item>
-              <q-item>
-                <q-btn color="primary" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
-                  Register: {{ identity.account_name }}
+                <q-btn color="blue-grey-14" class="q-mr-sm" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
+                  Register:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
                 </q-btn>
-              </q-item>
-            </q-list>
+              </div>
+            </div>
           </div>
-        </div>
-        <!-- Print list of nodes public keys and its associated accounts -->
-        <div class="row q-pa-md">
-          <div class="col-1">
-            <q-btn color="primary" v-on:click=refresh>Refresh</q-btn>
-          </div>
-        </div>
-        <div class="row q-pa-md">
-          <div class="col-5">
-            <q-list bordered separator>
-              <q-item v-for="node in nodes" :key="node.id">
-                <q-item-section>
-                  <q-item-label class="code"> {{ node.key }}</q-item-label>
-                  <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
-                </q-item-section>
-                <q-item-section avatar>
-                    <q-btn color="primary" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
+
+          <!-- Print list of nodes public keys and its associated accounts -->
+          <div class="col-5 q-pa-sm">
+            <q-scroll-area style="height: 400px;">
+              <q-list bordered separator class="bg-blue-grey-10 inset-shadow">
+                <q-item v-for="node in nodes" :key="node.id">
+                  <q-item-section>
+                    <q-item-label class="code"> {{ node.key }}</q-item-label>
+                    <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
-                </q-item>
-            </q-list>
+                  <q-item-section avatar>
+                      <q-btn color="blue-grey-14" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
+                    </q-item-section>
+                  </q-item>
+              </q-list>
+            </q-scroll-area>
           </div>
         </div>
 
@@ -89,9 +87,9 @@
         </q-dialog>
         <!-- Result dialog -->
         <q-dialog v-model="resultDialog">
-          <q-card style="min-width: 500px" class="bg-positive text-white">
+          <q-card style="min-width: 500px" class="bg-warning">
             <q-card-section>
-              <div class="text-h6">Result</div>
+              <div class="text-h6">Output</div>
             </q-card-section>
             <q-card-section>
               {{ resultMessage }}
@@ -103,7 +101,7 @@
         </q-dialog>
         <!-- Add node dialog -->
         <q-dialog v-model="addNodeDialog">
-          <q-card style="min-width: 500px">
+          <q-card style="min-width: 500px; max-width: 70vw;" class="bg-blue-grey-6">
             <q-card-section>
               <div class="text-h6">Add the node into the distribution contract</div>
             </q-card-section>
@@ -114,14 +112,14 @@
               {{ addNodeMessage }}
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn flat label="Add" @click=addNode />
+              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Add" color="blue-10" @click=addNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- register node dialog -->
         <q-dialog v-model="registerNodeDialog">
-          <q-card style="min-width: 500px">
+          <q-card style="min-width: 500px; max-width: 50vw;" class="bg-blue-grey-6">
             <q-card-section>
               <div class="text-h6">Register the node into the voting contract</div>
             </q-card-section>
@@ -132,23 +130,23 @@
               {{ registerNodeMessage }}
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="primary" v-close-popup />
-              <q-btn flat label="Register" @click=registerNode />
+              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Register" color="blue-10" @click=registerNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- Private key update dialog -->
         <q-dialog v-model="privateDialog" @show="$refs.input.focus()">
-          <q-card style="min-width: 500px">
+          <q-card style="min-width: 500px" class="bg-blue-grey-6">
             <q-card-section>
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense v-model="identity.private_key" counter ref="input" @keyup.enter="updatePrivate" />
+              <q-input dense v-model="identity.private_key" counter color="blue-10" ref="input" @keyup.enter="updatePrivate" />
             </q-card-section>
             <q-card-actions align="right" class="text-primary">
-              <q-btn flat label="Cancel" v-close-popup />
-              <q-btn flat label="Update private key" @click="updatePrivate" v-close-popup />
+              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Update private key" color="blue-10" @click="updatePrivate" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -183,7 +181,7 @@ export default {
   data () {
     return {
       identity: {
-        private_key: 'none',
+        private_key: '5JHaWUAbaY4HB91iKULRD9E4iPv2P8oruf3bBiZcV49JVdpbg2g',
         public_key: 'none',
         account_name: 'none',
         installer: ''

@@ -52,7 +52,8 @@ module.exports = function (ctx) {
         'QCardSection',
         'QCardActions',
         'QInput',
-        'QBadge'
+        'QBadge',
+        'QScrollArea'
       ],
 
       directives: [
