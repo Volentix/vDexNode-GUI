@@ -138,13 +138,13 @@
           </q-card>
         </q-dialog>
         <!-- Private key update dialog -->
-        <q-dialog v-model="privateDialog">
+        <q-dialog v-model="privateDialog" @show="$refs.input.focus()">
           <q-card style="min-width: 500px">
             <q-card-section>
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense v-model="identity.private_key" autofocus @keyup.enter="updatePrivate" />
+              <q-input dense v-model="identity.private_key" counter ref="input" @keyup.enter="updatePrivate" />
             </q-card-section>
             <q-card-actions align="right" class="text-primary">
               <q-btn flat label="Cancel" v-close-popup />
