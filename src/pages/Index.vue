@@ -84,12 +84,12 @@
         </q-dialog>
         <!-- Result dialog -->
         <q-dialog v-model="resultDialog">
-          <q-card style="min-width: 500px" class="bg-warning">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-warning">
             <q-card-section>
-              <div class="text-h6">Output</div>
+              <div class="text-h6">Result</div>
             </q-card-section>
-            <q-card-section>
-              {{ resultMessage }}
+            <q-card-section style="max-height: 50vh" class="scroll">
+              <pre>{{ resultMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
@@ -98,7 +98,7 @@
         </q-dialog>
         <!-- Add node dialog -->
         <q-dialog v-model="addNodeDialog">
-          <q-card style="min-width: 500px; max-width: 70vw;" class="bg-blue-grey-6">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-blue-grey-6">
             <q-card-section>
               <div class="text-h6">Add the node into the distribution contract</div>
             </q-card-section>
@@ -106,7 +106,7 @@
               Your account is: {{ identity.account_name }}
             </q-card-section>
             <q-card-section style="max-height: 50vh" class="scroll">
-              {{ addNodeMessage }}
+              <pre>{{ addNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
@@ -116,7 +116,7 @@
         </q-dialog>
         <!-- register node dialog -->
         <q-dialog v-model="registerNodeDialog">
-          <q-card style="min-width: 500px; max-width: 50vw;" class="bg-blue-grey-6">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-blue-grey-6">
             <q-card-section>
               <div class="text-h6">Register the node into the voting contract</div>
             </q-card-section>
@@ -124,7 +124,7 @@
               Your account is: {{ identity.account_name }}
             </q-card-section>
             <q-card-section style="max-height: 50vh" class="scroll">
-              {{ registerNodeMessage }}
+              <pre>{{ registerNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
@@ -162,7 +162,7 @@ export default {
   data () {
     return {
       identity: {
-        private_key: '5JHaWUAbaY4HB91iKULRD9E4iPv2P8oruf3bBiZcV49JVdpbg2g',
+        private_key: 'none',
         public_key: 'none',
         account_name: 'none',
         installer: ''
@@ -279,9 +279,11 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.addNodeMessage = JSON.stringify(result, null, 2)
+        this.addNodeMessage = 'Transaction executed successfully!\n\n'
+        this.addNodeMessage += JSON.stringify(result, null, 2)
       } catch (error) {
-        this.addNodeMessage = error
+        this.errorMessage = error
+        this.errorDialog = true
       }
     },
     async registerNode () {
@@ -308,9 +310,11 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.registerNodeMessage = JSON.stringify(result, null, 2)
+        this.registerNodeMessage = 'Transaction executed successfully!\n\n'
+        this.registerNodeMessage += JSON.stringify(result, null, 2)
       } catch (error) {
-        this.registerNodeMessage = error
+        this.errorMessage = error
+        this.errorDialog = true
       }
     },
     async voter (account) {
@@ -335,10 +339,11 @@ export default {
           expireSeconds: 30
         })
         this.resultDialog = true
-        this.resultMessage = JSON.stringify(result, null, 2)
-      } catch (e) {
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+      } catch (error) {
         this.errorDialog = true
-        this.errorMessage = e
+        this.errorMessage = error
       }
     },
     async getAccountName (id, key, eos) {
