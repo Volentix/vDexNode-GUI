@@ -9,7 +9,10 @@
               <q-item>
                 <q-item-section>
                     <q-item-label>Private key</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ identity.private_key }}</q-item-label>
+                    <q-item-label class="code text-pink" caption v-bind:style="{ display: privateState }">{{ identity.private_key }}</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn flat round color="blue-grey-14" :icon="isPrvt ? 'visibility_off' : 'visibility'" @click="showPrivate" />
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Update" color="blue-grey-14" @click="privateDialog = true" />
@@ -139,7 +142,15 @@
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense v-model="identity.private_key" counter color="blue-10" ref="input" @keyup.enter="updatePrivate" />
+              <q-input dense v-model="identity.private_key" :type="isPwd ? 'password' : 'text'" counter color="blue-10" ref="input" @keyup.enter="updatePrivate" >
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPwd = !isPwd"
+                  />
+                </template>
+              </q-input>
             </q-card-section>
             <q-card-actions align="right" class="text-primary">
               <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
@@ -176,7 +187,10 @@ export default {
       errorDialog: false,
       errorMessage: '',
       resultDialog: false,
-      resultMessage: ''
+      resultMessage: '',
+      isPwd: true,
+      isPrvt: true,
+      privateState: 'none'
     }
   },
   mounted () {
@@ -225,6 +239,15 @@ export default {
         this.identity.public_key = 'none'
         this.errorMessage = error
         this.errorDialog = true
+      }
+    },
+    showPrivate () {
+      if (this.isPrvt) {
+        this.isPrvt = false
+        this.privateState = ''
+      } else {
+        this.isPrvt = true
+        this.privateState = 'none'
       }
     },
     refresh () {
