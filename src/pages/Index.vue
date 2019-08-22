@@ -36,7 +36,7 @@
             <div class="q-py-sm">
               <div class="row q-py-sm justify-between">
                 <div class="col-5">
-                  <q-btn color="blue-grey-14" label="Get the vDex node installer" @click=getInstaller />
+                  <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
                 </div>
                 <div class="col-3">
                   <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
@@ -255,16 +255,21 @@ export default {
       this.getListOfNodes()
     },
     getInstaller () {
-      this.$http({
-        method: 'get',
-        url: process.env.INSTALLER,
-        responseType: 'arraybuffer'
-      }).then(response => {
-        this.forceFileDownload(response)
-      }).catch((error) => {
-        this.errorMessage = error
-        this.errorDialog = true
-      })
+      let way = process.env.NODE_WAY
+      if (way.includes('readme')) {
+        require('electron').shell.openExternal(process.env.README)
+      } else if (way.includes('installer')) {
+        this.$http({
+          method: 'get',
+          url: process.env.INSTALLER,
+          responseType: 'arraybuffer'
+        }).then(response => {
+          this.forceFileDownload(response)
+        }).catch((error) => {
+          this.errorMessage = error
+          this.errorDialog = true
+        })
+      }
     },
     forceFileDownload (response) {
       var options = {
