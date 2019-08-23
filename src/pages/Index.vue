@@ -2,9 +2,34 @@
   <q-layout>
     <q-page-container>
       <q-page class="bg-blue-grey-9 text-white">
-        <div class="row">
-          <div class="col-5 q-pa-sm">
-            <!-- Enter private key - get the public key and associated account name -->
+        <!-- Title -->
+        <div class="row justify-center">
+          <div class="text-h6 text-uppercase">vdexnode</div>
+        </div>
+        <div class="row justify-center">
+          <div class="text-italic">Rent your computer to earn VTX</div>
+        </div>
+        <!-- Buttons -->
+        <div class="row q-pa-sm">
+          <div class="text-italic">If you don't have a vDexNode:</div>
+        </div>
+        <div class="row q-px-sm justify-between">
+          <div class="col-2">
+            <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
+          </div>
+          <div class="col-4">
+            <q-btn color="blue-grey-14" class="q-mr-sm" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+              Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
+            </q-btn>
+            <q-btn color="blue-grey-14" class="q-mr-sm" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+              Register:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
+            </q-btn>
+          </div>
+        </div>
+        <!-- Identity -->
+        <div class="row q-pa-sm">
+          <div class="col-5 q-py-lg">
+            <div class="text-italic q-pb-sm">Enter private key to register your node:</div>
             <q-list bordered separator class="bg-blue-grey-10 inset-shadow">
               <q-item>
                 <q-item-section>
@@ -30,33 +55,51 @@
                     <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-item disabled>
+                <q-item-section>
+                    <q-item-label>Ranking</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "# 1" }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item disabled>
+                <q-item-section>
+                    <q-item-label>Uninterrupted uptime</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "5 days" }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item disabled>
+                <q-item-section>
+                    <q-item-label>VTX earned</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "40.00000000 VTX" }}</q-item-label>
+                </q-item-section>
+              </q-item>
             </q-list>
-
-            <!-- Button field -->
-            <div class="q-py-sm">
-              <div class="row q-py-sm justify-between">
-                <div class="col-5">
-                  <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
-                </div>
-                <div class="col-3">
-                  <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
-                </div>
-              </div>
-              <div class="row q-py-sm">
-                <q-btn color="blue-grey-14" class="q-mr-sm" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
-                  Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
-                </q-btn>
-                <q-btn color="blue-grey-14" class="q-mr-sm" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name !='none'">
-                  Register:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
-                </q-btn>
-              </div>
-            </div>
           </div>
-
-          <!-- Print list of nodes public keys and its associated accounts -->
-          <div class="col-5 q-pa-sm">
+          <div class="col-7 q-py-lg q-px-md">
+            <q-img
+              src="https://cdn.quasar.dev/img/parallax2.jpg"
+              basic
+            >
+              <div class="absolute-bottom text-subtitle2 text-center">
+                I'm a widget
+              </div>
+            </q-img>
+          </div>
+        </div>
+        <!-- List of nodes -->
+        <div class="row q-pa-sm justify-between">
+          <div class="col-5">
+            <div class="text-italic">List of nodes on the network</div>
+            <div class="text-italic">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+          </div>
+          <div class="col-2">
+            <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
+          </div>
+        </div>
+        <div class="row q-pa-sm">
+          <div class="col">
             <q-scroll-area style="height: 400px;">
-              <q-list bordered separator class="bg-blue-grey-10 inset-shadow">
+              <q-list bordered separator class="bg-blue-grey-10 inset-shadow" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
@@ -173,9 +216,9 @@ export default {
   data () {
     return {
       identity: {
-        private_key: 'none',
-        public_key: 'none',
-        account_name: 'none',
+        private_key: '',
+        public_key: '',
+        account_name: '',
         installer: ''
       },
       nodes: [],
@@ -216,6 +259,26 @@ export default {
     //       console.log(error)
     //     })
     //   }
+    // },
+    // async getAccountByKey (id, publicKey) {
+    //   return new Promise(resolve => {
+    //     var headers = {
+    //       'Content-Type': 'application/json'
+    //     }
+    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
+    //       let name = result.data.account_names[0]
+    //       if (name) {
+    //         this.nodes[id].account = name
+    //       } else {
+    //         this.nodes[id].account = 'No account found'
+    //       }
+    //       resolve()
+    //     }).catch((error) => {
+    //       console.log(error)
+    //       this.errorDialog = true
+    //       this.errorMessage = error
+    //     })
+    //   })
     // },
     async identify (key) {
       const eos = new EosWrapper()
@@ -388,26 +451,6 @@ export default {
         this.errorDialog = true
       }
     },
-    // async getAccountByKey (id, publicKey) {
-    //   return new Promise(resolve => {
-    //     var headers = {
-    //       'Content-Type': 'application/json'
-    //     }
-    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
-    //       let name = result.data.account_names[0]
-    //       if (name) {
-    //         this.nodes[id].account = name
-    //       } else {
-    //         this.nodes[id].account = 'No account found'
-    //       }
-    //       resolve()
-    //     }).catch((error) => {
-    //       console.log(error)
-    //       this.errorDialog = true
-    //       this.errorMessage = error
-    //     })
-    //   })
-    // },
     async getNodes () {
       return new Promise(resolve => {
         this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
