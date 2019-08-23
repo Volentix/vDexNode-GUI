@@ -105,6 +105,9 @@
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
                     <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="code text-pink" caption> {{ node.balance }} </q-item-label>
+                  </q-item-section>
                   <q-item-section avatar>
                       <q-btn color="blue-grey-14" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
                     </q-item-section>
@@ -442,9 +445,12 @@ export default {
         let accounts = await eos.getAccounts(key)
         let name = accounts.account_names[0]
         if (name) {
+          let balance = await eos.getBalance(name)
           this.nodes[id].account = name
+          this.nodes[id].balance = balance[0] ? balance[0] : '0 VTX'
         } else {
           this.nodes[id].account = 'No account found'
+          this.nodes[id].balance = '-'
         }
       } catch (error) {
         this.errorMessage = error

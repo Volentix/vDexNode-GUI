@@ -23,6 +23,11 @@ class EosWrapper {
     let accounts = await this.rpc.history_get_key_accounts(wif)
     return accounts
   }
+
+  async getBalance (name) {
+    let balance = await this.rpc.get_currency_balance('volentixgsys', name, 'VTX')
+    return balance
+  }
 }
 
 export default EosWrapper
