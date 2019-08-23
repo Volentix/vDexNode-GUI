@@ -2,8 +2,7 @@
   <q-layout>
     <q-page-container>
       <q-page class="bg-blue-grey-9 text-white">
-        <center><b>vDex Node</b><br><br>You can to rent your computer to earn VTX<br>Volentix Labs will use this network
-        in its R&D efforts toward builing the VDex decentralized exchange <br><br>
+        <center><b>VDEXNODE</b><br><br><i><b>Rent your computer to earn VTX</b></i>
         </center>
 
        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<i>If you don't have a vDexNode:</i>
@@ -23,7 +22,7 @@
           </div>
           </div>
           <br>
-               &nbsp; &nbsp; &nbsp; &nbsp;<i>Enter Account and Key Information to register your node:</i>
+               &nbsp; &nbsp; &nbsp; &nbsp;<i>Enter private key to register your node:</i>
         </div>
         <div class="row">
           <div class="col-5 q-pa-sm">
@@ -51,6 +50,24 @@
                 <q-item-section>
                     <q-item-label>Account name</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Ranking</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "# 1" }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Uninterrupted uptime</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "5 days" }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>VTX earned</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ "40.00000000 VTX" }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
