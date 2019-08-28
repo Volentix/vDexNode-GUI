@@ -13,10 +13,12 @@
   "dependencies": {
     "@quasar/extras": "^1.2.0",
     "axios": "^0.18.1",
+    "d3": "^3.5.12",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.4",
     "node-fetch": "^2.6.0",
     "quasar": "^1.0.5",
+    "topojson": "^3.0.2",
     "vue-i18n": "^8.14.0"
   },
   "devDependencies": {

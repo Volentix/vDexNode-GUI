@@ -75,15 +75,17 @@
               </q-item>
             </q-list>
           </div>
+          <!-- Widget -->
           <div class="col-7 q-py-lg q-px-md">
-            <q-img
+            <GeoWidget :geoData="geoData"/>
+            <!-- <q-img
               src="https://cdn.quasar.dev/img/parallax2.jpg"
               basic
             >
               <div class="absolute-bottom text-subtitle2 text-center">
                 I'm a widget
               </div>
-            </q-img>
+            </q-img> -->
           </div>
         </div>
         <!-- List of nodes -->
@@ -210,12 +212,16 @@
 </template>
 
 <script>
+import GeoWidget from '../components/GeoWidget.vue'
 import EosWrapper from '@/util/EosWrapper'
 const { dialog } = require('electron').remote
 const fs = require('fs')
 
 export default {
   name: 'index',
+  components: {
+    GeoWidget
+  },
   data () {
     return {
       identity: {
@@ -236,7 +242,8 @@ export default {
       resultMessage: '',
       isPwd: true,
       isPrvt: true,
-      privateState: 'none'
+      privateState: 'none',
+      geoData: 'hello'
     }
   },
   mounted () {
