@@ -52,6 +52,23 @@ npm install
 
 ## Usage
 
+### Fill the .env file
+You can just copy the `.env.template` file in the root folder and rename it to `.env` file.
+```bash
+NODES_API=http://95.216.0.79:9080
+INSTALLER=https://raw.githubusercontent.com/Volentix/vDexNode-GUI/master/ubuntu-installer/install.sh
+README=https://github.com/Volentix/vDexNode/blob/master/README.md
+NODE_WAY=readme
+
+#NODE_WAY=installer
+
+# mainnet endpoint
+EOS_ENDPOINT=https://eos.greymass.com
+
+# testnet endpoint
+# EOS_ENDPOINT=https://api.kylin.alohaeos.com
+```
+
 ### Running
 ```bash
 # Go to the project folder if you're not there
