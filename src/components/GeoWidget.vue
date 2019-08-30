@@ -30,8 +30,9 @@ export default {
   methods: {
     load () {
       d3.json('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json', function (json) {
+        var widgetWidth = Math.round(window.getComputedStyle(document.getElementById('map')).width.split('px')[0])
         // width and height
-        var w = window.innerWidth / 2
+        var w = widgetWidth
         var h = 400
 
         // container svg
@@ -85,9 +86,9 @@ export default {
 
           // TOOLTIP
           meteors.on('mouseover', function (d) {
-            var xPosition = parseFloat(d3.select(this).attr('cx')) + 20
+            var xPosition = parseFloat(d3.select(this).attr('cx')) + 20 + widgetWidth
             if (xPosition > window.innerWidth / 2 + 30) {
-              xPosition = parseFloat(d3.select(this).attr('cx')) - 220
+              xPosition = parseFloat(d3.select(this).attr('cx')) - 220 + widgetWidth
             }
             var yPosition = parseFloat(d3.select(this).attr('cy')) + 50
             // Update the tooltip position and value
@@ -118,7 +119,8 @@ export default {
         // RESPONSIVE WIDTH
         window.onresize = function () {
           // new width
-          var width = window.innerWidth / 2
+          // var width = window.innerWidth / 2
+          var width = widgetWidth / 2
           svg.attr('width', width)
           // new map
           var newProjection = d3.geo.mercator().translate([width / 2, h / 2])
