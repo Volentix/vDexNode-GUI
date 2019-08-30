@@ -91,15 +91,19 @@
         <!-- List of nodes -->
         <div class="row q-pa-sm justify-between">
           <div class="col-5">
-            <div class="text-italic">List of nodes on the network</div>
-            <div class="text-italic">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+            <div class="text-italic">List of nodes on the network.</div>
+            <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
           </div>
-          <div class="col-2">
+          <div class="col-4 text-right q-px-md">
             <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
+          </div>
+          <div class="col-3">
+            <div class="text-italic">Voting for the nodes.</div>
+            <div class="text-italic text-caption">*Activates when you select at least one node to vote</div>
           </div>
         </div>
         <div class="row q-pa-sm">
-          <div class="col">
+          <div class="col-9 q-pr-sm">
             <q-scroll-area style="height: 400px;">
               <q-list bordered separator class="bg-blue-grey-10 inset-shadow" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
@@ -111,8 +115,21 @@
                     <q-item-label class="code text-pink" caption> {{ node.balance }} </q-item-label>
                   </q-item-section>
                   <q-item-section avatar>
-                      <q-btn color="blue-grey-14" v-on:click="voter(node.account)" v-if="node.account != 'No account found'">Vote</q-btn>
-                    </q-item-section>
+                      <q-btn color="blue-grey-14" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
+                      <q-btn color="green-10" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-scroll-area>
+          </div>
+          <div class="col-3 bg-blue-grey-10 inset-shadow">
+            <q-btn color="blue-grey-14 q-ma-sm" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
+            <q-scroll-area style="height: 350px;">
+              <q-list bordered separator v-if="voting_list.length > 0">
+                <q-item v-for="node in voting_list" :key="node.id">
+                  <q-item-section>
+                    <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
+                  </q-item-section>
                   </q-item>
               </q-list>
             </q-scroll-area>
@@ -214,6 +231,7 @@
 <script>
 import GeoWidget from '../components/GeoWidget.vue'
 import EosWrapper from '@/util/EosWrapper'
+import * as utils from '@/util/utils.js'
 const { dialog } = require('electron').remote
 const fs = require('fs')
 
@@ -231,6 +249,7 @@ export default {
         installer: ''
       },
       nodes: [],
+      voting_list: [],
       privateDialog: false,
       addNodeDialog: false,
       addNodeMessage: '',
@@ -248,7 +267,7 @@ export default {
   },
   mounted () {
     this.getListOfNodes()
-    this.interval = setInterval(() => this.refresh(), 60000)
+    this.interval = setInterval(() => this.refresh(), 300000)
   },
   methods: {
     // async identify (key) {
@@ -325,6 +344,7 @@ export default {
     },
     refresh () {
       this.nodes = []
+      this.voting_list = []
       this.getListOfNodes()
     },
     getInstaller () {
@@ -418,35 +438,6 @@ export default {
         this.errorDialog = true
       }
     },
-    async voter (account) {
-      const eos = new EosWrapper(this.identity.private_key)
-
-      try {
-        const result = await eos.api.transact({
-          actions: [{
-            account: 'vdexdposvote',
-            name: 'voteproducer',
-            authorization: [{
-              actor: this.identity.account_name,
-              permission: 'active'
-            }],
-            data: {
-              voter_name: this.identity.account_name,
-              producers: [account]
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        this.resultDialog = true
-        this.resultMessage = 'Transaction executed successfully!\n\n'
-        this.resultMessage += JSON.stringify(result, null, 2)
-      } catch (error) {
-        this.errorDialog = true
-        this.errorMessage = error
-      }
-    },
     async getAccountName (id, key, eos) {
       try {
         let accounts = await eos.getAccounts(key)
@@ -472,6 +463,7 @@ export default {
               this.nodes.push({ id: key, key: result.data[key], account: '' })
             }
           }
+          this.nodes = utils.getUnique(this.nodes, 'key')
           resolve()
         }).catch((error) => {
           console.log(error)
@@ -486,6 +478,48 @@ export default {
       for (var id in this.nodes) {
         // this.getAccountByKey(id, this.nodes[id].key)
         this.getAccountName(id, this.nodes[id].key, eos)
+      }
+    },
+    addToVote (node) {
+      if (this.voting_list.includes(node)) {
+        var i = this.voting_list.indexOf(node)
+        this.voting_list.splice(i, 1)
+      } else {
+        this.voting_list.push(node)
+      }
+    },
+    async vote () {
+      const eos = new EosWrapper(this.identity.private_key)
+
+      let nodes = []
+      for (var i = 0; i < this.voting_list.length; i++) {
+        nodes.push(this.voting_list[i].account)
+      }
+      try {
+        const result = await eos.api.transact({
+          actions: [{
+            account: 'vdexdposvote',
+            name: 'voteproducer',
+            authorization: [{
+              actor: this.identity.account_name,
+              permission: 'active'
+            }],
+            data: {
+              voter_name: this.identity.account_name,
+              producers: nodes
+            }
+          }]
+        }, {
+          blocksBehind: 3,
+          expireSeconds: 30
+        })
+        this.resultDialog = true
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.voting_list = []
+      } catch (error) {
+        this.errorDialog = true
+        this.errorMessage = error
       }
     }
   }
