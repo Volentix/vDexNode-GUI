@@ -381,9 +381,8 @@ export default {
       })
     },
     async addNode () {
-      const eos = new EosWrapper(this.identity.private_key)
-
       try {
+        const eos = new EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vtxdistribut',
@@ -408,9 +407,8 @@ export default {
       }
     },
     async registerNode () {
-      const eos = new EosWrapper(this.identity.private_key)
-
       try {
+        const eos = new EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vdexdposvote',
@@ -489,13 +487,12 @@ export default {
       }
     },
     async vote () {
-      const eos = new EosWrapper(this.identity.private_key)
-
-      let nodes = []
+      let nodesToVote = []
       for (var i = 0; i < this.voting_list.length; i++) {
-        nodes.push(this.voting_list[i].account)
+        nodesToVote.push(this.voting_list[i].account)
       }
       try {
+        const eos = new EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vdexdposvote',
@@ -506,7 +503,7 @@ export default {
             }],
             data: {
               voter_name: this.identity.account_name,
-              producers: nodes
+              producers: nodesToVote
             }
           }]
         }, {
