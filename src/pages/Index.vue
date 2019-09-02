@@ -78,14 +78,6 @@
           <!-- Widget -->
           <div class="col-7 q-py-lg q-px-md">
             <GeoWidget :geoData="geoData"/>
-            <!-- <q-img
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-              basic
-            >
-              <div class="absolute-bottom text-subtitle2 text-center">
-                I'm a widget
-              </div>
-            </q-img> -->
           </div>
         </div>
         <!-- List of nodes -->
@@ -177,7 +169,7 @@
               <pre>{{ addNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
               <q-btn flat label="Add" color="blue-10" @click=addNode />
             </q-card-actions>
           </q-card>
@@ -195,7 +187,7 @@
               <pre>{{ registerNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
               <q-btn flat label="Register" color="blue-10" @click=registerNode />
             </q-card-actions>
           </q-card>
@@ -218,7 +210,7 @@
               </q-input>
             </q-card-section>
             <q-card-actions align="right" class="text-primary">
-              <q-btn flat label="Cancel" color="blue-grey-10" v-close-popup />
+              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
               <q-btn flat label="Update private key" color="blue-10" @click="updatePrivate" v-close-popup />
             </q-card-actions>
           </q-card>
@@ -262,7 +254,7 @@ export default {
       isPwd: true,
       isPrvt: true,
       privateState: 'none',
-      geoData: 'hello'
+      geoData: 'test'
     }
   },
   mounted () {
@@ -401,6 +393,7 @@ export default {
         })
         this.addNodeMessage = 'Transaction executed successfully!\n\n'
         this.addNodeMessage += JSON.stringify(result, null, 2)
+        this.refresh()
       } catch (error) {
         this.errorMessage = error
         this.errorDialog = true
@@ -431,6 +424,7 @@ export default {
         })
         this.registerNodeMessage = 'Transaction executed successfully!\n\n'
         this.registerNodeMessage += JSON.stringify(result, null, 2)
+        this.refresh()
       } catch (error) {
         this.errorMessage = error
         this.errorDialog = true
