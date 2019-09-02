@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "properties": {
+        "mass": "200000",
+        "name": "Vancouver",
+        "reclong": "-123.1",
+        "geolocation_address": null,
+        "geolocation_zip": null,
+        "year": "1880-01-01T00:00:00.000",
+        "geolocation_state": null,
+        "fall": "Fell",
+        "id": "1",
+        "recclass": "L5",
+        "reclat": "49.25",
+        "geolocation_city": null,
+        "nametype": "Valid"
+      }
+    },
+    {
+      "properties": {
+        "mass": "200000",
+        "name": "Montreal",
+        "reclong": "-73.656830",
+        "geolocation_address": null,
+        "geolocation_zip": null,
+        "year": "1951-01-01T00:00:00.000",
+        "geolocation_state": null,
+        "fall": "Fell",
+        "id": "2",
+        "recclass": "H6",
+        "reclat": "45.516136",
+        "geolocation_city": null,
+        "nametype": "Valid"
+      }
+    }
+  ]
+}
