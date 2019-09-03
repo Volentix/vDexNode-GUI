@@ -2,10 +2,8 @@
   <div class='bg-blue-grey-10 inset-shadow'>
     <div id='map'></div>
     <div id='tooltip' class='hidden bg-blue-grey-6'>
-      <p>Name: <span id='name'>Name</span></p>
-      <p>Year: <span id='year'>Year</span></p>
-      <p>Class: <span id='class'>Class</span></p>
-      <p>Mass: <span id='mass'>Mass</span></p>
+      <p>Location: <span id='city'>Unknown</span></p>
+      <p>Nodes: <span id='mass'>Unknown</span></p>
     </div>
   </div>
 </template>
@@ -44,19 +42,21 @@ export default {
       this.nodeGeoData.features.push({
         /* eslint-disable */
         "properties": {
-          "mass": "200000",
-          "name": "Moscow",
-          "reclong": "37.618423",
-          "geolocation_address": null,
-          "geolocation_zip": null,
-          "year": "1880-01-01T00:00:00.000",
-          "geolocation_state": null,
-          "fall": "Fell",
-          "id": "1",
-          "recclass": "L5",
           "reclat": "55.751244",
-          "geolocation_city": null,
-          "nametype": "Valid"
+          "reclong": "37.618423",
+          "mass": "30",
+          "city": "Moscow",
+          "id": "3"
+        }
+      })
+      this.nodeGeoData.features.push({
+        /* eslint-disable */
+        "properties": {
+          "reclat": "37.742828",
+          "reclong": "-25.680588",
+          "mass": "3",
+          "city": "Ponta Delgada",
+          "id": "4"
         }
       })
       /* eslint-enable */
@@ -103,12 +103,12 @@ export default {
             return projection([d.properties.reclong, d.properties.reclat])[1]
           })
           .attr('r', function (d) {
-            if (Math.floor(d.properties.mass) > 2000000) {
-              return 20
-            } else if (Math.floor(d.properties.mass) > 1000000) {
-              return 10
-            } else if (Math.floor(d.properties.mass) > 100000) {
-              return 5
+            if (Math.floor(d.properties.mass) >= 30) {
+              return 13
+            } else if (Math.floor(d.properties.mass) >= 20) {
+              return 7
+            } else if (Math.floor(d.properties.mass) >= 10) {
+              return 4
             } else {
               return 2
             }
@@ -127,17 +127,11 @@ export default {
           d3.select('#tooltip')
             .style('left', xPosition + 'px')
             .style('top', yPosition + 'px')
-            .select('#name')
-            .text(d.properties.name)
-          d3.select('#tooltip')
-            .select('#class')
-            .text(d.properties.recclass)
+            .select('#city')
+            .text(d.properties.city)
           d3.select('#tooltip')
             .select('#mass')
             .text(d.properties.mass)
-          d3.select('#tooltip')
-            .select('#year')
-            .text(d.properties.year.slice(0, 4))
           // Show the tooltip
           d3.select('#tooltip').classed('hidden', false)
         })
@@ -162,7 +156,7 @@ export default {
           })
         }
       })
-    }
+    } // end of mapLoad
   } // end of methods
 }
 </script>
