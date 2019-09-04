@@ -28,6 +28,11 @@ class EosWrapper {
     let balance = await this.rpc.get_currency_balance('volentixgsys', name, 'VTX')
     return balance
   }
+
+  async getTable (code, scope, table) {
+    const resp = await this.rpc.get_table_rows({ code: code, scope: scope, table: table, json: true })
+    return resp.rows
+  }
 }
 
 export default EosWrapper

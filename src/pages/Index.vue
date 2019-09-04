@@ -57,14 +57,14 @@
               </q-item>
               <q-item disabled>
                 <q-item-section>
-                    <q-item-label>Ranking</q-item-label>
+                    <q-item-label>Rank</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ "# 1" }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item disabled>
+              <q-item>
                 <q-item-section>
-                    <q-item-label>Uninterrupted uptime</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ "5 days" }}</q-item-label>
+                    <q-item-label>Uptime</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ identity.uptime }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item disabled>
@@ -238,7 +238,9 @@ export default {
         private_key: '',
         public_key: '',
         account_name: '',
-        installer: ''
+        installer: '',
+        time: '',
+        uptime: ''
       },
       nodes: [],
       voting_list: [],
@@ -260,6 +262,7 @@ export default {
   mounted () {
     this.getListOfNodes()
     this.interval = setInterval(() => this.refresh(), 300000)
+    this.identity.time = Math.floor((new Date()).getTime() / 1000)
   },
   methods: {
     // async identify (key) {
@@ -306,9 +309,34 @@ export default {
       try {
         let accounts = await eos.getAccounts(key)
         this.identity.account_name = accounts.account_names[0]
+        this.getUptime()
       } catch (error) {
         this.identity.account_name = 'none'
         this.errorMessage = error
+        this.errorDialog = true
+      }
+    },
+    async getUptime () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+
+          let nodeStats = result.find(row => row.account === accountName)
+          if (nodeStats) {
+            this.identity.uptime = Math.floor((this.identity.time - nodeStats.last_timestamp) / 86400)
+            this.identity.uptime += ' days'
+          } else {
+            this.errorMessage = 'Couldn\'t find' + accountName + 'in the uptimes table'
+            this.errorDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
         this.errorDialog = true
       }
     },
