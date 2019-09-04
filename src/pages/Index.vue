@@ -55,10 +55,13 @@
                     <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item disabled>
+              <q-item>
                 <q-item-section>
                     <q-item-label>Rank</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ "# 1" }}</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ identity.rank }}</q-item-label>
+                </q-item-section>
+                <q-item-section side top>
+                    <q-item-label>{{ identity.total_ranks }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -240,7 +243,9 @@ export default {
         account_name: '',
         installer: '',
         time: '',
-        uptime: ''
+        uptime: '',
+        rank: '',
+        total_ranks: ''
       },
       nodes: [],
       voting_list: [],
@@ -310,6 +315,7 @@ export default {
         let accounts = await eos.getAccounts(key)
         this.identity.account_name = accounts.account_names[0]
         this.getUptime()
+        this.getRank()
       } catch (error) {
         this.identity.account_name = 'none'
         this.errorMessage = error
@@ -328,7 +334,39 @@ export default {
             this.identity.uptime = Math.floor((this.identity.time - nodeStats.last_timestamp) / 86400)
             this.identity.uptime += ' days'
           } else {
-            this.errorMessage = 'Couldn\'t find' + accountName + 'in the uptimes table'
+            this.errorMessage = 'Couldn\'t find' + accountName + 'in the uptimes table for getting the Uptime'
+            this.errorDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async getRank () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+
+          let voteStats = result.find(row => row.owner === accountName)
+          if (voteStats) {
+            let ranks = []
+            result.forEach(item => {
+              let owner = item.owner
+              let votes = item.total_votes
+              ranks.push({ owner, votes })
+            })
+            ranks.sort((a, b) => (b.votes - a.votes))
+            this.identity.rank = '# '
+            this.identity.rank += ranks.map((e) => (e.owner)).indexOf(accountName) + 1
+            this.identity.total_ranks = '(out of: ' + ranks.length + ')'
+          } else {
+            this.errorMessage = 'Couldn\'t calculate the Rank for ' + accountName
             this.errorDialog = true
           }
         } catch (error) {
