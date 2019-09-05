@@ -76,6 +76,15 @@
                     <q-item-label class="code text-pink" caption>{{ "40.00000000 VTX" }}</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>Voted</q-item-label>
+                    <q-item-label class="code text-pink" caption>{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn label="Show more" color="blue-grey-14" @click="votedDialog = true" />
+                </q-item-section>
+              </q-item>
             </q-list>
           </div>
           <!-- Widget -->
@@ -153,6 +162,20 @@
             </q-card-section>
             <q-card-section style="max-height: 50vh" class="scroll">
               <pre>{{ resultMessage }}</pre>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- voted dialog -->
+        <q-dialog v-model="votedDialog">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-warning">
+            <q-card-section>
+              <div class="text-h6">Your voted list</div>
+            </q-card-section>
+            <q-card-section style="max-height: 50vh" class="scroll">
+              <pre>{{ identity.voted }}</pre>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
@@ -245,7 +268,17 @@ export default {
         time: '',
         uptime: '',
         rank: '',
-        total_ranks: ''
+        total_ranks: '',
+        voted: [
+          'test',
+          'test',
+          'test',
+          'test',
+          'test',
+          'test',
+          'test',
+          'test'
+        ]
       },
       nodes: [],
       voting_list: [],
@@ -258,6 +291,7 @@ export default {
       errorMessage: '',
       resultDialog: false,
       resultMessage: '',
+      votedDialog: false,
       isPwd: true,
       isPrvt: true,
       privateState: 'none',
