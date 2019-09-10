@@ -54,6 +54,9 @@
                     <q-item-label>Account name</q-item-label>
                     <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
                 </q-item-section>
+                <q-item-section side top>
+                    <q-item-label>{{ identity.balance }}</q-item-label>
+                </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
@@ -70,16 +73,19 @@
                     <q-item-label class="code text-pink" caption>{{ identity.uptime }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item disabled>
+              <q-item>
                 <q-item-section>
                     <q-item-label>VTX earned</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ "40.00000000 VTX" }}</q-item-label>
+                    <q-item-label class="code text-pink" caption disabled>{{ "0.000 VTX" }}</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn label="Retreive reward" color="blue-grey-14" @click="retreiveReward" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Voted</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
+                    <q-item-label class="code text-pink" caption disabled>{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Show more" color="blue-grey-14" @click="votedDialog = true" />
@@ -264,6 +270,7 @@ export default {
         private_key: '',
         public_key: '',
         account_name: '',
+        balance: '',
         installer: '',
         time: '',
         uptime: '',
@@ -302,6 +309,9 @@ export default {
     this.getListOfNodes()
     this.interval = setInterval(() => this.refresh(), 300000)
     this.identity.time = Math.floor((new Date()).getTime() / 1000)
+    if (this.identity.account_name) {
+      this.bal = setInterval(() => this.getBalance(), 60000)
+    }
   },
   methods: {
     // async identify (key) {
@@ -350,6 +360,7 @@ export default {
         this.identity.account_name = accounts.account_names[0]
         this.getUptime()
         this.getRank()
+        this.getBalance()
       } catch (error) {
         this.identity.account_name = 'none'
         this.errorMessage = error
@@ -409,6 +420,22 @@ export default {
         }
       } else {
         this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async getBalance () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          let balance = await eos.getBalance(accountName)
+          this.identity.balance = balance[0] ? balance[0] : '0 VTX'
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'No account name'
         this.errorDialog = true
       }
     },
@@ -611,6 +638,34 @@ export default {
       } catch (error) {
         this.errorDialog = true
         this.errorMessage = error
+      }
+    },
+    async retreiveReward () {
+      try {
+        const eos = new EosWrapper(this.identity.private_key)
+        const result = await eos.api.transact({
+          actions: [{
+            account: 'vtxdistribut',
+            name: 'uptime',
+            authorization: [{
+              actor: this.identity.account_name,
+              permission: 'active'
+            }],
+            data: {
+              account: this.identity.account_name
+            }
+          }]
+        }, {
+          blocksBehind: 3,
+          expireSeconds: 30
+        })
+        this.resultDialog = true
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.refresh()
+      } catch (error) {
+        this.errorMessage = error
+        this.errorDialog = true
       }
     }
   }
