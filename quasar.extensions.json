@@ -17,7 +17,7 @@
     "__internal": {
       "dev": {
         "electron": {
-          "iconHash": "4203c03cf2693297ca0fcef7126fac44"
+          "iconHash": "bcb078f3f9e616fec28cf638a1fae1b6"
         },
         "spa": {
           "iconHash": "4203c03cf2693297ca0fcef7126fac44"
@@ -25,7 +25,7 @@
       },
       "build": {
         "electron": {
-          "iconHash": "4203c03cf2693297ca0fcef7126fac44"
+          "iconHash": "bcb078f3f9e616fec28cf638a1fae1b6"
         }
       }
     }

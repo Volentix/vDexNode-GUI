@@ -54,7 +54,8 @@ module.exports = function (ctx) {
         'QInput',
         'QBadge',
         'QScrollArea',
-        'QImg'
+        'QImg',
+        'QBanner'
       ],
 
       directives: [
@@ -176,8 +177,82 @@ module.exports = function (ctx) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-
-        appId: 'vdexnode-gui'
+        'productName': 'vDexNode-GUI',
+        'appId': 'io.volentix.vdexnode',
+        /* eslint-disable */
+        'artifactName': '${name}-${os}-${version}.${ext}',
+        /* eslint-enable */
+        // "directories": {
+        //   "output": "build"
+        // },
+        // "files": [
+        //   "dist/electron/**/*"
+        // ],
+        'extraResources': [
+          'resources/**'
+        ],
+        'dmg': {
+          'contents': [{
+            'x': 410,
+            'y': 150,
+            'type': 'link',
+            'path': '/Applications'
+          },
+          {
+            'x': 130,
+            'y': 150,
+            'type': 'file'
+          }
+          ]
+        },
+        'mac': {
+          'icon': 'src/statics/icons/icon.icns',
+          'target': [
+            'zip',
+            'dmg'
+          ],
+          'extendInfo': {
+            'NSAppTransportSecurity': {
+              'NSAllowsArbitraryLoads': false
+            },
+            'NSExceptionDomains': {
+              'localhost': {
+                'NSTemporaryExceptionAllowsInsecureHTTPSLoads': false,
+                'NSIncludesSubdomains': false,
+                'NSTemporaryExceptionAllowsInsecureHTTPLoads': true,
+                'NSTemporaryExceptionMinimumTLSVersion': '1.0',
+                'NSTemporaryExceptionRequiresForwardSecrecy': false
+              }
+            }
+          }
+        },
+        'win': {
+          'icon': 'src/statics/icons/icon.ico',
+          'target': 'nsis',
+          'publisherName': 'Volentix Labs, Inc.'
+        },
+        'linux': {
+          'category': 'Network',
+          'description': 'A vDexNode GUI',
+          'desktop': {
+            'Name': 'vDexNode-GUI',
+            'GenericName': 'vDexNode GUI',
+            'X-GNOME-FullName': 'vDexNode-Gui',
+            'Comment': 'A vDexode GUI',
+            'Type': 'Application',
+            'Terminal': 'false',
+            'StartupNotify': 'false',
+            'Categories': 'Network;'
+          },
+          'icon': 'src/statics/icons/...',
+          'target': 'AppImage'
+        },
+        'publish': [{
+          'owner': 'Volentix',
+          'provider': 'github',
+          'releaseType': 'draft',
+          'url': 'https://github.com/Volentix/vdexnode-gui.git'
+        }]
       }
     }
   }
