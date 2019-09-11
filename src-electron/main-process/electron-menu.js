@@ -66,10 +66,10 @@ function vdexnodeMenu (app, shell) {
       },
       {
         type: 'separator'
-      },
-      {
-        role: 'toggledevtools'
       }
+      // {
+      //   role: 'toggledevtools'
+      // }
     ]
   },
   {

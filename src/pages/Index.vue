@@ -4,7 +4,8 @@
       <q-page class="bg-blue-grey-9 text-white">
         <!-- Title -->
         <div class="row justify-center">
-          <div class="text-h6 text-uppercase">vdexnode</div>
+          <div class="text-h6 text-uppercase q-px-sm">vdexnode</div>
+          <q-btn color="blue-grey-5" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
         </div>
         <div class="row justify-center">
           <div class="text-italic">Rent your computer to earn VTX</div>
@@ -14,14 +15,15 @@
           <div class="text-italic">If you don't have a vDexNode:</div>
         </div>
         <div class="row q-px-sm justify-between">
-          <div class="col-5" v-if="!identity.public_key">
+          <!-- <div class="col-5" v-if="!identity.public_key">
             <q-banner rounded class="text-white bg-blue-grey-10">
               Update your private key to get a public key. It is required to install the node.
             </q-banner>
-          </div>
-          <div class="col-2" v-if="identity.public_key">
+          </div> -->
+          <div class="col-2">
             <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
           </div>
+
           <div class="col-4">
             <q-btn color="blue-grey-14" class="q-mr-sm" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
               Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
@@ -126,7 +128,7 @@
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
                     <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
-                  <q-item-section>
+                  <q-item-section side center>
                     <q-item-label class="code text-pink" caption> {{ node.balance }} </q-item-label>
                   </q-item-section>
                   <q-item-section avatar>
@@ -252,6 +254,20 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <!-- Help dialog -->
+        <q-dialog v-model="helpDialog">
+          <q-card style="min-width: 700px; max-width: 80vw;" class="bg-warning">
+            <q-card-section>
+              <div class="text-h6">Help</div>
+            </q-card-section>
+            <q-card-section style="max-height: 60vh" class="scroll">
+              <pre>help</pre>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -303,6 +319,7 @@ export default {
       errorMessage: '',
       resultDialog: false,
       resultMessage: '',
+      helpDialog: false,
       votedDialog: false,
       isPwd: true,
       isPrvt: true,
