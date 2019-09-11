@@ -14,7 +14,12 @@
           <div class="text-italic">If you don't have a vDexNode:</div>
         </div>
         <div class="row q-px-sm justify-between">
-          <div class="col-2">
+          <div class="col-5" v-if="!identity.public_key">
+            <q-banner rounded class="text-white bg-blue-grey-10">
+              Update your private key to get a public key. It is required to install the node.
+            </q-banner>
+          </div>
+          <div class="col-2" v-if="identity.public_key">
             <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
           </div>
           <div class="col-4">
@@ -447,7 +452,6 @@ export default {
         this.identity.public_key = publicKey
         this.identify(this.identity.public_key)
       } catch (error) {
-        this.identity.public_key = 'none'
         this.errorMessage = error
         this.errorDialog = true
       }
