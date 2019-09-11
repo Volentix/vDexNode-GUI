@@ -19,7 +19,7 @@
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
     "build-all": "quasar build -m electron --target all",
-    "publish": "quasar build -m electron -P always",
+    "publish": "quasar build -m electron --target all -P always",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
