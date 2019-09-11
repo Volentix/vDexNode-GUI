@@ -1,5 +1,5 @@
 # vDexNode-GUI application
-<img width="1423" alt="Screen_Shot_2019-08-30_at_11_20_12_AM" src="https://user-images.githubusercontent.com/2269864/64043102-522f5c80-cb18-11e9-8f7f-fa78d1988207.png">
+<img width="1424" alt="Screen_Shot_2019-09-11_at_8_49_15_AM" src="https://user-images.githubusercontent.com/2269864/64713340-889e9d00-d471-11e9-879d-fe43fd22614e.png">
 
 
 ## Prerequisites
