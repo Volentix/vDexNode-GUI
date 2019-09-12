@@ -1,6 +1,6 @@
 {
   "name": "vdexnode",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "vDexNode GUI",
   "productName": "vDexNode",
   "cordovaId": "org.cordova.vdexnode",
@@ -17,12 +17,13 @@
   },
   "scripts": {
     "dev": "quasar dev -m electron",
-    "build": "npm version patch && quasar build -m electron",
-    "publish": "npm version patch && quasar build -m electron -P always",
-    "build-linux": "npm version patch && quasar build -m electron --target linux",
-    "publish-linux": "npm version patch && quasar build -m electron --target linux -P always",
-    "build-all": "npm version patch && quasar build -m electron --target all",
-    "publish-all": "npm version patch && quasar build -m electron --target all -P always",
+    "build": "quasar build -m electron",
+    "publish": "quasar build -m electron -P always",
+    "build-linux": "quasar build -m electron --target linux",
+    "publish-linux": "quasar build -m electron --target linux -P always",
+    "build-all": "quasar build -m electron --target all",
+    "publish-all": "quasar build -m electron --target all -P always",
+    "bump": "npm version patch",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
