@@ -81,3 +81,11 @@ quasar dev -m electron
 ```bash
 yarn run lint
 ```
+
+### Build
+If you have all the certificates installed in your system, you can build the binaries for several platforms.
+```bash
+yarn run build # build for current user electron platform
+yarn run build-all # build for all electron platforms linux|mac|windows|darwin
+yarn run publish # Build for all electron platforms and upload is a release on github
+```

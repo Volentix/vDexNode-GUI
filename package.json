@@ -1,10 +1,10 @@
 {
   "name": "vdexnode",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "vDexNode GUI",
   "productName": "vDexNode",
   "cordovaId": "org.cordova.vdexnode",
-  "author": "Dmitry Kryukov <remasik@gmail.com>, Daniel Thompson-Yvetot <denjell@quasar.dev>",
+  "author": "Volentix Labs <volentix.io>",
   "private": true,
   "homepage": "https://github.com/Volentix/vdexnode-gui",
   "license": "MIT",
