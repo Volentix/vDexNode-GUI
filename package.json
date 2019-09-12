@@ -17,9 +17,12 @@
   },
   "scripts": {
     "dev": "quasar dev -m electron",
-    "build": "quasar build -m electron",
-    "build-all": "quasar build -m electron --target all",
-    "publish": "quasar build -m electron --target all -P always",
+    "build": "npm version patch && quasar build -m electron",
+    "publish": "npm version patch && quasar build -m electron -P always",
+    "build-linux": "npm version patch && quasar build -m electron --target linux",
+    "publish-linux": "npm version patch && quasar build -m electron --target linux -P always",
+    "build-all": "npm version patch && quasar build -m electron --target all",
+    "publish-all": "npm version patch && quasar build -m electron --target all -P always",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },

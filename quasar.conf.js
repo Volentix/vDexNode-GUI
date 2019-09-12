@@ -54,7 +54,8 @@ module.exports = function (ctx) {
         'QBadge',
         'QScrollArea',
         'QImg',
-        'QBanner'
+        'QBanner',
+        'QSpace'
       ],
 
       directives: [

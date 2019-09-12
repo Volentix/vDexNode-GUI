@@ -2,42 +2,38 @@
   <q-layout>
     <q-page-container>
       <q-page class="bg-blue-grey-9 text-white">
-        <!-- Title -->
-        <div class="row justify-center">
-          <div class="text-h6 text-uppercase q-px-sm">vdexnode</div>
-          <q-btn color="blue-grey-5" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
-        </div>
-        <div class="row justify-center">
-          <div class="text-italic">Rent your computer to earn VTX</div>
-        </div>
-        <!-- Buttons -->
-        <div class="row q-pa-sm">
-          <div class="text-italic">If you don't have a vDexNode:</div>
-        </div>
-        <div class="row q-px-sm justify-between">
-          <!-- <div class="col-5" v-if="!identity.public_key">
-            <q-banner rounded class="text-white bg-blue-grey-10">
-              Update your private key to get a public key. It is required to install the node.
-            </q-banner>
-          </div> -->
-          <div class="col-2">
-            <q-btn color="blue-grey-14" label="Get the vDex node" @click=getInstaller />
+        <!-- Topbar -->
+        <div class="row">
+          <div class="col-4 text-left q-pa-sm">
+            <div class="text-italic text-blue-grey-1">If you don't have a vDexNode:</div>
+            <!-- <q-banner rounded class="text-white bg-blue-grey-10" v-if="!identity.public_key">
+              Update your private key. It is required to install the node.
+            </q-banner> -->
+            <q-btn color="blue-grey-14" class="text-blue-grey-1" label="Get the vDex node" @click=getInstaller />
+          </div>
+          <div class="col-4 text-center">
+            <div class="row inline items-center q-pt-sm">
+              <div class="text-h6 text-uppercase q-px-sm text-blue-grey-1">vdexnode</div>
+              <q-btn color="blue-grey-5" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
+            </div>
+            <div class="text-italic text-blue-grey-1">Rent your computer to earn VTX</div>
           </div>
 
-          <div class="col-4">
-            <q-btn color="blue-grey-14" class="q-mr-sm" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+          <div class="col-4 text-right q-pa-md">
+            <q-btn color="blue-grey-14" class="q-mr-sm q-mb-sm text-blue-grey-1" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
               Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
             </q-btn>
-            <q-btn color="blue-grey-14" class="q-mr-sm" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+            <q-btn color="blue-grey-14" class="q-mr-sm q-mb-sm text-blue-grey-1" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
               Register:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
             </q-btn>
           </div>
         </div>
-        <!-- Identity -->
+
+        <!-- Identity and Map widget -->
         <div class="row q-pa-sm">
-          <div class="col-5 q-py-lg">
-            <div class="text-italic q-pb-sm">Enter private key to register your node:</div>
-            <q-list bordered separator class="bg-blue-grey-10 inset-shadow">
+          <div class="col-5 q-py-md">
+            <div class="text-italic q-pb-sm text-blue-grey-1">Update a private key to start:</div>
+            <q-list bordered separator class="bg-blue-grey-10 text-blue-grey-1 inset-shadow">
               <q-item>
                 <q-item-section>
                     <q-item-label>Private key</q-item-label>
@@ -47,7 +43,7 @@
                   <q-btn flat round color="blue-grey-14" :icon="isPrvt ? 'visibility_off' : 'visibility'" @click="showPrivate" />
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Update" color="blue-grey-14" @click="privateDialog = true" />
+                  <q-btn label="Update" color="blue-grey-14" class="text-blue-grey-1" @click="privateDialog = true" />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -86,7 +82,7 @@
                     <q-item-label class="code text-pink" caption disabled>{{ "0.000 VTX" }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Retreive reward" color="blue-grey-14" @click="retreiveReward" />
+                  <q-btn label="Retreive reward" color="blue-grey-14" class="text-blue-grey-1" @click="retreiveReward" />
                 </q-item-section>
               </q-item>
               <q-item>
@@ -95,7 +91,7 @@
                     <q-item-label class="code text-pink" caption disabled>{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Show more" color="blue-grey-14" @click="votedDialog = true" />
+                  <q-btn label="Show more" color="blue-grey-14" class="text-blue-grey-1" @click="votedDialog = true" />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -105,14 +101,15 @@
             <GeoWidget :geoData="geoData"/>
           </div>
         </div>
+
         <!-- List of nodes -->
-        <div class="row q-pa-sm justify-between">
+        <div class="row q-pa-sm justify-between text-blue-grey-1">
           <div class="col-5">
             <div class="text-italic">List of nodes on the network.</div>
             <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
           </div>
           <div class="col-4 text-right q-px-md">
-            <q-btn color="blue-grey-14" v-on:click=refresh>Refresh nodes</q-btn>
+            <q-btn color="blue-grey-14" class="text-blue-grey-1" v-on:click=refresh>Refresh nodes</q-btn>
           </div>
           <div class="col-3">
             <div class="text-italic">Voting for the nodes.</div>
@@ -122,7 +119,7 @@
         <div class="row q-pa-sm">
           <div class="col-9 q-pr-sm">
             <q-scroll-area style="height: 400px;">
-              <q-list bordered separator class="bg-blue-grey-10 inset-shadow" v-if="nodes.length > 0">
+              <q-list bordered separator class="bg-blue-grey-10 inset-shadow text-blue-grey-1" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
@@ -132,15 +129,15 @@
                     <q-item-label class="code text-pink" caption> {{ node.balance }} </q-item-label>
                   </q-item-section>
                   <q-item-section avatar>
-                      <q-btn color="blue-grey-14" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
-                      <q-btn color="green-10" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
+                      <q-btn color="blue-grey-14" class="text-blue-grey-1" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
+                      <q-btn color="green-10" class="text-blue-grey-1" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
                   </q-item-section>
                 </q-item>
               </q-list>
             </q-scroll-area>
           </div>
           <div class="col-3 bg-blue-grey-10 inset-shadow">
-            <q-btn color="blue-grey-14 q-ma-sm" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
+            <q-btn color="blue-grey-14 q-ma-sm text-blue-grey-1" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
             <q-scroll-area style="height: 350px;">
               <q-list bordered separator v-if="voting_list.length > 0">
                 <q-item v-for="node in voting_list" :key="node.id">
@@ -256,12 +253,30 @@
         </q-dialog>
         <!-- Help dialog -->
         <q-dialog v-model="helpDialog">
-          <q-card style="min-width: 700px; max-width: 80vw;" class="bg-warning">
+          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-warning">
             <q-card-section>
               <div class="text-h6">Help</div>
             </q-card-section>
             <q-card-section style="max-height: 60vh" class="scroll">
-              <pre>help</pre>
+              <div class="text-subtitle1">1. Update your Private key.</div>
+              <p>It will define your public key, EOS account name and other required for intercting with the node information.</p>
+
+              <div class="text-subtitle1">2. Add the account</div>
+              <div class="text-italic">EOS account name is required for this step.</div>
+              <p>The button will appear in the top right side of the page.
+              It will add your account name into distribution contract.</p>
+
+              <div class="text-subtitle1">3. Register the account</div>
+              <div class="text-italic">EOS account name is required for this step.</div>
+              <p>The button will appear in the top right side of the page.
+              It will register your account in the voting contract.</p>
+
+              <div class="text-subtitle1">4. Uptime</div>
+              <div class="text-italic">EOS account name is required for this step.</div>
+              <p>It will start monitor the uptime of your node in the voting contract.</p>
+
+              <div class="text-subtitle1">5. Vote</div>
+
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
