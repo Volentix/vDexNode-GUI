@@ -88,7 +88,7 @@
               <q-item>
                 <q-item-section>
                     <q-item-label>Voted</q-item-label>
-                    <q-item-label class="code text-pink" caption disabled>{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
+                    <q-item-label class="code text-pink" caption v-if="this.identity.voted.length > 0">{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Show more" color="blue-grey-14" class="text-blue-grey-1" @click="votedDialog = true" />
@@ -312,16 +312,7 @@ export default {
         uptime: '',
         rank: '',
         total_ranks: '',
-        voted: [
-          'test',
-          'test',
-          'test',
-          'test',
-          'test',
-          'test',
-          'test',
-          'test'
-        ]
+        voted: []
       },
       nodes: [],
       voting_list: [],
@@ -346,50 +337,15 @@ export default {
     this.getListOfNodes()
     this.interval = setInterval(() => this.refresh(), 300000)
     this.identity.time = Math.floor((new Date()).getTime() / 1000)
-    if (this.identity.account_name) {
-      this.bal = setInterval(() => this.getBalance(), 60000)
-    }
+    this.refr = setInterval(() => this.refresher(), 60000)
   },
   methods: {
-    // async identify (key) {
-    //   if (key.length < 52 || !key.includes('EOS')) {
-    //     this.identity.account_name = 'none'
-    //     this.errorDialog = true
-    //     this.errorMessage = 'Invalid key format'
-    //   } else {
-    //     var headers = {
-    //       'Content-Type': 'application/json'
-    //     }
-    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: key }, { headers: headers }).then((result) => {
-    //       this.identity.account_name = result.data.account_names[0]
-    //     }).catch((error) => {
-    //       this.identity.account_name = 'none'
-    //       this.errorDialog = true
-    //       this.errorMessage = error
-    //       console.log(error)
-    //     })
-    //   }
-    // },
-    // async getAccountByKey (id, publicKey) {
-    //   return new Promise(resolve => {
-    //     var headers = {
-    //       'Content-Type': 'application/json'
-    //     }
-    //     this.$http.post(process.env.EOS_ENDPOINT + '/v1/history/get_key_accounts', { public_key: publicKey }, { headers: headers }).then((result) => {
-    //       let name = result.data.account_names[0]
-    //       if (name) {
-    //         this.nodes[id].account = name
-    //       } else {
-    //         this.nodes[id].account = 'No account found'
-    //       }
-    //       resolve()
-    //     }).catch((error) => {
-    //       console.log(error)
-    //       this.errorDialog = true
-    //       this.errorMessage = error
-    //     })
-    //   })
-    // },
+    refresher () {
+      if (this.identity.account_name) {
+        this.getBalance()
+        this.getVoted()
+      }
+    },
     async identify (key) {
       const eos = new EosWrapper()
       try {
@@ -398,6 +354,7 @@ export default {
         this.getUptime()
         this.getRank()
         this.getBalance()
+        this.getVoted()
       } catch (error) {
         this.identity.account_name = 'none'
         this.errorMessage = error
@@ -417,6 +374,29 @@ export default {
             this.identity.uptime += ' days'
           } else {
             this.errorMessage = 'Couldn\'t find' + accountName + 'in the uptimes table for getting the Uptime'
+            this.errorDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async getVoted () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'voters')
+
+          let nodeStats = result.find(row => row.owner === accountName)
+          if (nodeStats) {
+            this.identity.voted = nodeStats.producers
+          } else {
+            this.errorMessage = 'Couldn\'t find' + accountName + 'in the voters table for getting the voted list'
             this.errorDialog = true
           }
         } catch (error) {
@@ -671,6 +651,7 @@ export default {
         this.resultMessage = 'Transaction executed successfully!\n\n'
         this.resultMessage += JSON.stringify(result, null, 2)
         this.voting_list = []
+        setInterval(() => this.refresher(), 5000)
       } catch (error) {
         this.errorDialog = true
         this.errorMessage = error
