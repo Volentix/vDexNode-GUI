@@ -19,8 +19,6 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    // width: 1000,
-    // height: 600,
     useContentSize: true,
     resizable: true,
     title: 'vDexNode GUI',
@@ -51,7 +49,7 @@ if (process.env.PROD) {
 
 let tray = null
 app.on('ready', () => {
-  tray = new Tray(nativeImage.createFromPath(iconPath + '/vdexTemplate.png'))
+  tray = new Tray(nativeImage.createFromPath(iconPath + '/vdexnodeTemplate.png'))
   const contextMenu = Menu.buildFromTemplate([
     { label: app.getName() + ': ' + app.getVersion(), enabled: false },
     { type: 'separator' },
@@ -106,3 +104,65 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+// ipcMain.on('defaultIcon', function () {
+//   tray.setImage(nativeImage.createFromPath(iconPath + '/walletTemplate.png'))
+// })
+
+// ipcMain.on('updateAvailable', function () {
+//   tray.setImage(nativeImage.createFromPath(iconPath + '/walletNewTemplate.png'))
+// })
+
+/**
+ * Auto Updater
+ *
+ * Uncomment the following code below and install `electron-updater` to
+ * support auto updating. Code Signing with a valid certificate is required.
+ * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
+ */
+
+autoUpdater.logger = log
+autoUpdater.logger.transports.file.level = 'info'
+log.info('App starting...')
+
+app.on('ready', () => {
+  if (process.env.NODE_ENV === 'production') {
+    log.info('Setup check for updates and notify')
+    autoUpdater.checkForUpdatesAndNotify()
+  }
+})
+
+// autoUpdater.on('update-downloaded', () => {
+//   mainWindow.webContents.send("updateReady");
+//   autoUpdater.quitAndInstall();
+//   // process.exit(1);
+// })
+function sendStatusToWindow (text) {
+  log.info(text)
+  mainWindow.webContents.send('message', text)
+}
+autoUpdater.on('update-available', (info) => {
+  try {
+    app.dock.setBadge('update')
+  } catch (e) {
+    log.info('setBadge() does not work on windows.')
+  }
+  try {
+    tray.setImage(nativeImage.createFromPath(iconPath + '/vdexnodeUpdateTemplate.png'))
+  } catch (e) {
+    log.info('setImage() does not work on windows')
+  }
+  sendStatusToWindow('Update available. Once the download is complete you will need to quit and restart Verto.')
+})
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow('Error in auto-updater. ' + err)
+})
+autoUpdater.on('update-downloaded', (info) => {
+  sendStatusToWindow('Restart Verto to open the latest version!')
+})
+// autoUpdater.on('checking-for-update', () => {
+//   sendStatusToWindow('Checking for update...')
+// })
+// autoUpdater.on('update-not-available', (info) => {
+//   sendStatusToWindow('Update not available.')
+// })
