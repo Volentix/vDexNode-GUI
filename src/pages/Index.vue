@@ -259,24 +259,27 @@
             </q-card-section>
             <q-card-section style="max-height: 60vh" class="scroll">
               <div class="text-subtitle1">1. Update your Private key.</div>
-              <p>It will define your public key, EOS account name and other required for intercting with the node information.</p>
+              <p>It will define your public key, EOS account name and other required information.</p>
 
               <div class="text-subtitle1">2. Add the account</div>
               <div class="text-italic">EOS account name is required for this step.</div>
-              <p>The button will appear in the top right side of the page.
-              It will add your account name into distribution contract.</p>
+              <p>It will add your account name into distribution contract.</p>
 
               <div class="text-subtitle1">3. Register the account</div>
               <div class="text-italic">EOS account name is required for this step.</div>
-              <p>The button will appear in the top right side of the page.
-              It will register your account in the voting contract.</p>
+              <p>It will register your account in the voting contract.</p>
 
-              <div class="text-subtitle1">4. Uptime</div>
+              <div class="text-subtitle1">4. Init</div>
               <div class="text-italic">EOS account name is required for this step.</div>
               <p>It will start monitor the uptime of your node in the voting contract.</p>
 
               <div class="text-subtitle1">5. Vote</div>
+              <div class="text-italic">EOS account name is required for this step.</div>
+              <p>You can choose a number of nodes from the list you want to vote for.</p>
 
+              <div class="text-subtitle1">6. Retreive reward</div>
+              <div class="text-italic">EOS account name is required for this step.</div>
+              <p>To receive your reward for the running node click on the button retreive reward.</p>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
@@ -682,6 +685,7 @@ export default {
         this.resultMessage = 'Transaction executed successfully!\n\n'
         this.resultMessage += JSON.stringify(result, null, 2)
         this.refresh()
+        this.refresher()
       } catch (error) {
         this.errorMessage = error
         this.errorDialog = true
