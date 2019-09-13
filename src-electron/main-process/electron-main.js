@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell, Tray, ipcMain, nativeImage } from 'electron'
+import { app, BrowserWindow, Menu, shell, Tray, ipcMain, nativeImage, dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
 const path = require('path')
 const log = require('electron-log')
@@ -53,8 +53,13 @@ app.on('ready', () => {
   const contextMenu = Menu.buildFromTemplate([
     { label: app.getName() + ': ' + app.getVersion(), enabled: false },
     { type: 'separator' },
-    { label: 'Check for updates', enabled: false },
-    { label: 'Settings', enabled: false },
+    {
+      label: 'Check for updates',
+      enabled: true,
+      click: () => {
+        autoUpdater.checkForUpdatesAndNotify()
+      }
+    },
     { type: 'separator' },
     {
       label: 'Quit',
@@ -125,6 +130,11 @@ autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 log.info('App starting...')
 
+function sendStatusToWindow (text) {
+  log.info(text)
+  mainWindow.webContents.send('message', text)
+}
+
 app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') {
     log.info('Setup check for updates and notify')
@@ -132,15 +142,13 @@ app.on('ready', () => {
   }
 })
 
-// autoUpdater.on('update-downloaded', () => {
-//   mainWindow.webContents.send("updateReady");
-//   autoUpdater.quitAndInstall();
-//   // process.exit(1);
-// })
-function sendStatusToWindow (text) {
-  log.info(text)
-  mainWindow.webContents.send('message', text)
-}
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
+  logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
+  logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+  sendStatusToWindow(logMessage)
+})
+
 autoUpdater.on('update-available', (info) => {
   try {
     app.dock.setBadge('update')
@@ -154,11 +162,23 @@ autoUpdater.on('update-available', (info) => {
   }
   sendStatusToWindow('Update available. Once the download is complete you will need to quit and restart Verto.')
 })
+
 autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err)
 })
-autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow('Restart Verto to open the latest version!')
+
+autoUpdater.on('update-downloaded', function (event) {
+  dialog.showMessageBox({
+    type: 'info',
+    buttons: ['Restart', 'Later'],
+    title: 'Update the' + app.getName(),
+    message: ('The new version has been downloaded.'),
+    detail: 'Please restart the application to apply the updates.'
+  }, (index) => {
+    if (!index) {
+      autoUpdater.quitAndInstall()
+    }
+  })
 })
 // autoUpdater.on('checking-for-update', () => {
 //   sendStatusToWindow('Checking for update...')
