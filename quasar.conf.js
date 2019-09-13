@@ -177,7 +177,7 @@ module.exports = function (ctx) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-        'productName': 'vDexNode-GUI',
+        'productName': 'vDexNode',
         'appId': 'io.volentix.vdexnode',
         /* eslint-disable */
         'artifactName': '${name}-${os}-${version}.${ext}',
@@ -192,8 +192,12 @@ module.exports = function (ctx) {
           'resources/**'
         ],
         'dmg': {
+          'background': 'src-electron/icons/background.tiff',
+          /* eslint-disable */
+          'title': '${productName}-${version}',
+          /* eslint-enable */
           'contents': [{
-            'x': 410,
+            'x': 700,
             'y': 150,
             'type': 'link',
             'path': '/Applications'
@@ -206,7 +210,7 @@ module.exports = function (ctx) {
           ]
         },
         'mac': {
-          'icon': 'src/statics/icons/icon.icns',
+          // 'icon': 'src/statics/icons/icon.icns',
           'target': [
             'zip',
             'dmg'
@@ -227,24 +231,24 @@ module.exports = function (ctx) {
           }
         },
         'win': {
-          'icon': 'src/statics/icons/icon.ico',
+          // 'icon': 'src/statics/icons/icon.ico',
           'target': 'nsis',
           'publisherName': 'Volentix Labs, Inc.'
         },
         'linux': {
           'category': 'Network',
-          'description': 'A vDexNode GUI',
+          'description': 'vDexNode',
           'desktop': {
-            'Name': 'vDexNode-GUI',
-            'GenericName': 'vDexNode GUI',
-            'X-GNOME-FullName': 'vDexNode-Gui',
-            'Comment': 'A vDexode GUI',
+            'Name': 'vDexNode',
+            'GenericName': 'vDexNode',
+            'X-GNOME-FullName': 'vDexNode',
+            'Comment': 'vDexode',
             'Type': 'Application',
             'Terminal': 'false',
             'StartupNotify': 'false',
             'Categories': 'Network;'
           },
-          'icon': 'src/statics/icons/...',
+          // 'icon': 'src/statics/icons/...',
           'target': 'AppImage'
         },
         'publish': [{
