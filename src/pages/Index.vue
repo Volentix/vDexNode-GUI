@@ -13,7 +13,7 @@
           </div>
           <div class="col-4 text-center">
             <div class="row inline items-center q-pt-sm">
-              <div class="text-h6 text-uppercase q-px-sm text-blue-grey-1">vdexnode</div>
+              <div class="text-h6 text-uppercase q-px-sm text-blue-grey-1">vdexnode <q-badge color="blue-grey-10" text-color="blue-grey-1" align="top" transparent>{{ version }}</q-badge></div>
               <q-btn color="blue-grey-5" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
             </div>
             <div class="text-italic text-blue-grey-1">Rent your computer to earn VTX</div>
@@ -292,7 +292,7 @@
 import GeoWidget from '../components/GeoWidget.vue'
 import EosWrapper from '@/util/EosWrapper'
 import * as utils from '@/util/utils.js'
-const { dialog } = require('electron').remote
+const { app, dialog } = require('electron').remote
 const fs = require('fs')
 
 export default {
@@ -314,6 +314,7 @@ export default {
         total_ranks: '',
         voted: []
       },
+      version: '',
       nodes: [],
       voting_list: [],
       privateDialog: false,
@@ -334,6 +335,7 @@ export default {
     }
   },
   mounted () {
+    this.version = app.getVersion()
     this.getListOfNodes()
     this.interval = setInterval(() => this.refresh(), 300000)
     this.identity.time = Math.floor((new Date()).getTime() / 1000)
