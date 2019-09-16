@@ -446,6 +446,7 @@ export default {
       }
     },
     async getBalance () {
+      console.log('update')
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
@@ -685,7 +686,7 @@ export default {
         this.resultMessage = 'Transaction executed successfully!\n\n'
         this.resultMessage += JSON.stringify(result, null, 2)
         this.refresh()
-        this.refresher()
+        setInterval(() => this.refresher(), 5000)
       } catch (error) {
         this.errorMessage = error
         this.errorDialog = true
