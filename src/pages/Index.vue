@@ -87,8 +87,12 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>Voted</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted.length > 0">{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
+                    <q-item-label>Voted for me</q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted_for.length > 0">{{ this.identity.voted_for.length }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>I voted</q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted_i.length > 0">{{ this.identity.voted_i.length }} </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Show more" color="vblack" class="text-vgrey" @click="votedDialog = true" />
@@ -180,12 +184,33 @@
         </q-dialog>
         <!-- voted dialog -->
         <q-dialog v-model="votedDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-grey">
+          <q-card style="min-width: 600px; max-width: 60vw;" class="bg-vgrey q-ma-sm">
             <q-card-section>
-              <div class="text-h6">Your voted list</div>
+              <div class="text-h6">Votes</div>
             </q-card-section>
             <q-card-section style="max-height: 50vh" class="scroll">
-              <pre>{{ identity.voted }}</pre>
+              <div class="row">
+                <div class="col q-px-sm">
+                  <div class="text-subtitle1">Voted for me:</div>
+                  <q-list bordered separator class=" inset-shadow" v-if="identity.voted_for.length > 0">
+                    <q-item v-for="account in identity.voted_for" :key="account">
+                      <q-item-section>
+                        <q-item-label class="code"> {{ account }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+                <div class="col q-px-sm">
+                  <div class="text-subtitle1">I voted:</div>
+                  <q-list bordered separator class=" inset-shadow" v-if="identity.voted_i.length > 0">
+                    <q-item v-for="account in identity.voted_i" :key="account">
+                      <q-item-section>
+                        <q-item-label class="code"> {{ account }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </div>
+              </div>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
@@ -315,7 +340,8 @@ export default {
         uptime: '',
         rank: '',
         total_ranks: '',
-        voted: []
+        voted_for: [],
+        voted_i: []
       },
       version: '',
       nodes: [],
@@ -399,11 +425,18 @@ export default {
 
           let nodeStats = result.find(row => row.owner === accountName)
           if (nodeStats) {
-            this.identity.voted = nodeStats.producers
+            this.identity.voted_i = nodeStats.producers
           } else {
-            this.errorMessage = 'Couldn\'t find ' + accountName + ' in the voters table for getting the voted list'
-            this.errorDialog = true
+            this.resultMessage = 'Account: ' + accountName + ' did not vote for anyone. Please vote.'
+            this.resultDialog = true
           }
+          var self = this
+          this.identity.voted_for = []
+          result.forEach(function (item) {
+            if (item.producers.includes(accountName)) {
+              self.identity.voted_for.push(item.owner)
+            }
+          })
         } catch (error) {
           this.errorMessage = error
           this.errorDialog = true
@@ -446,7 +479,6 @@ export default {
       }
     },
     async getBalance () {
-      console.log('update')
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {

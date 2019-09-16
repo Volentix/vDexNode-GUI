@@ -30,7 +30,7 @@ class EosWrapper {
   }
 
   async getTable (code, scope, table) {
-    const resp = await this.rpc.get_table_rows({ code: code, scope: scope, table: table, json: true })
+    const resp = await this.rpc.get_table_rows({ code: code, scope: scope, table: table, json: true, limit: 999999999999 })
     return resp.rows
   }
 }
