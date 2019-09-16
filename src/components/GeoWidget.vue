@@ -1,7 +1,7 @@
 <template>
-  <div class='bg-blue-grey-10 inset-shadow'>
+  <div class='bg-vdark inset-shadow'>
     <div id='map'></div>
-    <div id='tooltip' class='hidden bg-blue-grey-6'>
+    <div id='tooltip' class='hidden bg-vgrey'>
       <p>Location: <span id='city'>Unknown</span></p>
       <p>Nodes: <span id='mass'>Unknown</span></p>
     </div>
@@ -94,7 +94,7 @@ export default {
         .enter()
         .append('path')
         .attr('d', land)
-        .style('fill', '#171717')
+        .style('fill', '#000')
 
       // node locations
       var nodes
@@ -120,7 +120,7 @@ export default {
             return 2
           }
         })
-        .style('fill', '#e91e63')
+        .style('fill', '#A000FD')
         .style('opacity', 0.75)
 
       // TOOLTIP
@@ -169,10 +169,6 @@ export default {
 </script>
 
 <style scoped>
-svg.chart-wrap {
-  background-color: #E4F1FE;
-}
-
 #tooltip {
   position: absolute;
   width: 200px;

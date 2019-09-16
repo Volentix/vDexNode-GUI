@@ -1,30 +1,30 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="bg-blue-grey-9 text-white">
+      <q-page class="bg-vblack">
         <!-- Topbar -->
         <div class="row">
           <div class="col-4 text-left q-pa-sm">
-            <div class="text-italic text-blue-grey-1">If you don't have a vDexNode:</div>
+            <div class="text-italic text-vgrey">If you don't have a vDexNode:</div>
             <!-- <q-banner rounded class="text-white bg-blue-grey-10" v-if="!identity.public_key">
               Update your private key. It is required to install the node.
             </q-banner> -->
-            <q-btn color="blue-grey-14" class="text-blue-grey-1" label="Get the vDex node" @click=getInstaller />
+            <q-btn color="vdark" class="text-vgrey" label="Get the vDex node" @click=getInstaller />
           </div>
           <div class="col-4 text-center">
             <div class="row inline items-center q-pt-sm">
-              <div class="text-h6 text-uppercase q-px-sm text-blue-grey-1">vdexnode <q-badge color="blue-grey-10" text-color="blue-grey-1" align="top" transparent>{{ version }}</q-badge></div>
-              <q-btn color="blue-grey-5" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
+              <div class="text-h6 text-uppercase q-px-sm text-vgrey">vdexnode <q-badge color="vgreen" text-color="vblack" align="top" transparent>{{ version }}</q-badge></div>
+              <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
             </div>
-            <div class="text-italic text-blue-grey-1">Rent your computer to earn VTX</div>
+            <div class="text-italic text-vgrey">Rent your computer to earn VTX</div>
           </div>
 
           <div class="col-4 text-right q-pa-md">
-            <q-btn color="blue-grey-14" class="q-mr-sm q-mb-sm text-blue-grey-1" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
-              Add:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
+            <q-btn color="vdark" class="q-mr-sm q-mb-sm text-vgrey" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+              Add:&nbsp;<span class="text-vgreen">{{ identity.account_name }}</span>
             </q-btn>
-            <q-btn color="blue-grey-14" class="q-mr-sm q-mb-sm text-blue-grey-1" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
-              Register:&nbsp;<span class="text-pink-4">{{ identity.account_name }}</span>
+            <q-btn color="vdark" class="q-mr-sm q-mb-sm text-vgrey" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
+              Register:&nbsp;<span class="text-vgreen">{{ identity.account_name }}</span>
             </q-btn>
           </div>
         </div>
@@ -32,66 +32,66 @@
         <!-- Identity and Map widget -->
         <div class="row q-pa-sm">
           <div class="col-5 q-py-md">
-            <div class="text-italic q-pb-sm text-blue-grey-1">Update a private key to start:</div>
-            <q-list bordered separator class="bg-blue-grey-10 text-blue-grey-1 inset-shadow">
+            <div class="text-italic q-pb-sm text-vgrey">Update a private key to start:</div>
+            <q-list bordered separator class="bg-vdark text-vgrey inset-shadow">
               <q-item>
                 <q-item-section>
                     <q-item-label>Private key</q-item-label>
-                    <q-item-label class="code text-pink" caption v-bind:style="{ display: privateState }">{{ identity.private_key }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-bind:style="{ display: privateState }">{{ identity.private_key }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn flat round color="blue-grey-14" :icon="isPrvt ? 'visibility_off' : 'visibility'" @click="showPrivate" />
+                  <q-btn flat round color="vgrey" :icon="isPrvt ? 'visibility_off' : 'visibility'" @click="showPrivate" />
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Update" color="blue-grey-14" class="text-blue-grey-1" @click="privateDialog = true" />
+                  <q-btn label="Update" color="vblack" class="text-vgrey" @click="privateDialog = true" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Public key</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ identity.public_key }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.public_key }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Account name</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ identity.account_name }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.account_name }}</q-item-label>
                 </q-item-section>
                 <q-item-section side top>
-                    <q-item-label>{{ identity.balance }}</q-item-label>
+                    <q-item-label class="text-vgrey">{{ identity.balance }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Rank</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ identity.rank }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.rank }}</q-item-label>
                 </q-item-section>
                 <q-item-section side top>
-                    <q-item-label>{{ identity.total_ranks }}</q-item-label>
+                    <q-item-label class="text-vgrey">{{ identity.total_ranks }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Uptime</q-item-label>
-                    <q-item-label class="code text-pink" caption>{{ identity.uptime }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.uptime }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>VTX earned</q-item-label>
-                    <q-item-label class="code text-pink" caption disabled>{{ "0.000 VTX" }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption disabled>{{ "0.0000 VTX" }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Retreive reward" color="blue-grey-14" class="text-blue-grey-1" @click="retreiveReward" />
+                  <q-btn label="Retreive reward" color="vblack" class="text-vgrey" @click="retreiveReward" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Voted</q-item-label>
-                    <q-item-label class="code text-pink" caption v-if="this.identity.voted.length > 0">{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted.length > 0">{{ this.identity.voted.slice(0,3).toString() }} ... </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Show more" color="blue-grey-14" class="text-blue-grey-1" @click="votedDialog = true" />
+                  <q-btn label="Show more" color="vblack" class="text-vgrey" @click="votedDialog = true" />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -103,13 +103,13 @@
         </div>
 
         <!-- List of nodes -->
-        <div class="row q-pa-sm justify-between text-blue-grey-1">
+        <div class="row q-pa-sm justify-between text-vgrey">
           <div class="col-5">
             <div class="text-italic">List of nodes on the network.</div>
             <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
           </div>
           <div class="col-4 text-right q-px-md">
-            <q-btn color="blue-grey-14" class="text-blue-grey-1" v-on:click=refresh>Refresh nodes</q-btn>
+            <q-btn color="vdark" class="text-vgrey" v-on:click=refresh>Refresh nodes</q-btn>
           </div>
           <div class="col-3">
             <div class="text-italic">Voting for the nodes.</div>
@@ -119,30 +119,30 @@
         <div class="row q-pa-sm">
           <div class="col-9 q-pr-sm">
             <q-scroll-area style="height: 400px;">
-              <q-list bordered separator class="bg-blue-grey-10 inset-shadow text-blue-grey-1" v-if="nodes.length > 0">
+              <q-list bordered separator class="bg-vdark inset-shadow text-vgrey" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
+                    <q-item-label class="code text-vgreen" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
                   <q-item-section side center>
-                    <q-item-label class="code text-pink" caption> {{ node.balance }} </q-item-label>
+                    <q-item-label class="code text-vgreen" caption> {{ node.balance }} </q-item-label>
                   </q-item-section>
                   <q-item-section avatar>
-                      <q-btn color="blue-grey-14" class="text-blue-grey-1" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
-                      <q-btn color="green-10" class="text-blue-grey-1" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
+                      <q-btn color="vblack" class="text-vgrey" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
+                      <q-btn color="vgreen" class="text-vgrey" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
                   </q-item-section>
                 </q-item>
               </q-list>
             </q-scroll-area>
           </div>
-          <div class="col-3 bg-blue-grey-10 inset-shadow">
-            <q-btn color="blue-grey-14 q-ma-sm text-blue-grey-1" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
+          <div class="col-3 bg-vdark inset-shadow">
+            <q-btn color="vblack" class="q-ma-sm text-vgrey" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
             <q-scroll-area style="height: 350px;">
               <q-list bordered separator v-if="voting_list.length > 0">
                 <q-item v-for="node in voting_list" :key="node.id">
                   <q-item-section>
-                    <q-item-label class="code text-pink" caption> {{ node.account }} </q-item-label>
+                    <q-item-label class="code text-vgreen" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
                   </q-item>
               </q-list>
@@ -152,7 +152,7 @@
 
         <!-- Error dialog -->
         <q-dialog v-model="errorDialog">
-          <q-card style="min-width: 500px" class="bg-negative text-white">
+          <q-card style="min-width: 500px" class="bg-negative text-vgrey">
             <q-card-section>
               <div class="text-h6">Error occured</div>
             </q-card-section>
@@ -166,7 +166,7 @@
         </q-dialog>
         <!-- Result dialog -->
         <q-dialog v-model="resultDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-warning">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Result</div>
             </q-card-section>
@@ -180,7 +180,7 @@
         </q-dialog>
         <!-- voted dialog -->
         <q-dialog v-model="votedDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-warning">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-grey">
             <q-card-section>
               <div class="text-h6">Your voted list</div>
             </q-card-section>
@@ -194,7 +194,7 @@
         </q-dialog>
         <!-- Add node dialog -->
         <q-dialog v-model="addNodeDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-blue-grey-6">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Add the node into the distribution contract</div>
             </q-card-section>
@@ -205,14 +205,14 @@
               <pre>{{ addNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
-              <q-btn flat label="Add" color="blue-10" @click=addNode />
+              <q-btn flat label="Close" color="vdark" v-close-popup />
+              <q-btn flat label="Add" color="vblack" @click=addNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- register node dialog -->
         <q-dialog v-model="registerNodeDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-blue-grey-6">
+          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Register the node into the voting contract</div>
             </q-card-section>
@@ -223,19 +223,19 @@
               <pre>{{ registerNodeMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
-              <q-btn flat label="Register" color="blue-10" @click=registerNode />
+              <q-btn flat label="Close" color="vdark" v-close-popup />
+              <q-btn flat label="Register" color="vblack" @click=registerNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- Private key update dialog -->
         <q-dialog v-model="privateDialog" @show="$refs.input.focus()">
-          <q-card style="min-width: 500px" class="bg-blue-grey-6">
+          <q-card style="min-width: 500px" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
             <q-card-section>
-              <q-input dense v-model="identity.private_key" :type="isPwd ? 'password' : 'text'" counter color="blue-10" ref="input" @keyup.enter="updatePrivate" >
+              <q-input dense v-model="identity.private_key" :type="isPwd ? 'password' : 'text'" counter color="vdark" ref="input" @keyup.enter="updatePrivate" >
                 <template v-slot:append>
                   <q-icon
                     :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -245,15 +245,15 @@
                 </template>
               </q-input>
             </q-card-section>
-            <q-card-actions align="right" class="text-primary">
-              <q-btn flat label="Close" color="blue-grey-10" v-close-popup />
-              <q-btn flat label="Update private key" color="blue-10" @click="updatePrivate" v-close-popup />
+            <q-card-actions align="right" class="text-vgreen">
+              <q-btn flat label="Close" color="vdark" v-close-popup />
+              <q-btn flat label="Update private key" color="vblack" @click="updatePrivate" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
         <!-- Help dialog -->
         <q-dialog v-model="helpDialog">
-          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-warning">
+          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Help</div>
             </q-card-section>
@@ -378,7 +378,7 @@ export default {
             this.identity.uptime = Math.floor((this.identity.time - nodeStats.last_timestamp) / 86400)
             this.identity.uptime += ' days'
           } else {
-            this.errorMessage = 'Couldn\'t find' + accountName + 'in the uptimes table for getting the Uptime'
+            this.errorMessage = 'Couldn\'t find ' + accountName + ' in the uptimes table for getting the Uptime'
             this.errorDialog = true
           }
         } catch (error) {
@@ -401,7 +401,7 @@ export default {
           if (nodeStats) {
             this.identity.voted = nodeStats.producers
           } else {
-            this.errorMessage = 'Couldn\'t find' + accountName + 'in the voters table for getting the voted list'
+            this.errorMessage = 'Couldn\'t find ' + accountName + ' in the voters table for getting the voted list'
             this.errorDialog = true
           }
         } catch (error) {
