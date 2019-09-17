@@ -437,9 +437,6 @@ export default {
           let nodeStats = result.find(row => row.owner === accountName)
           if (nodeStats) {
             this.identity.voted_i = nodeStats.producers
-          } else {
-            this.resultMessage = 'Account: ' + accountName + ' did not vote for anyone. Please vote.'
-            this.resultDialog = true
           }
           var self = this
           this.identity.voted_for = []
