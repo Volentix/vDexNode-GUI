@@ -120,7 +120,7 @@ export default {
             return 2
           }
         })
-        .style('fill', '#A000FD')
+        .style('fill', '#00F7A9')
         .style('opacity', 0.75)
 
       // TOOLTIP

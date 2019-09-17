@@ -55,7 +55,8 @@ module.exports = function (ctx) {
         'QScrollArea',
         'QImg',
         'QBanner',
-        'QSpace'
+        'QSpace',
+        'QTooltip'
       ],
 
       directives: [
@@ -249,7 +250,7 @@ module.exports = function (ctx) {
             'Categories': 'Network;'
           },
           // 'icon': 'src/statics/icons/...',
-          'target': 'AppImage'
+          'target': 'deb'
         },
         'publish': [{
           'owner': 'Volentix',

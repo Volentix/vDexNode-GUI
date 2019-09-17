@@ -89,6 +89,7 @@ yarn run build # build for current user electron platform
 yarn run build-all # build for all electron platforms linux|mac|windows|darwin
 yarn run build-linux # build for linux electron platform
 
+yarn run oublish # build for current user electron platform and upload the binaries as a release on GitHub
 yarn run publish-all # Build for all electron platforms and upload the binaries as a release on github
 yarn run publish-linux # build for linux electron platform and upload the binary as a release on github
 ```
