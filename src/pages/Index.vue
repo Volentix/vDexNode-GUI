@@ -7,32 +7,30 @@
           <div class="col-md col-sm-12 col-xs-12">
             <div class="row items-center">
               <div class="text-h6 text-uppercase text-vgrey">vdexnode <q-badge color="vgreen" text-color="vblack" align="middle" transparent>{{ version }}</q-badge></div>
-              <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" @click="helpDialog = true" />
+              <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" class="q-mx-sm" @click="helpDialog = true" />
             </div>
             <div class="text-italic text-vgrey">Rent your computer to earn VTX</div>
           </div>
 
           <div class="col-md col-sm-12 col-xs-12 text-right">
-            <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name" label="Add" >
-              <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
-            </q-btn>
+            <div row items-center justify-end>
+              <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNodeDialog = true" v-if="identity.account_name && !identity.account_added" label="Add" >
+                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
+              </q-btn>
+              <q-btn disabled outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" v-if="identity.account_name && identity.account_added" label="Added" />
 
-            <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name" label="Register" >
-              <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
-            </q-btn>
+              <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNodeDialog = true" v-if="identity.account_name && !identity.account_registered" label="Register" >
+                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
+              </q-btn>
+              <q-btn disabled outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_registered" label="Registered" />
 
-             <q-btn outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" @click="retreiveReward()" v-if="identity.private_key.length > 20 && identity.account_name" label="Run" >
-              <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">You need to init your node by pushing the retreive reward action first time.</q-tooltip>
-            </q-btn>
+              <q-btn outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" @click="retreiveReward()" v-if="identity.account_name && !identity.account_run" label="Run" >
+                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">You need to init your node by pushing the retreive reward action first time.</q-tooltip>
+              </q-btn>
+              <q-btn disabled outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_run" label="Done" />
+            </div>
 
-            <!-- <q-btn color="vdark" class="q-mt-sm q-mx-xs" @click="addNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
-              Add:&nbsp;<span class="text-vgreen">{{ identity.account_name }}</span>
-            </q-btn>
-            <q-btn color="vdark" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNodeDialog = true" v-if="identity.private_key.length > 20 && identity.account_name">
-              Register:&nbsp;<span class="text-vgreen">{{ identity.account_name }}</span>
-            </q-btn> -->
-
-            <div class="row inline items-center q-pt-sm">
+            <div class="row items-center q-pt-sm justify-end">
               <div class="text-italic text-vgrey q-mx-xs">If you don't have a vDexNode:</div>
               <!-- <q-banner rounded class="text-white bg-blue-grey-10" v-if="!identity.public_key">
                 Update your private key. It is required to install the node.
@@ -125,7 +123,13 @@
           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
             <div class="row text-vgrey justify-between">
               <div class="col">
-                <div class="text-italic">List of nodes on the network.</div>
+                <div class="text-italic">
+                  List of nodes on the network.
+                  <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
+                  </q-btn>
+
+                </div>
                 <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
               </div>
               <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mb-sm" v-on:click=refresh />
@@ -342,6 +346,9 @@ const fs = require('fs')
  * Main page. Loads other components
  * @vue-data {*} identity - Set of variables for storing user identification information
  *
+ * @vue-event {} checkAccountAdded
+ * @vue-event {} checkAccountRegistered
+ * @vue-event {} checkAccountRun
  * @vue-event {} refresher
  * @vue-event {} identify
  * @vue-event {} getUptime
@@ -380,7 +387,10 @@ export default {
         rank: '',
         total_ranks: '',
         voted_for: [],
-        voted_i: []
+        voted_i: [],
+        account_added: false,
+        account_registered: false,
+        account_run: false
       },
       version: '',
       nodes: [],
@@ -410,6 +420,75 @@ export default {
     this.refr = setInterval(() => this.refresher(), 60000)
   },
   methods: {
+    async checkAccountAdded () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
+
+          let nodeStats = result.find(row => row.account === accountName)
+          if (nodeStats) {
+            this.identity.account_added = true
+          } else {
+            this.resultMessage = 'Account: ' + accountName + ' is not added to the distribution contract. Please Add it.'
+            this.resultDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async checkAccountRegistered () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+
+          let nodeStats = result.find(row => row.owner === accountName)
+          if (nodeStats) {
+            this.identity.account_registered = true
+          } else {
+            this.resultMessage = 'Account: ' + accountName + ' is not registered in the voting contract. Please Register it.'
+            this.resultDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async checkAccountRun () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new EosWrapper()
+          const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+
+          let nodeStats = result.find(row => row.account === accountName)
+          if (nodeStats) {
+            this.identity.account_run = true
+          } else {
+            this.resultMessage = 'Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.'
+            this.resultDialog = true
+          }
+        } catch (error) {
+          this.errorMessage = error
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
     refresher () {
       if (this.identity.account_name) {
         this.getBalance()
@@ -421,6 +500,9 @@ export default {
       try {
         let accounts = await eos.getAccounts(key)
         this.identity.account_name = accounts.account_names[0]
+        this.checkAccountAdded()
+        this.checkAccountRegistered()
+        this.checkAccountRun()
         this.getUptime()
         this.getRank()
         this.getBalance()

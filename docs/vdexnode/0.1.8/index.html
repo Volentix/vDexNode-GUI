@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="EosWrapper.html">EosWrapper</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EosWrapper.html#getAccounts">getAccounts</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EosWrapper.html#getBalance">getBalance</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EosWrapper.html#getTable">getTable</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="EosWrapper.html#privateToPublic">privateToPublic</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="EosWrapper.EosWrapper.html">EosWrapper</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-App.html">App</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-Error404.html">Error404</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-GeoWidget.html">GeoWidget</a></span></li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-Index.html">Index</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getUnique">getUnique</a></span></li>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>vDexNode-GUI application</h1>
+<img width="1424" alt="Screen_Shot_2019-09-11_at_8_49_15_AM" src="https://user-images.githubusercontent.com/2269864/64713340-889e9d00-d471-11e9-879d-fe43fd22614e.png">
+<h2>Prerequisites</h2>
+<p>For the application to work, it is <strong>recommended</strong> to use the <strong>YARN</strong> package manager, however, with the <strong>NPM</strong>, the application will also work.</p>
+<h3>1. Node.js</h3>
+<p>If you don't have Node.js installed in your system you can follow the official instructions to do that: <a href="https://nodejs.org/en/">Node.js install</a></p>
+<blockquote>
+<p>You can install any <strong>LTS</strong> or <strong>Current</strong> version on your machine.</p>
+</blockquote>
+<h3>2. Package manager</h3>
+<h4>Option 1: NPM</h4>
+<p>If you installed the Node.js correctly you already have the latest <strong>NPM</strong> installed.</p>
+<h4>Option 2: YARN (recommended)</h4>
+<h5>Ubuntu</h5>
+<pre class="prettyprint source lang-bash"><code>curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+
+echo &quot;deb https://dl.yarnpkg.com/debian/ stable main&quot; | sudo tee /etc/apt/sources.list.d/yarn.list
+
+sudo apt update
+
+sudo apt install yarn
+</code></pre>
+<h5>MacOS</h5>
+<pre class="prettyprint source lang-bash"><code>brew install yarn
+</code></pre>
+<h5>Other</h5>
+<p>You can follow the instructions from official website: <a href="https://yarnpkg.com/en/docs/install">YARN</a></p>
+<h3>3. Quasar</h3>
+<p>If you don't have a quasar installed use the following command:</p>
+<pre class="prettyprint source lang-bash"><code>npm install -g @quasar/cli
+</code></pre>
+<h2>Installation</h2>
+<pre class="prettyprint source lang-bash"><code># Clone the repo
+git clone https://github.com/Volentix/vDexNode-GUI.git
+# Go to the project folder
+cd vDexNode-GUI
+# Install dependencies
+# if you are using YARN
+yarn
+#if you are using NPM
+npm install
+</code></pre>
+<h2>Usage</h2>
+<h3>Fill the .env file</h3>
+<p>You can just copy the <code>.env.template</code> file in the root folder and rename it to <code>.env</code> file.</p>
+<pre class="prettyprint source lang-bash"><code>NODES_API=http://95.216.0.79:9080
+INSTALLER=https://raw.githubusercontent.com/Volentix/vDexNode-GUI/master/ubuntu-installer/install.sh
+README=https://github.com/Volentix/vDexNode/blob/master/README.md
+NODE_WAY=readme
+
+#NODE_WAY=installer
+
+# mainnet endpoint
+EOS_ENDPOINT=https://eos.greymass.com
+
+# testnet endpoint
+# EOS_ENDPOINT=https://api.kylin.alohaeos.com
+</code></pre>
+<h3>Running</h3>
+<pre class="prettyprint source lang-bash"><code># Go to the project folder if you're not there
+cd vDexNode-GUI
+# Run the app
+quasar dev -m electron
+</code></pre>
+<h3>Lint the files</h3>
+<pre class="prettyprint source lang-bash"><code>yarn run lint
+</code></pre>
+<h3>Build</h3>
+<p>If you have all the certificates installed in your system, you can build the binaries for several platforms.</p>
+<pre class="prettyprint source lang-bash"><code>yarn run build # build for current user electron platform
+yarn run build-all # build for all electron platforms linux|mac|windows|darwin
+yarn run build-linux # build for linux electron platform
+
+yarn run oublish # build for current user electron platform and upload the binaries as a release on GitHub
+yarn run publish-all # Build for all electron platforms and upload the binaries as a release on github
+yarn run publish-linux # build for linux electron platform and upload the binary as a release on github
+</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Wed Sep 18 2019 10:46:14 GMT-0700 (Pacific Daylight Time) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
