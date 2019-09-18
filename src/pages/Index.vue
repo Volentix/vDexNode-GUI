@@ -847,8 +847,4 @@ export default {
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro&display=swap');
-  .code {
-    font-family: 'Source Code Pro', monospace;
-  }
 </style>
