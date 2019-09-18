@@ -1,0 +1,47 @@
+{
+  "opts": {
+    "encoding": "utf8",
+    "template": "node_modules/minami",
+    "destination": "./docs/",
+    "recurse": true,
+    "verbose": true,
+    "private": true
+  },
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": [
+      "jsdoc"
+    ]
+  },
+  "source": {
+    "include": [
+      ".",
+      "package.json",
+      "README.md"
+    ],
+    "exclude": [
+      ".git",
+      "node_modules",
+      ".github",
+      ".quasar",
+      "dist",
+      "docs"
+    ],
+    "includePattern": "\\.(vue|js)$"
+  },
+  "plugins": ["plugins/markdown", "node_modules/jsdoc-vuejs"],
+  "markdown": {
+    "parser": "gfm",
+    "hardwrap": true
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": true,
+    "useLongnameInNav": false,
+    "showInheritedInNav": true,
+    "default": {
+      "outputSourceFiles": true,
+      "includeDate": true
+    }
+  }
+}
