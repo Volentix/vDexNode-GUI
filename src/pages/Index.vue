@@ -338,6 +338,30 @@ import * as utils from '@/util/utils.js'
 const { app, dialog } = require('electron').remote
 const fs = require('fs')
 
+/**
+ * Main page. Loads other components
+ * @vue-data {*} identity - Set of variables for storing user identification information
+ *
+ * @vue-event {} refresher
+ * @vue-event {} identify
+ * @vue-event {} getUptime
+ * @vue-event {} getVoted
+ * @vue-event {} getRank
+ * @vue-event {} getBalance
+ * @vue-event {} updatePrivate
+ * @vue-event {} showPrivate
+ * @vue-event {} refresh
+ * @vue-event {} getInstaller
+ * @vue-event {} forceFileDownload
+ * @vue-event {} addNode
+ * @vue-event {} registerNode
+ * @vue-event {} getAccountName
+ * @vue-event {} getNodes
+ * @vue-event {} getListOfNodes
+ * @vue-event {} addToVote
+ * @vue-event {} vote
+ * @vue-event {} retreiveReward
+ */
 export default {
   name: 'index',
   components: {

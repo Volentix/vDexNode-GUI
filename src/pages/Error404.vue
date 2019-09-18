@@ -16,6 +16,9 @@
 </template>
 
 <script>
+/**
+ * Error handler
+ */
 export default {
   name: 'Error404'
 }

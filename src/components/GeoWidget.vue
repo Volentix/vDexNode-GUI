@@ -14,6 +14,18 @@ import * as d3 from 'd3'
 const topojson = require('topojson')
 var countries = require('../assets/geoWidgetData/countries.geo.json')
 var initialNodeList = require('../assets/geoWidgetData/initial_node_list.json')
+/**
+ * Map widget component
+ * @vue-prop {Array} geoData
+ * @vue-data {Object} nodeGeoData - Store the node locations
+ * @vue-event {} load - Init loading the widget
+ * @vue-event {} getNodeGeoData - Get the initial node locations and fill the data object
+ * @vue-event {} mapLoad - Load and display the map with node locations data on it
+ *
+ * @example
+ *  import GeoWidget from '../components/GeoWidget.vue'
+ *  <GeoWidget :geoData="geoData"/>
+ */
 
 export default {
   name: 'GeoWidget',

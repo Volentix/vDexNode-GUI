@@ -5,8 +5,11 @@
 </template>
 
 <script>
+/**
+ * Entry point to the application
+ */
 export default {
-  name: 'vdexnode-gui'
+  name: 'App'
 }
 </script>
 
