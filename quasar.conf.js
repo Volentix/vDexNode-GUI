@@ -250,7 +250,7 @@ module.exports = function (ctx) {
             'Categories': 'Network;'
           },
           // 'icon': 'src/statics/icons/...',
-          'target': 'deb'
+          'target': ['deb', 'AppImage']
         },
         'publish': [{
           'owner': 'Volentix',

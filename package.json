@@ -1,6 +1,6 @@
 {
   "name": "vdexnode",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "vDexNode GUI",
   "productName": "vDexNode",
   "cordovaId": "org.cordova.vdexnode",
@@ -25,6 +25,7 @@
     "publish-all": "quasar build -m electron --target all -P always",
     "bump": "npm version patch",
     "lint": "eslint --ext .js,.vue src",
+    "docs": "jsdoc -c jsdoc.json",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
@@ -41,20 +42,24 @@
     "vue-i18n": "^8.14.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.6",
+    "@quasar/app": "^1.1.0",
     "@quasar/quasar-app-extension-dotenv": "^1.0.0-beta.11",
     "@quasar/quasar-app-extension-icon-genie": "^1.0.2",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.2",
     "devtron": "^1.4.0",
-    "electron": "^6.0.8",
+    "electron": "^6.0.9",
     "electron-builder": "^21.2.0",
     "electron-debug": "^3.0.1",
     "electron-devtools-installer": "^2.2.4",
     "eslint": "^6.1.0",
     "eslint-loader": "^2.2.1",
     "eslint-plugin-vue": "^5.2.3",
-    "eslint-utils": "^1.4.2"
+    "eslint-utils": "^1.4.2",
+    "jsdoc": "^3.6.3",
+    "jsdoc-vuejs": "^3.0.4",
+    "minami": "^1.2.3",
+    "vue-template-compiler": "^2.6.10"
   },
   "engines": {
     "node": ">= 8.9.0",
