@@ -2,7 +2,15 @@
 .code {
   font-family: 'Source Code Pro', monospace;
 }
+.blink {
+  animation: blinker 1s linear infinite;
+}
 
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
 // app global css
 .bg-vgrey {
   background: #CECFD0;

@@ -43,7 +43,7 @@
         <!-- Identity and Map widget -->
         <div class="row q-pb-md q-col-gutter-xl">
           <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
-            <div class="text-vgrey">Update a private key to start</div>
+            <div class="text-vgrey" v-bind:class="{ blink: !identity.private_key}">Update a private key to start</div>
             <q-list bordered separator class="bg-vdark text-vgrey inset-shadow">
               <q-item>
                 <q-item-section>
@@ -84,7 +84,7 @@
               <q-item>
                 <q-item-section>
                     <q-item-label>Uptime</q-item-label>
-                    <q-item-label class="code text-vgreen" caption>{{ identity.uptime }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption disabled>{{ identity.uptime }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -93,20 +93,20 @@
                     <q-item-label class="code text-vgreen" caption disabled>{{ "0.0000 VTX" }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Retreive reward" outline color="vgreen" class="text-vgrey" @click="retreiveReward" />
+                  <q-btn label="Retreive reward" outline color="vgreen" class="text-vgrey" @click="retreiveReward" v-if="identity.account_name"/>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                     <q-item-label>Voted for me</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted_for.length > 0">{{ this.identity.voted_for.length }}</q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-if="identity.voted_for.length > 0">{{ this.identity.voted_for.length }}</q-item-label>
                 </q-item-section>
                 <q-item-section>
                     <q-item-label>I voted for</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-if="this.identity.voted_i.length > 0">{{ this.identity.voted_i.length }} </q-item-label>
+                    <q-item-label class="code text-vgreen" caption v-if="identity.voted_i.length > 0">{{ this.identity.voted_i.length }} </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Show more" outline color="vgreen" class="text-vgrey" @click="votedDialog = true" />
+                  <q-btn label="Show more" outline color="vgreen" class="text-vgrey" @click="votedDialog = true" v-if="identity.account_name"/>
                 </q-item-section>
               </q-item>
             </q-list>
