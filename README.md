@@ -1,5 +1,7 @@
 # vDexNode-GUI application
-<img width="1424" alt="Screen_Shot_2019-09-11_at_8_49_15_AM" src="https://user-images.githubusercontent.com/2269864/64713340-889e9d00-d471-11e9-879d-fe43fd22614e.png">
+The application allows you to manage a vDexNode node running in a openDHT network using a set of smart contracts of the EOS blockchain platform.
+
+<img width="1426" alt="Screen_Shot_2019-09-18_at_12_42_16_PM" src="https://user-images.githubusercontent.com/2269864/65180517-e9018180-da11-11e9-8967-87fd55666b07.png">
 
 
 ## Prerequisites
@@ -25,6 +27,7 @@ sudo apt update
 sudo apt install yarn
 ```
 ##### MacOS
+> It is assumed that brew is already installed
 ```bash
 brew install yarn
 ```
@@ -75,11 +78,15 @@ EOS_ENDPOINT=https://eos.greymass.com
 cd vDexNode-GUI
 # Run the app
 quasar dev -m electron
+# or
+yarn run dev
 ```
 
-### Lint the files
+### Other commands
 ```bash
 yarn run lint
+yarn run docs
+yarn run test #Under development
 ```
 
 ### Build
@@ -89,7 +96,7 @@ yarn run build # build for current user electron platform
 yarn run build-all # build for all electron platforms linux|mac|windows|darwin
 yarn run build-linux # build for linux electron platform
 
-yarn run oublish # build for current user electron platform and upload the binaries as a release on GitHub
+yarn run publish # build for current user electron platform and upload the binaries as a release on GitHub
 yarn run publish-all # Build for all electron platforms and upload the binaries as a release on github
 yarn run publish-linux # build for linux electron platform and upload the binary as a release on github
 ```
