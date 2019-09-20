@@ -123,7 +123,7 @@
           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
               <div class="row">
-                <div class="col">
+                <div class="col self-center">
                   <div class="text-italic">
                     List of nodes on the network.
                     <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
@@ -132,9 +132,11 @@
                   </div>
                   <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
                 </div>
-                <div class="col">
-                  <div class="col bg-blue-grey">Running nodes: {{ running_nodes }}</div>
-                  <div class="col bg-blue-grey">Registered nodes: {{ registered_nodes }}</div>
+                <div class="col-3 self-center">
+                  <q-badge color="vgreen" class="text-vdark">Running nodes: {{ running_nodes }}</q-badge>
+                  <q-badge color="vgreen" class="text-vdark">Registered nodes: {{ registered_nodes }}
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">{{ registered_nodes_names}}</q-tooltip>
+                  </q-badge>
                 </div>
               </div>
 
