@@ -165,7 +165,8 @@
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
-              <div class="text-italic q-py-md">Voting.</div>
+              <div class="text-italic q-py-xs">Voting.</div>
+              <div class="text-italic text-caption">*See rules for details.</div>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 <div v-if="voting_list.length <= 0">Choose nodes to vote</div>
