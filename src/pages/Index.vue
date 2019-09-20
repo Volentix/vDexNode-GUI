@@ -121,7 +121,7 @@
         <!-- List of nodes -->
         <div class="row q-pb-md q-col-gutter-xl">
           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-            <q-banner inline-actions rounded class="bg-vdark text-vgrey q-mb-sm">
+            <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
               <div class="text-italic">
                 List of nodes on the network.
                 <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
@@ -153,14 +153,17 @@
             </q-scroll-area>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <div class="text-italic text-vgrey">Voting for the nodes.</div>
-            <div class="text-italic text-vgrey text-caption">*Activates when you select at least one node to vote</div>
+            <!-- <div class="text-italic text-vgrey">Voting for the nodes.</div>
+            <div class="text-italic text-vgrey text-caption">*Activates when you select at least one node to vote</div> -->
+            <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
+              <div class="text-italic q-py-md">Voting.</div>
+              <template v-slot:action>
+                <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
+                <div v-if="voting_list.length <= 0">Choose nodes to vote</div>
+              </template>
+            </q-banner>
             <div class="bg-vdark inset-shadow" v-if="nodes.length > 0">
               <q-scroll-area style="height: 300pt;">
-                <q-btn color="vgreen" class="text-vdark q-ma-sm" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
-                <q-banner class="text-vgrey text-center bg-vdark" v-if="voting_list.length <= 0">
-                  Choose nodes to vote
-                </q-banner>
                 <q-list bordered separator v-if="voting_list.length > 0">
                   <q-item v-for="node in voting_list" :key="node.id">
                     <q-item-section>
