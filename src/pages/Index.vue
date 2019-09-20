@@ -121,19 +121,19 @@
         <!-- List of nodes -->
         <div class="row q-pb-md q-col-gutter-xl">
           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-            <div class="row text-vgrey justify-between">
-              <div class="col">
-                <div class="text-italic">
-                  List of nodes on the network.
-                  <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
-                  </q-btn>
-
-                </div>
-                <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+            <q-banner inline-actions rounded class="bg-vdark text-vgrey q-mb-sm">
+              <div class="text-italic">
+                List of nodes on the network.
+                <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
+                  <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
+                </q-btn>
               </div>
-              <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mb-sm" v-on:click=refresh />
-            </div>
+              <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+              <template v-slot:action>
+                <q-btn size="md" outline color="vgreen" label="Rules" class="q-mx-xs" v-on:click="rulesDialog=true" />
+                <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" v-on:click=refresh />
+              </template>
+            </q-banner>
             <q-scroll-area style="height: 300pt;">
               <q-list bordered separator class="bg-vdark inset-shadow text-vgrey" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
@@ -330,6 +330,32 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <!-- Voting rules dialog -->
+        <q-dialog v-model="rulesDialog">
+          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-vgrey">
+            <q-card-section>
+              <div class="text-h6">Voting rules</div>
+            </q-card-section>
+            <q-card-section style="max-height: 60vh" class="scroll">
+              <div class="text-subtitle1">1. Voting.</div>
+              <ul>
+                <li>You can't vote for the node without account name.</li>
+                <li>You can't vote for the yourself (node with your account name).</li>
+                <li>You can't vote for the node which is not registered in the contracts.</li>
+              </ul>
+              <div class="text-subtitle1">2. Reward.</div>
+              <ul>
+                <li>For being rewared your node should be running.</li>
+                <li>Your node assigned account name should be added and registered in the contracts.</li>
+                <li>The uptime of your node should be at least 24 hours.</li>
+                <li>You have to vote for at least 2 other nodes to get the reward.</li>
+              </ul>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -406,6 +432,7 @@ export default {
       resultMessage: '',
       helpDialog: false,
       votedDialog: false,
+      rulesDialog: false,
       isPwd: true,
       isPrvt: true,
       privateState: 'none',
@@ -733,21 +760,12 @@ export default {
         this.errorDialog = true
       }
     },
-    async getAccountName (id, key, eos) {
-      try {
-        let accounts = await eos.getAccounts(key)
-        let name = accounts.account_names[0]
-        if (name) {
-          let balance = await eos.getBalance(name)
-          this.nodes[id].account = name
-          this.nodes[id].balance = balance[0] ? balance[0] : '0 VTX'
-        } else {
-          this.nodes[id].account = 'No account found'
-          this.nodes[id].balance = '-'
-        }
-      } catch (error) {
-        this.errorMessage = error
-        this.errorDialog = true
+    async getListOfNodes () {
+      await this.getNodes()
+      const eos = new EosWrapper()
+      for (var id in this.nodes) {
+        // this.getAccountByKey(id, this.nodes[id].key)
+        this.getAccountName(id, this.nodes[id].key, eos)
       }
     },
     async getNodes () {
@@ -767,12 +785,21 @@ export default {
         })
       })
     },
-    async getListOfNodes () {
-      await this.getNodes()
-      const eos = new EosWrapper()
-      for (var id in this.nodes) {
-        // this.getAccountByKey(id, this.nodes[id].key)
-        this.getAccountName(id, this.nodes[id].key, eos)
+    async getAccountName (id, key, eos) {
+      try {
+        let accounts = await eos.getAccounts(key)
+        let name = accounts.account_names[0]
+        if (name) {
+          let balance = await eos.getBalance(name)
+          this.nodes[id].account = name
+          this.nodes[id].balance = balance[0] ? balance[0] : '0 VTX'
+        } else {
+          this.nodes[id].account = 'No account found'
+          this.nodes[id].balance = ''
+        }
+      } catch (error) {
+        this.errorMessage = error
+        this.errorDialog = true
       }
     },
     addToVote (node) {
