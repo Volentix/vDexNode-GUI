@@ -122,13 +122,22 @@
         <div class="row q-pb-md q-col-gutter-xl">
           <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
-              <div class="text-italic">
-                List of nodes on the network.
-                <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
-                  <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
-                </q-btn>
+              <div class="row">
+                <div class="col">
+                  <div class="text-italic">
+                    List of nodes on the network.
+                    <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
+                      <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
+                    </q-btn>
+                  </div>
+                  <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+                </div>
+                <div class="col">
+                  <div class="col bg-blue-grey">Running nodes: {{ running_nodes }}</div>
+                  <div class="col bg-blue-grey">Registered nodes: {{ registered_nodes }}</div>
+                </div>
               </div>
-              <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
+
               <template v-slot:action>
                 <q-btn size="md" outline color="vgreen" label="Rules" class="q-mx-xs" v-on:click="rulesDialog=true" />
                 <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" v-on:click=refresh />
@@ -142,9 +151,9 @@
                     <q-item-label class="code text-vgreen" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
                   <q-item-section side center>
-                    <q-item-label class="code text-vgreen" caption> {{ node.balance }} </q-item-label>
+                    <q-item-label class="code text-vgreen" caption> {{ node.balance }}</q-item-label>
                   </q-item-section>
-                  <q-item-section avatar v-if="identity.account_name && node.account != identity.account_name && node.account != 'No account found'">
+                  <q-item-section avatar v-if="identity.account_name && node.vote && node.account != identity.account_name">
                       <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node) ">Vote</q-btn>
                       <q-btn color="vgreen" class="text-vdark" v-on:click="addToVote(node)" v-if="voting_list.includes(node)">Vote</q-btn>
                   </q-item-section>
@@ -436,6 +445,9 @@ export default {
       rulesDialog: false,
       isPwd: true,
       isPrvt: true,
+      running_nodes: 0,
+      registered_nodes: 0,
+      registered_nodes_names: [],
       privateState: 'none',
       geoData: 'test'
     }
@@ -477,7 +489,6 @@ export default {
         try {
           const eos = new EosWrapper()
           const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-
           let nodeStats = result.find(row => row.owner === accountName)
           if (nodeStats) {
             this.identity.account_registered = true
@@ -514,6 +525,20 @@ export default {
         }
       } else {
         this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
+    async getRegisteredNodes () {
+      try {
+        const eos = new EosWrapper()
+        const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+        this.registered_nodes = result.length
+        var self = this
+        result.forEach(function (item) {
+          self.registered_nodes_names.push(item.owner)
+        })
+      } catch (error) {
+        this.errorMessage = error
         this.errorDialog = true
       }
     },
@@ -666,6 +691,8 @@ export default {
       }
     },
     refresh () {
+      this.running_nodes = 0
+      this.registered_nodes = 0
       this.nodes = []
       this.voting_list = []
       this.getListOfNodes()
@@ -764,6 +791,8 @@ export default {
     async getListOfNodes () {
       await this.getNodes()
       const eos = new EosWrapper()
+      this.running_nodes = this.nodes.length
+      this.getRegisteredNodes()
       for (var id in this.nodes) {
         // this.getAccountByKey(id, this.nodes[id].key)
         this.getAccountName(id, this.nodes[id].key, eos)
@@ -774,7 +803,7 @@ export default {
         this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
           for (var key in result.data) {
             if (result.data[key].includes('EOS')) {
-              this.nodes.push({ id: key, key: result.data[key].trim(), account: '' })
+              this.nodes.push({ id: key, key: result.data[key].trim(), account: '', vote: true })
             }
           }
           this.nodes = utils.getUnique(this.nodes, 'key')
@@ -794,9 +823,15 @@ export default {
           let balance = await eos.getBalance(name)
           this.nodes[id].account = name
           this.nodes[id].balance = balance[0] ? balance[0] : '0 VTX'
+          if (this.registered_nodes_names.includes(name)) {
+            this.nodes[id].vote = true
+          } else {
+            this.nodes[id].vote = false
+          }
         } else {
           this.nodes[id].account = 'No account found'
           this.nodes[id].balance = ''
+          this.nodes[id].vote = false
         }
       } catch (error) {
         this.errorMessage = error
