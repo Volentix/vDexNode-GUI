@@ -198,14 +198,14 @@ module.exports = function (ctx) {
           'title': '${productName}-${version}',
           /* eslint-enable */
           'contents': [{
-            'x': 700,
-            'y': 150,
+            'x': 520,
+            'y': 225,
             'type': 'link',
             'path': '/Applications'
           },
           {
-            'x': 130,
-            'y': 150,
+            'x': 280,
+            'y': 230,
             'type': 'file'
           }
           ]
