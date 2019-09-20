@@ -144,9 +144,9 @@
                   <q-item-section side center>
                     <q-item-label class="code text-vgreen" caption> {{ node.balance }} </q-item-label>
                   </q-item-section>
-                  <q-item-section avatar>
-                      <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && !voting_list.includes(node) ">Vote</q-btn>
-                      <q-btn color="vgreen" class="text-vdark" v-on:click="addToVote(node)" v-if="node.account != 'No account found' && voting_list.includes(node)">Vote</q-btn>
+                  <q-item-section avatar v-if="identity.account_name && node.account != identity.account_name && node.account != 'No account found'">
+                      <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node) ">Vote</q-btn>
+                      <q-btn color="vgreen" class="text-vdark" v-on:click="addToVote(node)" v-if="voting_list.includes(node)">Vote</q-btn>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -499,16 +499,20 @@ export default {
       const eos = new EosWrapper()
       try {
         let accounts = await eos.getAccounts(key)
-        this.identity.account_name = accounts.account_names[0]
-        this.checkAccountAdded()
-        this.checkAccountRegistered()
-        this.checkAccountRun()
-        this.getUptime()
-        this.getRank()
-        this.getBalance()
-        this.getVoted()
+        this.identity.account_name = accounts.account_names[0] ? accounts.account_names[0] : ''
+        if (this.identity.account_name) {
+          this.checkAccountAdded()
+          this.checkAccountRegistered()
+          this.checkAccountRun()
+          this.getUptime()
+          this.getRank()
+          this.getBalance()
+          this.getVoted()
+        } else {
+          this.errorMessage = 'Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.'
+          this.errorDialog = true
+        }
       } catch (error) {
-        this.identity.account_name = 'none'
         this.errorMessage = error
         this.errorDialog = true
       }
