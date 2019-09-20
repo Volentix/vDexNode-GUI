@@ -1,8 +1,18 @@
 # vDexNode-GUI application
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+> vDexNode graphic interface
+
 The application allows you to manage a vDexNode node running in a openDHT network using a set of smart contracts of the EOS blockchain platform.
 
 <img width="1426" alt="Screen_Shot_2019-09-18_at_12_42_16_PM" src="https://user-images.githubusercontent.com/2269864/65180517-e9018180-da11-11e9-8967-87fd55666b07.png">
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Install](#install)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Prerequisites
 For the application to work, it is **recommended** to use the **YARN** package manager, however, with the **NPM**, the application will also work.
@@ -100,3 +110,16 @@ yarn run publish # build for current user electron platform and upload the binar
 yarn run publish-all # Build for all electron platforms and upload the binaries as a release on github
 yarn run publish-linux # build for linux electron platform and upload the binary as a release on github
 ```
+## Contributing
+
+See [the contributing file](CONTRIBUTING.md)!
+
+PRs accepted.
+
+Small note: If editing the Readme, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
+
+### Any optional sections
+
+## License
+
+[MIT © Volentix Labs.](../LICENSE)

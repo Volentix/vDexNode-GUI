@@ -153,8 +153,6 @@
             </q-scroll-area>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <!-- <div class="text-italic text-vgrey">Voting for the nodes.</div>
-            <div class="text-italic text-vgrey text-caption">*Activates when you select at least one node to vote</div> -->
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
               <div class="text-italic q-py-md">Voting.</div>
               <template v-slot:action>
