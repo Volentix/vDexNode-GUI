@@ -27,7 +27,7 @@
               <q-btn outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" @click="retreiveReward()" v-if="identity.account_name && !identity.account_run" label="Run" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">You need to init your node by pushing the retreive reward action first time.</q-tooltip>
               </q-btn>
-              <q-btn disabled outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_run" label="Done" />
+              <q-btn disabled outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_run" label="Running" />
             </div>
 
             <div class="row items-center q-pt-sm justify-end">
@@ -536,6 +536,7 @@ export default {
         const eos = new EosWrapper()
         const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
         this.registered_nodes = result.length
+        this.registered_nodes_names = []
         var self = this
         result.forEach(function (item) {
           self.registered_nodes_names.push(item.owner)
