@@ -8,11 +8,15 @@ The application allows you to manage a vDexNode node running in a openDHT networ
 
 ## Table of Contents
 
+- [Download](#download)
 - [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Download
+You can download the latest release of the application [here](https://github.com/Volentix/vDexNode-GUI/releases)
 
 ## Prerequisites
 For the application to work, it is **recommended** to use the **YARN** package manager, however, with the **NPM**, the application will also work.
