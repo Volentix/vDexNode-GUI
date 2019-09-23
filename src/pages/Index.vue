@@ -810,6 +810,7 @@ export default {
             }
           }
           this.nodes = utils.getUnique(this.nodes, 'key')
+          this.nodes = utils.sortByKey(this.nodes, 'key')
           resolve()
         }).catch((error) => {
           console.log(error)

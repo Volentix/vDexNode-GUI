@@ -19,6 +19,22 @@ function getUnique (arr, comp) {
   return unique
 }
 
+/**
+ * Sort array of object by key field
+ *
+ * @param {*} array
+ * @param {*} key
+ * @returns {Array} Sorted Array
+ */
+function sortByKey (array, key) {
+  return array.sort(function (a, b) {
+    var x = a[key]
+    var y = b[key]
+    return ((x < y) ? -1 : ((x > y) ? 1 : 0))
+  })
+}
+
 export {
-  getUnique
+  getUnique,
+  sortByKey
 }
