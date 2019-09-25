@@ -150,7 +150,8 @@
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label @click="$utils.openExternal(node.account)" class="code text-vgreen link" caption> {{ node.account }} </q-item-label>
+                    <q-item-label caption><q-btn dense flat size="sm" color="vgreen" @click="$utils.openExternal(node.account)" :label="node.account"/></q-item-label>
+                    <!-- <q-item-label @click="$utils.openExternal(node.account)" class="code text-vgreen link" caption> {{ node.account }} </q-item-label> -->
                   </q-item-section>
                   <q-item-section side center>
                     <q-item-label class="code text-vgreen" caption> {{ node.balance }}</q-item-label>
