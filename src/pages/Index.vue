@@ -188,12 +188,12 @@
 
         <!-- Error dialog -->
         <q-dialog v-model="errorDialog">
-          <q-card style="min-width: 500px" class="bg-negative text-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-negative text-vgrey">
             <q-card-section>
               <div class="text-h6">Error occured</div>
             </q-card-section>
             <q-card-section>
-              {{ errorMessage }}
+              <pre>{{ errorMessage }}</pre>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
@@ -202,7 +202,7 @@
         </q-dialog>
         <!-- Result dialog -->
         <q-dialog v-model="resultDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Result</div>
             </q-card-section>
@@ -216,7 +216,7 @@
         </q-dialog>
         <!-- voted dialog -->
         <q-dialog v-model="votedDialog">
-          <q-card style="min-width: 600px; max-width: 60vw;" class="bg-vgrey q-ma-sm">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey q-ma-sm">
             <q-card-section>
               <div class="text-h6">Votes</div>
             </q-card-section>
@@ -251,7 +251,7 @@
         </q-dialog>
         <!-- Add node dialog -->
         <q-dialog v-model="addNodeDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Add the node into the distribution contract</div>
             </q-card-section>
@@ -269,7 +269,7 @@
         </q-dialog>
         <!-- register node dialog -->
         <q-dialog v-model="registerNodeDialog">
-          <q-card style="min-width: 500px; max-width: 60vw;" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Register the node into the voting contract</div>
             </q-card-section>
@@ -287,7 +287,7 @@
         </q-dialog>
         <!-- Private key update dialog -->
         <q-dialog v-model="privateDialog" @show="$refs.input.focus()">
-          <q-card style="min-width: 500px" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Enter your private key</div>
             </q-card-section>
@@ -310,7 +310,7 @@
         </q-dialog>
         <!-- Help dialog -->
         <q-dialog v-model="helpDialog">
-          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Help</div>
             </q-card-section>
@@ -345,7 +345,7 @@
         </q-dialog>
         <!-- Voting rules dialog -->
         <q-dialog v-model="rulesDialog">
-          <q-card style="min-width: 700px; max-width: 60vw;" class="bg-vgrey">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Voting rules</div>
             </q-card-section>
@@ -477,6 +477,8 @@ export default {
           }
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -499,6 +501,8 @@ export default {
           }
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -522,6 +526,8 @@ export default {
           }
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -541,6 +547,8 @@ export default {
         })
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -569,6 +577,8 @@ export default {
         }
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -589,6 +599,8 @@ export default {
           }
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -616,6 +628,8 @@ export default {
           })
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -648,6 +662,8 @@ export default {
           }
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -664,6 +680,8 @@ export default {
           this.identity.balance = balance[0] ? balance[0] : '0 VTX'
         } catch (error) {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         }
       } else {
@@ -680,6 +698,8 @@ export default {
         this.identify(this.identity.public_key)
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -712,6 +732,8 @@ export default {
           this.forceFileDownload(response)
         }).catch((error) => {
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
           this.errorDialog = true
         })
       }
@@ -756,6 +778,8 @@ export default {
         this.refresh()
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -787,6 +811,8 @@ export default {
         this.refresh()
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -814,6 +840,8 @@ export default {
         }).catch((error) => {
           this.errorDialog = true
           this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
         })
       })
     },
@@ -837,6 +865,8 @@ export default {
         }
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     },
@@ -880,6 +910,8 @@ export default {
       } catch (error) {
         this.errorDialog = true
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
       }
     },
     async retreiveReward () {
@@ -908,6 +940,8 @@ export default {
         setInterval(() => this.refresher(), 3000)
       } catch (error) {
         this.errorMessage = error
+        this.errorMessage += '\n\n'
+        this.errorMessage += error.stack
         this.errorDialog = true
       }
     }
