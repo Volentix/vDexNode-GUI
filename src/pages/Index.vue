@@ -376,7 +376,6 @@
 
 <script>
 import GeoWidget from '../components/GeoWidget.vue'
-import EosWrapper from '@/util/EosWrapper'
 const { app, dialog } = require('electron').remote
 const fs = require('fs')
 
@@ -466,7 +465,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
 
           let nodeStats = result.find(row => row.account === accountName)
@@ -489,7 +488,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
           let nodeStats = result.find(row => row.owner === accountName)
           if (nodeStats) {
@@ -511,7 +510,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
 
           let nodeStats = result.find(row => row.account === accountName)
@@ -532,7 +531,7 @@ export default {
     },
     async getRegisteredNodes () {
       try {
-        const eos = new EosWrapper()
+        const eos = new this.$EosWrapper()
         const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
         this.registered_nodes = result.length
         this.registered_nodes_names = []
@@ -552,7 +551,7 @@ export default {
       }
     },
     async identify (key) {
-      const eos = new EosWrapper()
+      const eos = new this.$EosWrapper()
       try {
         let accounts = await eos.getAccounts(key)
         this.identity.account_name = accounts.account_names[0] ? accounts.account_names[0] : ''
@@ -577,7 +576,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
 
           let nodeStats = result.find(row => row.account === accountName)
@@ -601,7 +600,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'voters')
 
           let nodeStats = result.find(row => row.owner === accountName)
@@ -628,7 +627,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
 
           let voteStats = result.find(row => row.owner === accountName)
@@ -660,7 +659,7 @@ export default {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
         try {
-          const eos = new EosWrapper()
+          const eos = new this.$EosWrapper()
           let balance = await eos.getBalance(accountName)
           this.identity.balance = balance[0] ? balance[0] : '0 VTX'
         } catch (error) {
@@ -674,7 +673,7 @@ export default {
     },
     updatePrivate () {
       this.privateDialog = false
-      const eos = new EosWrapper()
+      const eos = new this.$EosWrapper()
       try {
         let publicKey = eos.privateToPublic(this.identity.private_key)
         this.identity.public_key = publicKey
@@ -735,7 +734,7 @@ export default {
     },
     async addNode () {
       try {
-        const eos = new EosWrapper(this.identity.private_key)
+        const eos = new this.$EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vtxdistribut',
@@ -762,7 +761,7 @@ export default {
     },
     async registerNode () {
       try {
-        const eos = new EosWrapper(this.identity.private_key)
+        const eos = new this.$EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vdexdposvote',
@@ -793,7 +792,7 @@ export default {
     },
     async getListOfNodes () {
       await this.getNodes()
-      const eos = new EosWrapper()
+      const eos = new this.$EosWrapper()
       this.running_nodes = this.nodes.length
       this.getRegisteredNodes()
       for (var id in this.nodes) {
@@ -855,7 +854,7 @@ export default {
         nodesToVote.push(this.voting_list[i].account)
       }
       try {
-        const eos = new EosWrapper(this.identity.private_key)
+        const eos = new this.$EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vdexdposvote',
@@ -885,7 +884,7 @@ export default {
     },
     async retreiveReward () {
       try {
-        const eos = new EosWrapper(this.identity.private_key)
+        const eos = new this.$EosWrapper(this.identity.private_key)
         const result = await eos.api.transact({
           actions: [{
             account: 'vtxdistribut',

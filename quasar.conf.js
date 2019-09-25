@@ -7,7 +7,8 @@ module.exports = function (ctx) {
     boot: [
       'i18n',
       'axios',
-      'utils'
+      'utils',
+      'eos'
     ],
 
     css: [
