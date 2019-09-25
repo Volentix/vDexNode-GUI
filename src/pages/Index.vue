@@ -150,7 +150,7 @@
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label class="code text-vgreen" caption> {{ node.account }} </q-item-label>
+                    <q-item-label @click="$utils.openExternal(node.account)" class="code text-vgreen link" caption> {{ node.account }} </q-item-label>
                   </q-item-section>
                   <q-item-section side center>
                     <q-item-label class="code text-vgreen" caption> {{ node.balance }}</q-item-label>
@@ -377,7 +377,6 @@
 <script>
 import GeoWidget from '../components/GeoWidget.vue'
 import EosWrapper from '@/util/EosWrapper'
-import * as utils from '@/util/utils.js'
 const { app, dialog } = require('electron').remote
 const fs = require('fs')
 
@@ -810,11 +809,10 @@ export default {
               this.nodes.push({ id: key, key: result.data[key].trim(), account: '', vote: true })
             }
           }
-          this.nodes = utils.getUnique(this.nodes, 'key')
-          this.nodes = utils.sortByKey(this.nodes, 'key')
+          this.nodes = this.$utils.getUnique(this.nodes, 'key')
+          this.nodes = this.$utils.sortByKey(this.nodes, 'key')
           resolve()
         }).catch((error) => {
-          console.log(error)
           this.errorDialog = true
           this.errorMessage = error
         })

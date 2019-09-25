@@ -1,3 +1,5 @@
+import { shell } from 'electron'
+
 /**
  * Function returns an array with removed duplicates by any field in the object
  * @param {Array} arr - Array of objects to work with.
@@ -34,7 +36,12 @@ function sortByKey (array, key) {
   })
 }
 
+function openExternal (accountName) {
+  shell.openExternal('https://bloks.io/account/' + accountName)
+}
+
 export {
   getUnique,
-  sortByKey
+  sortByKey,
+  openExternal
 }
