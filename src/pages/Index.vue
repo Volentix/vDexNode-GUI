@@ -150,14 +150,13 @@
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label caption><q-btn dense flat size="sm" color="vgreen" @click="$utils.openExternal(node.account)" :label="node.account"/></q-item-label>
-                    <!-- <q-item-label @click="$utils.openExternal(node.account)" class="code text-vgreen link" caption> {{ node.account }} </q-item-label> -->
+                    <q-item-label caption><q-btn dense flat size="sm" color="vgreen" class="code" @click="$utils.openExternal(node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
                   </q-item-section>
                   <q-item-section side center>
                     <q-item-label class="code text-vgreen" caption> {{ node.balance }}</q-item-label>
                   </q-item-section>
                   <q-item-section avatar v-if="identity.account_name && node.vote && node.account != identity.account_name">
-                      <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node) ">Vote</q-btn>
+                      <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node)">Vote</q-btn>
                       <q-btn color="vgreen" class="text-vdark" v-on:click="addToVote(node)" v-if="voting_list.includes(node)">Vote</q-btn>
                   </q-item-section>
                 </q-item>
