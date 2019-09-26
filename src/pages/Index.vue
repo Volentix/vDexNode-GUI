@@ -14,12 +14,12 @@
 
           <div class="col-md col-sm-12 col-xs-12 text-right">
             <div row items-center justify-end>
-              <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNodeDialog = true" v-if="identity.account_name && !identity.account_added" label="Add" >
+              <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNode()" v-if="identity.account_name && !identity.account_added" label="Add" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
               </q-btn>
               <q-btn disabled outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" v-if="identity.account_name && identity.account_added" label="Added" />
 
-              <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNodeDialog = true" v-if="identity.account_name && !identity.account_registered" label="Register" >
+              <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNode()" v-if="identity.account_name && !identity.account_registered" label="Register" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
               </q-btn>
               <q-btn disabled outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_registered" label="Registered" />
@@ -250,7 +250,7 @@
           </q-card>
         </q-dialog>
         <!-- Add node dialog -->
-        <q-dialog v-model="addNodeDialog">
+        <!-- <q-dialog v-model="addNodeDialog">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Add the node into the distribution contract</div>
@@ -266,9 +266,9 @@
               <q-btn flat label="Add" color="vblack" @click=addNode />
             </q-card-actions>
           </q-card>
-        </q-dialog>
+        </q-dialog> -->
         <!-- register node dialog -->
-        <q-dialog v-model="registerNodeDialog">
+        <!-- <q-dialog v-model="registerNodeDialog">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
               <div class="text-h6">Register the node into the voting contract</div>
@@ -284,7 +284,7 @@
               <q-btn flat label="Register" color="vblack" @click=registerNode />
             </q-card-actions>
           </q-card>
-        </q-dialog>
+        </q-dialog> -->
         <!-- Private key update dialog -->
         <q-dialog v-model="privateDialog" @show="$refs.input.focus()">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
@@ -433,10 +433,10 @@ export default {
       nodes: [],
       voting_list: [],
       privateDialog: false,
-      addNodeDialog: false,
-      addNodeMessage: '',
-      registerNodeDialog: false,
-      registerNodeMessage: '',
+      // addNodeDialog: false,
+      // addNodeMessage: '',
+      // registerNodeDialog: false,
+      // registerNodeMessage: '',
       errorDialog: false,
       errorMessage: '',
       resultDialog: false,
@@ -773,8 +773,9 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.addNodeMessage = 'Transaction executed successfully!\n\n'
-        this.addNodeMessage += JSON.stringify(result, null, 2)
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.resultDialog = true
         this.refresh()
       } catch (error) {
         this.errorMessage = error
@@ -806,8 +807,9 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.registerNodeMessage = 'Transaction executed successfully!\n\n'
-        this.registerNodeMessage += JSON.stringify(result, null, 2)
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.resultDialog = true
         this.refresh()
       } catch (error) {
         this.errorMessage = error
