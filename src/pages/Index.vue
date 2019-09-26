@@ -144,7 +144,11 @@
                 <div class="col-3 self-center">
                   <q-badge color="vgreen" class="text-vdark">Running nodes: {{ running_nodes }}</q-badge>
                   <q-badge color="vgreen" class="text-vdark">Registered nodes: {{ registered_nodes }}
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">{{ registered_nodes_names}}</q-tooltip>
+                    <q-tooltip content-class="bg-vgreen text-vdark">
+                      <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes_names" :key="node">
+                        {{ node }}
+                      </q-badge>
+                    </q-tooltip>
                   </q-badge>
                 </div>
               </div>
