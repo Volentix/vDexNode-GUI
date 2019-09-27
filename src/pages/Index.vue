@@ -76,6 +76,20 @@
               </q-item>
               <q-item>
                 <q-item-section>
+                    <q-item-label>RAM</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.ram }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>CPU</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.cpu }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>NET</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.net }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                     <q-item-label>
                       Rank
                       <q-badge color="vgreen" class="text-vdark" @click="rankDialog = true">
@@ -142,8 +156,8 @@
                   <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
                 </div>
                 <div class="col-3 self-center">
-                  <q-badge color="vgreen" class="text-vdark">Running nodes: {{ running_nodes }}</q-badge>
-                  <q-badge color="vgreen" class="text-vdark">Registered nodes: {{ registered_nodes }}
+                  <q-badge color="vgreen" class="text-vdark q-mx-xs">Running nodes: {{ running_nodes }}</q-badge>
+                  <q-badge color="vgreen" class="text-vdark q-mx-xs">Registered nodes: {{ registered_nodes }}
                     <q-tooltip content-class="bg-vgreen text-vdark">
                       <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes_names" :key="node">
                         {{ node }}
@@ -178,7 +192,7 @@
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
-              <div class="text-italic q-py-xs">Voting.</div>
+              <div class="text-italic">Voting.</div>
               <div class="text-italic text-caption">*See rules for details.</div>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
@@ -345,7 +359,7 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-         <!-- Rank  dialog -->
+        <!-- Rank  dialog -->
         <q-dialog v-model="rankDialog">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
             <q-card-section>
@@ -423,7 +437,10 @@ export default {
         voted_i: [],
         account_added: false,
         account_registered: false,
-        account_run: false
+        account_run: false,
+        ram: '',
+        cpu: '',
+        net: ''
       },
       version: '',
       nodes: [],
@@ -454,6 +471,26 @@ export default {
     this.refr = setInterval(() => this.refresher(), 60000)
   },
   methods: {
+    async getAccountResources () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new this.$EosWrapper()
+          const result = await eos.getResources(accountName)
+          this.identity.ram = result.ram ? result.ram : 'unknown'
+          this.identity.cpu = result.cpu ? result.cpu : 'unknown'
+          this.identity.net = result.net ? result.net : 'unknown'
+        } catch (error) {
+          this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
     async checkAccountAdded () {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
@@ -549,6 +586,9 @@ export default {
       if (this.identity.account_name) {
         this.getBalance()
         this.getVoted()
+        this.getAccountResources()
+        this.getUptime()
+        this.getRank()
       }
     },
     async identify (key) {
@@ -563,6 +603,7 @@ export default {
           this.getUptime()
           this.getRank()
           this.getBalance()
+          this.getAccountResources()
           this.getVoted()
         } else {
           this.errorMessage = 'Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.'

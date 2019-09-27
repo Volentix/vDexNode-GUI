@@ -3,6 +3,7 @@ import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
 import ecc from 'eosjs-ecc'
 const { TextEncoder, TextDecoder } = require('util')
 const fetch = require('node-fetch')
+import * as utils from '@/util/utils'
 /**
  * Wrapper on eosjs library for interacting with EOS blockchain
  *
@@ -68,6 +69,15 @@ class EosWrapper {
   async getTable (code, scope, table) {
     const resp = await this.rpc.get_table_rows({ code: code, scope: scope, table: table, json: true, limit: 999999999999 })
     return resp.rows
+  }
+
+  async getResources (name) {
+    let resources = await this.rpc.get_account(name)
+
+    let cpu = resources.cpu_limit.available / 1000 + 'ms'
+    let ram = utils.formatBytes(resources.ram_usage, 2) + '/' + utils.formatBytes(resources.ram_quota, 2)
+    let net = utils.formatBytes(resources.net_limit.used, 2) + '/' + utils.formatBytes(resources.net_limit.max, 2)
+    return { ram, cpu, net }
   }
 }
 
