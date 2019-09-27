@@ -1,5 +1,7 @@
 # vDexNode-GUI application
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
+
+[![Download](https://user-images.githubusercontent.com/2269864/65721684-555a3180-e05f-11e9-93fc-e0d7b2a7d121.png)](https://github.com/Volentix/vDexNode-GUI/releases)
 > vDexNode graphic interface
 
 The application allows you to manage a vDexNode node running in a openDHT network using a set of smart contracts of the EOS blockchain platform.
