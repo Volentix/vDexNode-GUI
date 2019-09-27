@@ -76,15 +76,15 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>RAM</q-item-label>
+                    <q-item-label>RAM <sup>(used)</sup></q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.ram }}</q-item-label>
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label>CPU</q-item-label>
+                    <q-item-label>CPU <sup>(avail)</sup></q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.cpu }}</q-item-label>
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label>NET</q-item-label>
+                    <q-item-label>NET <sup>(used)</sup></q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.net }}</q-item-label>
                 </q-item-section>
               </q-item>
@@ -99,8 +99,8 @@
                     </q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.rank }}</q-item-label>
                 </q-item-section>
-                <q-item-section side top>
-                    <q-item-label caption class="text-vgrey">{{ identity.total_ranks }}</q-item-label>
+                <q-item-section side top v-if="identity.account_name">
+                    <q-item-label caption class="text-vgrey">(out of: {{ identity.total_ranks }})</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -689,7 +689,7 @@ export default {
             ranks.sort((a, b) => (b.votes - a.votes))
             this.identity.rank = '# '
             this.identity.rank += ranks.map((e) => (e.owner)).indexOf(accountName) + 1
-            this.identity.total_ranks = '(out of: ' + ranks.length + ')'
+            this.identity.total_ranks = ranks.length
           } else {
             this.errorMessage = 'Couldn\'t calculate the Rank for ' + accountName
             this.errorDialog = true
