@@ -19,17 +19,14 @@
               <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNode()" v-if="identity.account_name && !identity.account_added" label="Add" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
               </q-btn>
-              <q-btn disabled outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" v-if="identity.account_name && identity.account_added" label="Added" />
 
               <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNode()" v-if="identity.account_name && !identity.account_registered" label="Register" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
               </q-btn>
-              <q-btn disabled outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_registered" label="Registered" />
 
               <q-btn outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" @click="retreiveReward()" v-if="identity.account_name && !identity.account_run" label="Run" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">You need to init your node by pushing the retreive reward action first time.</q-tooltip>
               </q-btn>
-              <q-btn disabled outline color="vgreen" icon="fas fa-running" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_run" label="Running" />
             </div>
 
             <div class="row items-center q-pt-sm justify-end">
