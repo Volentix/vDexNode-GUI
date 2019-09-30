@@ -7,19 +7,21 @@
           <div class="col-md col-sm-12 col-xs-12">
             <div class="row items-center">
               <div class="text-h6 text-uppercase text-vgrey">vdexnode <q-badge color="vgreen" text-color="vblack" align="middle" transparent>{{ version }}</q-badge></div>
-              <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" class="q-mx-sm" @click="helpDialog = true" />
+              <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" class="q-mx-sm" @click="helpDialog = true" >
+                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
+              </q-btn>
             </div>
             <div class="text-italic text-vgrey">Rent your computer to earn VTX</div>
           </div>
 
           <div class="col-md col-sm-12 col-xs-12 text-right">
             <div row items-center justify-end>
-              <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNodeDialog = true" v-if="identity.account_name && !identity.account_added" label="Add" >
+              <q-btn outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" @click="addNode()" v-if="identity.account_name && !identity.account_added" label="Add" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
               </q-btn>
               <q-btn disabled outline color="vgreen" icon="fas fa-user-plus" class="q-mt-sm q-mx-xs" v-if="identity.account_name && identity.account_added" label="Added" />
 
-              <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNodeDialog = true" v-if="identity.account_name && !identity.account_registered" label="Register" >
+              <q-btn outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" @click="registerNode()" v-if="identity.account_name && !identity.account_registered" label="Register" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
               </q-btn>
               <q-btn disabled outline color="vgreen" icon="fas fa-address-card" class="q-mt-sm q-mx-xs text-vgrey" v-if="identity.account_name && identity.account_registered" label="Registered" />
@@ -74,11 +76,31 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>Rank</q-item-label>
+                    <q-item-label>RAM <sup>(used)</sup></q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.ram }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>CPU <sup>(avail)</sup></q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.cpu }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>NET <sup>(used)</sup></q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ identity.net }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                    <q-item-label>
+                      Rank
+                      <q-badge color="vgreen" class="text-vdark" @click="rankDialog = true">
+                        <q-icon name="fas fa-question" color="vdark"/>
+                        <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
+                      </q-badge>
+                    </q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.rank }}</q-item-label>
                 </q-item-section>
-                <q-item-section side top>
-                    <q-item-label caption class="text-vgrey">{{ identity.total_ranks }}</q-item-label>
+                <q-item-section side top v-if="identity.account_name">
+                    <q-item-label caption class="text-vgrey">(out of: {{ identity.total_ranks }})</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -126,16 +148,21 @@
                 <div class="col self-center">
                   <div class="text-italic">
                     List of nodes on the network.
-                    <q-btn flat round size="sm" color="vgreen" icon="fas fa-question" class="">
+                    <q-badge color="vgreen" class="text-vdark">
+                      <q-icon name="fas fa-question" color="vdark"/>
                       <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">List of the nodes is automatically updated every 5 minutes</q-tooltip>
-                    </q-btn>
+                    </q-badge>
                   </div>
                   <div class="text-italic text-caption">*You are required to vote for 21 nodes per day to activate the distribution of VTX.</div>
                 </div>
                 <div class="col-3 self-center">
-                  <q-badge color="vgreen" class="text-vdark">Running nodes: {{ running_nodes }}</q-badge>
-                  <q-badge color="vgreen" class="text-vdark">Registered nodes: {{ registered_nodes }}
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">{{ registered_nodes_names}}</q-tooltip>
+                  <q-badge color="vgreen" class="text-vdark q-mx-xs">Running nodes: {{ running_nodes }}</q-badge>
+                  <q-badge color="vgreen" class="text-vdark q-mx-xs">Registered nodes: {{ registered_nodes }}
+                    <q-tooltip content-class="bg-vgreen text-vdark">
+                      <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes_names" :key="node">
+                        {{ node }}
+                      </q-badge>
+                    </q-tooltip>
                   </q-badge>
                 </div>
               </div>
@@ -165,11 +192,11 @@
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
-              <div class="text-italic q-py-xs">Voting.</div>
+              <div class="text-italic">Voting.</div>
               <div class="text-italic text-caption">*See rules for details.</div>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
-                <div v-if="voting_list.length <= 0">Choose nodes to vote</div>
+                <div v-if="voting_list.length <= 0">Choose nodes</div>
               </template>
             </q-banner>
             <div class="bg-vdark inset-shadow" v-if="nodes.length > 0">
@@ -185,7 +212,6 @@
             </div>
           </div>
         </div>
-
         <!-- Error dialog -->
         <q-dialog v-model="errorDialog">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-negative text-vgrey">
@@ -246,42 +272,6 @@
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Got it" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <!-- Add node dialog -->
-        <q-dialog v-model="addNodeDialog">
-          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
-            <q-card-section>
-              <div class="text-h6">Add the node into the distribution contract</div>
-            </q-card-section>
-            <q-card-section>
-              Your account is: {{ identity.account_name }}
-            </q-card-section>
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <pre>{{ addNodeMessage }}</pre>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Close" color="vdark" v-close-popup />
-              <q-btn flat label="Add" color="vblack" @click=addNode />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <!-- register node dialog -->
-        <q-dialog v-model="registerNodeDialog">
-          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
-            <q-card-section>
-              <div class="text-h6">Register the node into the voting contract</div>
-            </q-card-section>
-            <q-card-section>
-              Your account is: {{ identity.account_name }}
-            </q-card-section>
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <pre>{{ registerNodeMessage }}</pre>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Close" color="vdark" v-close-popup />
-              <q-btn flat label="Register" color="vblack" @click=registerNode />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -369,6 +359,26 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <!-- Rank  dialog -->
+        <q-dialog v-model="rankDialog">
+          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
+            <q-card-section>
+              <div class="text-h6">Rank</div>
+            </q-card-section>
+            <q-card-section style="max-height: 60vh" class="scroll">
+              <div class="text-subtitle1">How the rank works</div>
+              <ul>
+                <li>Rank is your position among all registered nodes based on the vote points.</li>
+                <li>Those users who vote for your node give you their points based on the power of their vote. The sum of points and its position harm the other nodes forms the rank. Foe example #1 means you have the most vote points.</li>
+                <li>The power of the vote depends on the VTX balance. The more VTX you have, the stronger your vote.</li>
+                <li>Votes are divided by the number of nodes for which you vote. For example, if the strength of your vote is 10 points and you vote for 1 node, you give all 10 points to this node, but if you vote for 5 nodes, each will receive 2 points only.</li>
+              </ul>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -427,16 +437,15 @@ export default {
         voted_i: [],
         account_added: false,
         account_registered: false,
-        account_run: false
+        account_run: false,
+        ram: '',
+        cpu: '',
+        net: ''
       },
       version: '',
       nodes: [],
       voting_list: [],
       privateDialog: false,
-      addNodeDialog: false,
-      addNodeMessage: '',
-      registerNodeDialog: false,
-      registerNodeMessage: '',
       errorDialog: false,
       errorMessage: '',
       resultDialog: false,
@@ -444,6 +453,7 @@ export default {
       helpDialog: false,
       votedDialog: false,
       rulesDialog: false,
+      rankDialog: false,
       isPwd: true,
       isPrvt: true,
       running_nodes: 0,
@@ -461,6 +471,26 @@ export default {
     this.refr = setInterval(() => this.refresher(), 60000)
   },
   methods: {
+    async getAccountResources () {
+      const accountName = this.identity.account_name
+      if (accountName.length > 0) {
+        try {
+          const eos = new this.$EosWrapper()
+          const result = await eos.getResources(accountName)
+          this.identity.ram = result.ram ? result.ram : 'unknown'
+          this.identity.cpu = result.cpu ? result.cpu : 'unknown'
+          this.identity.net = result.net ? result.net : 'unknown'
+        } catch (error) {
+          this.errorMessage = error
+          this.errorMessage += '\n\n'
+          this.errorMessage += error.stack
+          this.errorDialog = true
+        }
+      } else {
+        this.errorMessage = 'Make sure your node is running'
+        this.errorDialog = true
+      }
+    },
     async checkAccountAdded () {
       const accountName = this.identity.account_name
       if (accountName.length > 0) {
@@ -556,6 +586,9 @@ export default {
       if (this.identity.account_name) {
         this.getBalance()
         this.getVoted()
+        this.getAccountResources()
+        this.getUptime()
+        this.getRank()
       }
     },
     async identify (key) {
@@ -570,6 +603,7 @@ export default {
           this.getUptime()
           this.getRank()
           this.getBalance()
+          this.getAccountResources()
           this.getVoted()
         } else {
           this.errorMessage = 'Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.'
@@ -655,7 +689,7 @@ export default {
             ranks.sort((a, b) => (b.votes - a.votes))
             this.identity.rank = '# '
             this.identity.rank += ranks.map((e) => (e.owner)).indexOf(accountName) + 1
-            this.identity.total_ranks = '(out of: ' + ranks.length + ')'
+            this.identity.total_ranks = ranks.length
           } else {
             this.errorMessage = 'Couldn\'t calculate the Rank for ' + accountName
             this.errorDialog = true
@@ -773,8 +807,9 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.addNodeMessage = 'Transaction executed successfully!\n\n'
-        this.addNodeMessage += JSON.stringify(result, null, 2)
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.resultDialog = true
         this.refresh()
       } catch (error) {
         this.errorMessage = error
@@ -806,8 +841,9 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.registerNodeMessage = 'Transaction executed successfully!\n\n'
-        this.registerNodeMessage += JSON.stringify(result, null, 2)
+        this.resultMessage = 'Transaction executed successfully!\n\n'
+        this.resultMessage += JSON.stringify(result, null, 2)
+        this.resultDialog = true
         this.refresh()
       } catch (error) {
         this.errorMessage = error
