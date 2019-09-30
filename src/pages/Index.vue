@@ -190,7 +190,8 @@
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
               <div class="text-italic">Voting.</div>
-              <div class="text-italic text-caption">*See rules for details.</div>
+              <div class="text-italic text-caption" v-if="voting_list.length <= 0">*See rules for details.</div>
+              <q-badge color="vgreen" class="text-vdark" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 <div v-if="voting_list.length <= 0">Choose nodes</div>
@@ -811,7 +812,11 @@ export default {
         var i = this.voting_list.indexOf(node)
         this.voting_list.splice(i, 1)
       } else {
-        this.voting_list.push(node)
+        if (this.voting_list.length !== 21) {
+          this.voting_list.push(node)
+        } else {
+          this.$userError('You can vote for no more than 21 nodes', 'Add to vote action')
+        }
       }
     },
     async vote () {
