@@ -174,10 +174,10 @@
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label caption><q-btn dense flat size="sm" color="vgreen" class="code" @click="$utils.openExternal(node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
+                    <q-item-label caption><q-btn dense flat size="sm" :color="parseFloat(node.balance) > 0 ? 'vgreen' : 'vpurple'" class="code" @click="$utils.openExternal(node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
                   </q-item-section>
                   <q-item-section side center>
-                    <q-item-label class="code text-vgreen" caption> {{ node.balance }}</q-item-label>
+                    <q-item-label class="code" :class="parseFloat(node.balance) > 0 ? 'text-vgreen' : 'text-vpurple'" caption> {{ node.balance }}</q-item-label>
                   </q-item-section>
                   <q-item-section avatar v-if="identity.account_name && node.vote && node.account != identity.account_name">
                       <q-btn outline color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node)">Vote</q-btn>
@@ -799,7 +799,7 @@ export default {
           }
         } else {
           this.nodes[id].account = 'No account found'
-          this.nodes[id].balance = ''
+          this.nodes[id].balance = '0 VTX'
           this.nodes[id].vote = false
         }
       } catch (error) {
