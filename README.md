@@ -7,13 +7,18 @@ The application allows you to manage a vDexNode node running in a openDHT networ
 <img width="1426" alt="Screen_Shot_2019-09-18_at_12_42_16_PM" src="https://user-images.githubusercontent.com/2269864/65180517-e9018180-da11-11e9-8967-87fd55666b07.png">
 
 ## Table of Contents
-
+- [Disclaimer](#disclaimer)
 - [Download](#download)
 - [Prerequisites](#prerequisites)
 - [Install](#install)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Disclaimer
+***Disclaimer: this is a test network and the sole purpose of this network is for R&D purposes. 
+The network might not work as intended and you temporarily might not receive VTX at all on a certain day or until issues are resolved.
+Please report if you have not received your VTX but do not expect this VTX as guaranteed.*** 
 
 ## Download
 You can download the latest release of the application [here](https://github.com/Volentix/vDexNode-GUI/releases)
