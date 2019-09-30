@@ -212,34 +212,7 @@
             </div>
           </div>
         </div>
-        <!-- Error dialog -->
-        <q-dialog v-model="errorDialog">
-          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-negative text-vgrey">
-            <q-card-section>
-              <div class="text-h6">Error occured</div>
-            </q-card-section>
-            <q-card-section>
-              <pre>{{ errorMessage }}</pre>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Got it" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-        <!-- Result dialog -->
-        <q-dialog v-model="resultDialog">
-          <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey">
-            <q-card-section>
-              <div class="text-h6">Result</div>
-            </q-card-section>
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <pre>{{ resultMessage }}</pre>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Got it" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+
         <!-- voted dialog -->
         <q-dialog v-model="votedDialog">
           <q-card style="min-width: 50vw; max-width: 70vw;" class="bg-vgrey q-ma-sm">
@@ -446,10 +419,6 @@ export default {
       nodes: [],
       voting_list: [],
       privateDialog: false,
-      errorDialog: false,
-      errorMessage: '',
-      resultDialog: false,
-      resultMessage: '',
       helpDialog: false,
       votedDialog: false,
       rulesDialog: false,
@@ -481,14 +450,10 @@ export default {
           this.identity.cpu = result.cpu ? result.cpu : 'unknown'
           this.identity.net = result.net ? result.net : 'unknown'
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get account resources action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Get account resources action')
       }
     },
     async checkAccountAdded () {
@@ -502,18 +467,13 @@ export default {
           if (nodeStats) {
             this.identity.account_added = true
           } else {
-            this.resultMessage = 'Account: ' + accountName + ' is not added to the distribution contract. Please Add it.'
-            this.resultDialog = true
+            this.$userResult('Account: ' + accountName + ' is not added to the distribution contract. Please Add it.')
           }
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Check account added action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('make sure your node is running', 'Check account added action')
       }
     },
     async checkAccountRegistered () {
@@ -526,18 +486,13 @@ export default {
           if (nodeStats) {
             this.identity.account_registered = true
           } else {
-            this.resultMessage = 'Account: ' + accountName + ' is not registered in the voting contract. Please Register it.'
-            this.resultDialog = true
+            this.$userResult('Account: ' + accountName + ' is not registered in the voting contract. Please Register it.')
           }
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Check account registered action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Check account registered action')
       }
     },
     async checkAccountRun () {
@@ -551,18 +506,13 @@ export default {
           if (nodeStats) {
             this.identity.account_run = true
           } else {
-            this.resultMessage = 'Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.'
-            this.resultDialog = true
+            this.$userResult('Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.')
           }
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Check Running action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Check Running action')
       }
     },
     async getRegisteredNodes () {
@@ -576,10 +526,7 @@ export default {
           self.registered_nodes_names.push(item.owner)
         })
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Get registered nodes action')
       }
     },
     refresher () {
@@ -606,14 +553,10 @@ export default {
           this.getAccountResources()
           this.getVoted()
         } else {
-          this.errorMessage = 'Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.'
-          this.errorDialog = true
+          this.$userError('Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.', 'Identify action')
         }
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Identify action')
       }
     },
     async getUptime () {
@@ -628,18 +571,13 @@ export default {
             this.identity.uptime = Math.floor((this.identity.time - nodeStats.last_timestamp) / 86400)
             this.identity.uptime += ' days'
           } else {
-            this.errorMessage = 'Couldn\'t find ' + accountName + ' in the uptimes table for getting the Uptime'
-            this.errorDialog = true
+            this.$userError('Couldn\'t find ' + accountName + ' in the uptimes table for getting the Uptime', 'Get uptime action')
           }
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get uptime action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Get uptime action')
       }
     },
     async getVoted () {
@@ -661,14 +599,10 @@ export default {
             }
           })
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get voted lists action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Get voted lists action')
       }
     },
     async getRank () {
@@ -691,18 +625,13 @@ export default {
             this.identity.rank += ranks.map((e) => (e.owner)).indexOf(accountName) + 1
             this.identity.total_ranks = ranks.length
           } else {
-            this.errorMessage = 'Couldn\'t calculate the Rank for ' + accountName
-            this.errorDialog = true
+            this.$userError('Couldn\'t calculate the Rank for ' + accountName, 'Get rank action')
           }
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get rank action')
         }
       } else {
-        this.errorMessage = 'Make sure your node is running'
-        this.errorDialog = true
+        this.$userError('Make sure your node is running', 'Get rank action')
       }
     },
     async getBalance () {
@@ -713,14 +642,10 @@ export default {
           let balance = await eos.getBalance(accountName)
           this.identity.balance = balance[0] ? balance[0] : '0 VTX'
         } catch (error) {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get balance action')
         }
       } else {
-        this.errorMessage = 'No account name'
-        this.errorDialog = true
+        this.$userError('No account name', 'Get balance action')
       }
     },
     updatePrivate () {
@@ -731,10 +656,7 @@ export default {
         this.identity.public_key = publicKey
         this.identify(this.identity.public_key)
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Update private key action')
       }
     },
     showPrivate () {
@@ -765,10 +687,7 @@ export default {
         }).then(response => {
           this.forceFileDownload(response)
         }).catch((error) => {
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
-          this.errorDialog = true
+          this.$userError(error, 'Get Installer action')
         })
       }
     },
@@ -807,15 +726,10 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.resultMessage = 'Transaction executed successfully!\n\n'
-        this.resultMessage += JSON.stringify(result, null, 2)
-        this.resultDialog = true
+        this.$userResult('The account added successfully!', result)
         this.refresh()
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Add the account action')
       }
     },
     async registerNode () {
@@ -841,15 +755,10 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.resultMessage = 'Transaction executed successfully!\n\n'
-        this.resultMessage += JSON.stringify(result, null, 2)
-        this.resultDialog = true
+        this.$userResult('The account registered successfully!', result)
         this.refresh()
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Register the account action')
       }
     },
     async getListOfNodes () {
@@ -874,10 +783,7 @@ export default {
           this.nodes = this.$utils.sortByKey(this.nodes, 'key')
           resolve()
         }).catch((error) => {
-          this.errorDialog = true
-          this.errorMessage = error
-          this.errorMessage += '\n\n'
-          this.errorMessage += error.stack
+          this.$userError(error, 'Get nodes action')
         })
       })
     },
@@ -900,10 +806,7 @@ export default {
           this.nodes[id].vote = false
         }
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Get account name action')
       }
     },
     addToVote (node) {
@@ -938,16 +841,11 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.resultDialog = true
-        this.resultMessage = 'Transaction executed successfully!\n\n'
-        this.resultMessage += JSON.stringify(result, null, 2)
+        this.$userResult('Voted successfully!', result)
         this.voting_list = []
         setInterval(() => this.refresher(), 5000)
       } catch (error) {
-        this.errorDialog = true
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
+        this.$userError(error, 'Vote action')
       }
     },
     async retreiveReward () {
@@ -969,16 +867,11 @@ export default {
           blocksBehind: 3,
           expireSeconds: 30
         })
-        this.resultDialog = true
-        this.resultMessage = 'Transaction executed successfully!\n\n'
-        this.resultMessage += JSON.stringify(result, null, 2)
+        this.$userResult('Transaction \'Retreive reward\' executed successfully!', result)
         this.refresh()
         setInterval(() => this.refresher(), 3000)
       } catch (error) {
-        this.errorMessage = error
-        this.errorMessage += '\n\n'
-        this.errorMessage += error.stack
-        this.errorDialog = true
+        this.$userError(error, 'Retreive reward action')
       }
     }
   }
