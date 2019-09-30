@@ -3,7 +3,7 @@ import { Notify } from 'quasar'
 class ResultHandler {
   constructor (message, stack) {
     Notify.setDefaults({
-      position: 'top',
+      position: 'top-right',
       textColor: 'vdark',
       timeout: 60000,
       color: 'vgreen',
