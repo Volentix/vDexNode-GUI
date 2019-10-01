@@ -69,7 +69,7 @@
                 </q-item-section>
                 <q-item-section side top>
                     <q-item-label caption :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-vpurple'">{{ identity.balance }}</q-item-label>
-                    <q-badge color="vpurple" class="text-vgrey" @click="$utils.openExternal('VTX')" v-if="identity.account_name && parseFloat(identity.balance) == 0">
+                    <q-badge color="vpurple" class="text-vgrey pointer-cursor" @click="$utils.openExternal('VTX')" v-if="identity.account_name && parseFloat(identity.balance) == 0">
                       Get VTX
                       <q-tooltip content-class="bg-vpurple text-vgrey" content-style="font-size: 16px" :offset="[10, 10]">Click to get VTX</q-tooltip>
                     </q-badge>
@@ -93,7 +93,7 @@
                 <q-item-section>
                     <q-item-label>
                       Rank
-                      <q-badge color="vgreen" class="text-vdark" @click="rankDialog = true">
+                      <q-badge color="vgreen" class="text-vdark pointer-cursor" @click="rankDialog = true">
                         <q-icon name="fas fa-question" color="vdark"/>
                         <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
                       </q-badge>
@@ -194,11 +194,17 @@
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <q-banner inline-actions class="bg-vdark text-vgrey q-mb-sm">
               <div class="text-italic">Voting.</div>
-              <div class="text-italic text-caption" v-if="voting_list.length <= 0">*See rules for details.</div>
-              <q-badge color="vgreen" class="text-vdark" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
+              <div class="text-italic text-caption" v-if="voting_list.length == 0">*See rules for details.</div>
+              <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
+              <q-badge color="vpurple" class="text-vdark q-mx-xs pointer-cursor" v-if="voting_list.length > 0" @click="voting_list = []">Clear</q-badge>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
-                <div v-if="voting_list.length <= 0">Choose nodes</div>
+                <div class="col text-center">
+                  <div v-if="voting_list.length == 0">Choose nodes or</div>
+                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList()" > Vote back
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for top 21 nodes that voted for you</q-tooltip>
+                  </q-badge>
+                </div>
               </template>
             </q-banner>
             <div class="bg-vdark inset-shadow" v-if="nodes.length > 0">
@@ -521,7 +527,7 @@ export default {
       try {
         const eos = new this.$EosWrapper()
         const result = await eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-        this.registered_nodes = result.length
+        this.registered_nodes = result.length ? result.length : 0
         this.registered_nodes_names = []
         var self = this
         result.forEach(function (item) {
@@ -792,7 +798,7 @@ export default {
     async getAccountName (id, key, eos) {
       try {
         let accounts = await eos.getAccounts(key)
-        let name = accounts.account_names[0]
+        let name = accounts.account_names[0] ? accounts.account_names[0] : ''
         if (name) {
           let balance = await eos.getBalance(name)
           this.nodes[id].account = name
@@ -821,6 +827,28 @@ export default {
         } else {
           this.$userError('You can vote for no more than 21 nodes', 'Add to vote action')
         }
+      }
+    },
+    getVoteBackList () {
+      let self = this
+      let bank = this.nodes.filter(function (item) {
+        return self.identity.voted_for.includes(item.account)
+      })
+
+      if (bank.length <= 21) {
+        bank.forEach((item) => {
+          this.addToVote(item)
+        })
+        bank = []
+      } else {
+        for (let i = 0; i < 21; i++) {
+          let rand = Math.random()
+          let total = bank.length
+          let randIndex = Math.floor(rand * total)
+          this.addToVote(bank[randIndex])
+          bank.splice(randIndex, 1)
+        }
+        bank = []
       }
     },
     async vote () {

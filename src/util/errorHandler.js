@@ -5,7 +5,7 @@ class ErrorHandler extends Error {
     Notify.setDefaults({
       position: 'top-right',
       textColor: 'vgrey',
-      timeout: 60000,
+      timeout: 0,
       color: 'negative',
       icon: 'report_problem',
       multiLine: true,
