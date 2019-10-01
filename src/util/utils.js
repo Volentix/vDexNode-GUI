@@ -38,7 +38,11 @@ function sortByKey (array, key) {
 }
 
 function openExternal (accountName) {
-  shell.openExternal('https://bloks.io/account/' + accountName)
+  if (accountName === 'VTX') {
+    shell.openExternal('https://www.stex.com/')
+  } else {
+    shell.openExternal('https://bloks.io/account/' + accountName)
+  }
 }
 
 function formatBytes (bytes, decimals) {

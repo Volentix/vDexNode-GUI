@@ -68,7 +68,11 @@
                     <q-item-label class="code text-vgreen" caption>{{ identity.account_name }}</q-item-label>
                 </q-item-section>
                 <q-item-section side top>
-                    <q-item-label caption class="text-vgrey">{{ identity.balance }}</q-item-label>
+                    <q-item-label caption :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-vpurple'">{{ identity.balance }}</q-item-label>
+                    <q-badge color="vpurple" class="text-vgrey" @click="$utils.openExternal('VTX')" v-if="identity.account_name && parseFloat(identity.balance) == 0">
+                      Get VTX
+                      <q-tooltip content-class="bg-vpurple text-vgrey" content-style="font-size: 16px" :offset="[10, 10]">Click to get VTX</q-tooltip>
+                    </q-badge>
                 </q-item-section>
               </q-item>
               <q-item>
@@ -778,7 +782,7 @@ export default {
             }
           }
           this.nodes = this.$utils.getUnique(this.nodes, 'key')
-          this.nodes = this.$utils.sortByKey(this.nodes, 'key')
+          // this.nodes = this.$utils.sortByKey(this.nodes, 'key')
           resolve()
         }).catch((error) => {
           this.$userError(error, 'Get nodes action')
