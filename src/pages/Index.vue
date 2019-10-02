@@ -201,7 +201,10 @@
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 <div class="col text-center">
                   <div v-if="voting_list.length == 0">Choose nodes or</div>
-                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList()" > Vote back
+                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList('random')" > Vote back randomly
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for random 21 nodes that voted for you</q-tooltip>
+                  </q-badge>
+                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList('top')" > Vote back top
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for top 21 nodes that voted for you</q-tooltip>
                   </q-badge>
                 </div>
@@ -829,7 +832,7 @@ export default {
         }
       }
     },
-    getVoteBackList () {
+    getVoteBackList (option) {
       let self = this
       let bank = this.nodes.filter(function (item) {
         return self.identity.voted_for.includes(item.account)
@@ -841,14 +844,22 @@ export default {
         })
         bank = []
       } else {
-        for (let i = 0; i < 21; i++) {
-          let rand = Math.random()
-          let total = bank.length
-          let randIndex = Math.floor(rand * total)
-          this.addToVote(bank[randIndex])
-          bank.splice(randIndex, 1)
+        if (option === 'random') {
+          for (let i = 0; i < 21; i++) {
+            let rand = Math.random()
+            let total = bank.length
+            let randIndex = Math.floor(rand * total)
+            this.addToVote(bank[randIndex])
+            bank.splice(randIndex, 1)
+          }
+          bank = []
+        } else if (option === 'top') {
+          bank.sort((a, b) => (parseFloat(b.balance) - parseFloat(a.balance)))
+          let top = bank.slice(0, 21)
+          top.forEach(item => {
+            this.addToVote(item)
+          })
         }
-        bank = []
       }
     },
     async vote () {
