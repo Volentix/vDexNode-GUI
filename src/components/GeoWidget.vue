@@ -32,18 +32,38 @@ export default {
   props: ['geoData'],
   data () {
     return {
-      // mapPath: '../statics/geoWidgetData/countries.geo.json',
-      // locPath: '/initial_node_list.json',
       nodeGeoData: {}
     }
   },
   mounted () {
-    this.load()
+    // this.getNodesLocation()
+    this.getNodeGeoData()
+    this.mapLoad()
   },
   methods: {
-    load () {
-      this.getNodeGeoData()
-      this.mapLoad()
+    async getNodesLocation () {
+      await this.getLocationsData()
+    },
+    async getLocationsData () {
+      return new Promise(resolve => {
+        this.$http.get(process.env.NODES_API + '/getNodesLocation').then((result) => {
+          for (var key in result.data) {
+            // this.nodeGeoData.features.push({
+            //   "properties": {
+            //     "reclat": result.data[key][],
+            //     "reclong": "37.618423",
+            //     "mass": "1",
+            //     "city": "Moscow",
+            //     "id": "3"
+            //   }
+            // })
+          }
+          // this.nodes = this.$utils.getUnique(this.nodes, 'key')
+          resolve()
+        }).catch((error) => {
+          this.$userError(error, 'Get location data action')
+        })
+      })
     },
     getNodeGeoData () {
       // Temporary solution, get the initial list of node locations from the file

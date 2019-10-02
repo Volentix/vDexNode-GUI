@@ -547,6 +547,12 @@ export default {
         this.getAccountResources()
         this.getUptime()
         this.getRank()
+        this.checkNodeRun()
+      }
+    },
+    checkNodeRun () {
+      if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.account_name)) {
+        this.$userError('Wow, seems like your docker container is not running. I can\'t see your node in the list. Try to update the list or check your node.', 'Check node running action')
       }
     },
     async identify (key) {
