@@ -178,7 +178,7 @@
 
               <template v-slot:action>
                 <q-btn size="md" outline color="vgreen" label="Rules" class="q-mx-xs" v-on:click="rulesDialog=true" />
-                <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" v-on:click=refresh />
+                <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" :disabled="nodes.length && nodes.every(item => item.balance && item.account) ? false : true" v-on:click=refresh />
               </template>
             </q-banner>
             <q-scroll-area style="height: 300pt;">
@@ -783,14 +783,19 @@ export default {
       const eos = new this.$EosWrapper()
       this.running_nodes = this.nodes.length
       this.getRegisteredNodes()
-      for (var id in this.nodes) {
-        // this.getAccountByKey(id, this.nodes[id].key)
-        this.getAccountName(id, this.nodes[id].key, eos)
+      if (this.nodes.length > 0) {
+        for (var id in this.nodes) {
+          // this.getAccountByKey(id, this.nodes[id].key)
+          this.getAccountName(id, this.nodes[id].key, eos)
+        }
+      } else {
+        this.$userError('Oops, too often refresh, please try later.', 'Get list of Nodes action')
       }
     },
     async getNodes () {
       return new Promise(resolve => {
         this.$http.get(process.env.NODES_API + '/getConnectedNodes').then((result) => {
+          // TODO: Handler if the object is empty of has result: null or result: try later
           for (var key in result.data) {
             if (result.data[key].includes('EOS')) {
               this.nodes.push({ id: key, key: result.data[key].trim(), account: '', vote: true })
