@@ -449,6 +449,7 @@ export default {
     this.interval = setInterval(() => this.refresh(), 300000)
     this.identity.time = Math.floor((new Date()).getTime() / 1000)
     this.refr = setInterval(() => this.refresher(), 60000)
+    this.check = setInterval(() => this.checkNodeRun(), 600000)
   },
   methods: {
     async getAccountResources () {
@@ -547,11 +548,10 @@ export default {
         this.getAccountResources()
         this.getUptime()
         this.getRank()
-        this.checkNodeRun()
       }
     },
     checkNodeRun () {
-      if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.account_name)) {
+      if (this.identity.account_name && this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.account_name)) {
         this.$userError('Oops, I can\'t see your node in the list. Try to update the list or check your node.', 'Check node running action')
       }
     },
@@ -894,7 +894,7 @@ export default {
         })
         this.$userResult('Voted successfully!', result)
         this.voting_list = []
-        setInterval(() => this.refresher(), 5000)
+        setInterval(() => this.refresher(), 3000)
       } catch (error) {
         this.$userError(error, 'Vote action')
       }
