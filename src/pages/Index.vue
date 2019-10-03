@@ -121,12 +121,20 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>Voted for me</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-if="identity.voted_for.length > 0">{{ this.identity.voted_for.length }}</q-item-label>
+                  <q-badge v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('random')" > Vote back randomly
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for random 21 nodes that voted for you</q-tooltip>
+                  </q-badge>
+                  <q-badge v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('top')" > Vote back top
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for top 21 nodes that voted for you</q-tooltip>
+                  </q-badge>
                 </q-item-section>
                 <q-item-section>
-                    <q-item-label>I voted for</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-if="identity.voted_i.length > 0">{{ this.identity.voted_i.length }} </q-item-label>
+                  <q-item-label>Voted for me</q-item-label>
+                  <q-item-label class="code text-vgreen" caption v-if="identity.voted_for.length > 0">{{ this.identity.voted_for.length }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>I voted for</q-item-label>
+                  <q-item-label class="code text-vgreen" caption v-if="identity.voted_i.length > 0">{{ this.identity.voted_i.length }} </q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Show more" outline color="vgreen" class="text-vgrey" @click="votedDialog = true" v-if="identity.account_name"/>
@@ -199,15 +207,7 @@
               <q-badge color="vpurple" class="text-vdark q-mx-xs pointer-cursor" v-if="voting_list.length > 0" @click="voting_list = []">Clear</q-badge>
               <template v-slot:action>
                 <q-btn color="vgreen" class="text-vdark q-mx-xs" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
-                <div class="col text-center">
-                  <div v-if="voting_list.length == 0">Choose nodes or</div>
-                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList('random')" > Vote back randomly
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for random 21 nodes that voted for you</q-tooltip>
-                  </q-badge>
-                  <q-badge v-if="voting_list.length == 0 && identity.account_name && nodes.length > 0" color="vgreen" class="text-vdark q-pa-xs q-ma-xs pointer-cursor" @click="getVoteBackList('top')" > Vote back top
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for top 21 nodes that voted for you</q-tooltip>
-                  </q-badge>
-                </div>
+                <div v-if="voting_list.length == 0">Choose nodes or</div>
               </template>
             </q-banner>
             <div class="bg-vdark inset-shadow" v-if="nodes.length > 0">
@@ -552,7 +552,7 @@ export default {
     },
     checkNodeRun () {
       if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.account_name)) {
-        this.$userError('Wow, seems like your docker container is not running. I can\'t see your node in the list. Try to update the list or check your node.', 'Check node running action')
+        this.$userError('Oops, I can\'t see your node in the list. Try to update the list or check your node.', 'Check node running action')
       }
     },
     async identify (key) {
