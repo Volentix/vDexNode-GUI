@@ -5,7 +5,7 @@ class ResultHandler {
     Notify.setDefaults({
       position: 'top-right',
       textColor: 'vdark',
-      timeout: 60000,
+      timeout: 5000,
       color: 'vgreen',
       icon: 'fas fa-check-circle',
       multiLine: true,
