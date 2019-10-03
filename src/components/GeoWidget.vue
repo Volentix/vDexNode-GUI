@@ -1,19 +1,21 @@
 <template>
   <div class='bg-vdark inset-shadow'>
+    <q-banner dense inline-actions class="text-vdark bg-vgreen">
+      This feature is currently disabled, the data is artificial.
+    </q-banner>
     <div id='map'></div>
     <div id='tooltip' class='hidden bg-vgrey'>
       <p>Location: <span id='city'>Unknown</span></p>
-      <p>Nodes: <span id='mass'>Unknown</span></p>
+      <p>Quantity: <span id='mass'>Unknown</span></p>
+      <p>Nodes: <span id='nodes'>Unknown</span></p>
     </div>
   </div>
 </template>
 
 <script>
 import * as d3 from 'd3'
-// const d3 = require('d3')
 const topojson = require('topojson')
 var countries = require('../assets/geoWidgetData/countries.geo.json')
-var initialNodeList = require('../assets/geoWidgetData/initial_node_list.json')
 /**
  * Map widget component
  * @vue-prop {Array} geoData
@@ -32,73 +34,79 @@ export default {
   props: ['geoData'],
   data () {
     return {
-      nodeGeoData: {}
+      nodeGeoData: []
     }
   },
   mounted () {
-    // this.getNodesLocation()
-    this.getNodeGeoData()
+    this.getNodesLocation()
     this.mapLoad()
+  },
+  watch: {
+    nodeGeoData: function () {
+      this.mapLoad()
+    }
   },
   methods: {
     async getNodesLocation () {
-      await this.getLocationsData()
+      // await this.getLocationsData() // Real data
+      await this.getLocationsDataFake() // Fake data
     },
     async getLocationsData () {
       return new Promise(resolve => {
         this.$http.get(process.env.NODES_API + '/getNodesLocation').then((result) => {
+          let locations = []
           for (var key in result.data) {
-            // this.nodeGeoData.features.push({
-            //   "properties": {
-            //     "reclat": result.data[key][],
-            //     "reclong": "37.618423",
-            //     "mass": "1",
-            //     "city": "Moscow",
-            //     "id": "3"
-            //   }
-            // })
+            let coord = result.data[key][1].split(',')
+            locations.push({ 'id': key, 'city': result.data[key][0], 'lat': coord[0], 'long': coord[1] })
           }
-          // this.nodes = this.$utils.getUnique(this.nodes, 'key')
+          locations = this.$utils.getUniqueLocations(locations)
+          /* eslint-disable */
+          for (let i = 0; i < locations.length; i++) {
+            this.nodeGeoData.push({
+              "properties": {
+                "reclat": locations[i].lat,
+                "reclong": locations[i].long,
+                "mass": locations[i].ids.length,
+                "city": locations[i].city,
+                "nodes": locations[i].ids
+              }
+            })
+          }
+          /* eslint-enable */
           resolve()
         }).catch((error) => {
           this.$userError(error, 'Get location data action')
         })
       })
-    },
-    getNodeGeoData () {
-      // Temporary solution, get the initial list of node locations from the file
-      const fs = require('fs')
-      const path = require('path')
-      // const jsonString = fs.readFileSync(path.join(__dirname, '../assets/geoWidgetData') + this.locPath, 'utf8')
-      // this.nodeGeoData = JSON.parse(jsonString)
-      // const jsonString = fs.readFileSync(initialNodeList, 'utf8')
-      // this.nodeGeoData = JSON.parse(jsonString)
-      this.nodeGeoData = initialNodeList
-
-      // TODO: Get the list of locations through API
-      this.nodeGeoData.features.push({
-        /* eslint-disable */
-        "properties": {
-          "reclat": "55.751244",
-          "reclong": "37.618423",
-          "mass": "30",
-          "city": "Moscow",
-          "id": "3"
-        }
+    }, // end of getLocationsData
+    async getLocationsDataFake () {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          let raw = require('../assets/geoWidgetData/fake.json')
+          let locations = []
+          for (var key in raw) {
+            let coord = raw[key][1].split(',')
+            locations.push({ 'id': key, 'city': raw[key][0], 'lat': coord[0], 'long': coord[1] })
+          }
+          locations = this.$utils.getUniqueLocations(locations)
+          /* eslint-disable */
+          for (let i = 0; i < locations.length; i++) {
+            this.nodeGeoData.push({
+              "properties": {
+                "reclat": locations[i].lat,
+                "reclong": locations[i].long,
+                "mass": locations[i].ids.length,
+                "city": locations[i].city,
+                "nodes": locations[i].ids
+              }
+            })
+          }
+          /* eslint-enable */
+        }, 1000)
       })
-      this.nodeGeoData.features.push({
-        /* eslint-disable */
-        "properties": {
-          "reclat": "37.742828",
-          "reclong": "-25.680588",
-          "mass": "3",
-          "city": "Ponta Delgada",
-          "id": "4"
-        }
-      })
-      /* eslint-enable */
-    },
+    }, // end of getLocationsDataFake
     mapLoad () {
+      d3.select('svg').remove()
       var self = this
       // 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json'
       // d3.json(countries, function (json) {
@@ -132,7 +140,7 @@ export default {
       var nodes
       var data = self.nodeGeoData
       nodes = svg.selectAll('circle')
-        .data(data.features)
+        .data(data)
         .enter()
         .append('circle')
         .attr('cx', function (d) {
@@ -142,14 +150,14 @@ export default {
           return projection([d.properties.reclong, d.properties.reclat])[1]
         })
         .attr('r', function (d) {
-          if (Math.floor(d.properties.mass) >= 30) {
-            return 13
-          } else if (Math.floor(d.properties.mass) >= 20) {
-            return 7
+          if (Math.floor(d.properties.mass) >= 20) {
+            return 8
           } else if (Math.floor(d.properties.mass) >= 10) {
-            return 4
-          } else {
+            return 5
+          } else if (Math.floor(d.properties.mass) >= 5) {
             return 2
+          } else {
+            return 1
           }
         })
         .style('fill', '#00F7A9')
@@ -171,6 +179,9 @@ export default {
         d3.select('#tooltip')
           .select('#mass')
           .text(d.properties.mass)
+        // d3.select('#tooltip')
+        //   .select('#nodes')
+        //   .text(d.properties.nodes)
         // Show the tooltip
         d3.select('#tooltip').classed('hidden', false)
       })
@@ -203,7 +214,7 @@ export default {
 <style scoped>
 #tooltip {
   position: absolute;
-  width: 200px;
+  width: 250px;
   height: auto;
   padding: 10px;
   color: #000000;

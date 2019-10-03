@@ -37,6 +37,18 @@ function sortByKey (array, key) {
   })
 }
 
+function getUniqueLocations (locations) {
+  let data = []
+  for (let i = 0; i < locations.length; i++) {
+    if (data.some(item => item.city === locations[i].city)) {
+      data.find(item => item.city === locations[i].city).ids.push(locations[i].id)
+    } else {
+      data.push({ 'city': locations[i].city, 'lat': locations[i].lat, 'long': locations[i].long, 'ids': [locations[i].id] })
+    }
+  }
+  return data
+}
+
 function openExternal (accountName) {
   if (accountName === 'VTX') {
     shell.openExternal('https://www.stex.com/')
@@ -58,5 +70,6 @@ export {
   getUnique,
   sortByKey,
   openExternal,
-  formatBytes
+  formatBytes,
+  getUniqueLocations
 }
