@@ -1,7 +1,7 @@
 <template>
   <div class='bg-vdark inset-shadow'>
     <q-banner dense inline-actions class="text-vdark bg-vgreen">
-      This feature is currently disabled, the data is artificial.
+      The map widget is currently disabled, the data is artificial.
     </q-banner>
     <div id='map'></div>
     <div id='tooltip' class='hidden bg-vgrey'>

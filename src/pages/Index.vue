@@ -106,14 +106,14 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>Uptime</q-item-label>
+                    <q-item-label disabled>Uptime</q-item-label>
                     <q-item-label class="code text-vgreen" caption disabled>{{ identity.uptime }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
-                    <q-item-label>VTX earned</q-item-label>
-                    <q-item-label class="code text-vgreen" caption disabled>{{ "0.0000 VTX" }}</q-item-label>
+                    <q-item-label disabled>VTX earned</q-item-label>
+                    <q-item-label class="code text-vgreen" caption>{{ "0.0000 VTX" }}</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
                   <q-btn label="Retreive reward" outline color="vgreen" class="text-vgrey" @click="retreiveReward" v-if="identity.account_name"/>
@@ -121,12 +121,12 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-badge v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('random')" > Vote back randomly
+                  <q-btn dense size="xs" v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('random')" > Vote back (random)
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for random 21 nodes that voted for you</q-tooltip>
-                  </q-badge>
-                  <q-badge v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('top')" > Vote back top
+                  </q-btn>
+                  <q-btn dense size="xs" v-if="identity.account_name && nodes.length > 0" :disabled="voting_list.length ? true : false" color="vgreen" class="text-vdark q-ma-xs pointer-cursor" @click="getVoteBackList('top')" > Vote back (top)
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to vote for top 21 nodes that voted for you</q-tooltip>
-                  </q-badge>
+                  </q-btn>
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Voted for me</q-item-label>
@@ -897,6 +897,9 @@ export default {
         setInterval(() => this.refresher(), 3000)
       } catch (error) {
         this.$userError(error, 'Vote action')
+        if (error.message.includes('unable to complete by deadline')) {
+          this.$userError('Try at a later time when EOSIO network is not as busy or get more CPU.', 'Vote action')
+        }
       }
     },
     async retreiveReward () {
