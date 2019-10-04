@@ -36,6 +36,7 @@
               </q-banner> -->
               <q-btn color="vgreen" class="text-vdark q-mx-xs" label="Get the vDex node" @click=getInstaller />
               <q-btn color="vdark" class="text-vgrey q-mx-xs" label="Chat" @click="chatDialog=true" />
+              <q-btn color="vdark" class="text-vgrey q-mx-xs" label="Logout" @click="$utils.logout()" />
             </div>
           </div>
         </div>

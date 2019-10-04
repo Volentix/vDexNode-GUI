@@ -11,7 +11,8 @@ Vue.use(Vuex)
 
 function initialState () {
   return {
-    loggedIn: false
+    loggedIn: false,
+    identity: {}
   }
 }
 
@@ -19,35 +20,34 @@ const store = new Vuex.Store({
   // plugins: [vuexPersist.plugin],
   state: initialState,
   getters: {
-    getLoggedIn: state => {
-      return state.loggedIn
-    }
+    isLoggedIn: state => state.loggedIn,
+    getIdentity: state => state.identity
   },
   mutations: {
-    resetState: (state) => {
+    logout: (state) => {
       Object.assign(state, initialState())
+    },
+    login: (state, privateKey) => {
+      state.identity.privateKey = privateKey
     },
     setLoggedIn: state => {
       state.loggedIn = true
     }
   },
   actions: {
-    // logout: (context) => {
-    //   return new Promise((resolve, reject) => {
-    //     context.commit('resetState')
-    //     resolve()
-    //   })
-    // },
-    // login: ({ context }, privateKey, publicKey, accountName) => {
-    //   console.log(privateKey, publicKey, accountName)
-    //   return new Promise((resolve, reject) => {
-    //     context.commit('setLoggedIn')
-    //     context.commit('setPrivateKey', privateKey)
-    //     context.commit('setPublicKey', publicKey)
-    //     context.commit('setAccountName', accountName)
-    //     resolve()
-    //   })
-    // }
+    login ({ commit }, privateKey) {
+      return new Promise((resolve, reject) => {
+        commit('login', privateKey)
+        commit('setLoggedIn')
+        resolve()
+      })
+    },
+    logout ({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('logout')
+        resolve()
+      })
+    }
   }
 })
 

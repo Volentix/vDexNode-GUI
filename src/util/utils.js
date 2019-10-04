@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import store from '@/store'
+import router from '@/router'
 
 /**
  * Function returns an array with removed duplicates by any field in the object
@@ -66,10 +67,26 @@ function formatBytes (bytes, decimals) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
+function login (privateKey) {
+  store.dispatch('login', { privateKey }).then(() => {
+    router.push('/')
+  }).catch(err => {
+    console.log(err)
+  })
+}
+
+function logout () {
+  store.dispatch('logout').then(() => {
+    router.push('/login')
+  })
+}
+
 export {
   getUnique,
   sortByKey,
   openExternal,
   formatBytes,
-  getUniqueLocations
+  getUniqueLocations,
+  login,
+  logout
 }

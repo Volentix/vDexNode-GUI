@@ -2,7 +2,14 @@
 const routes = [
   {
     path: '/',
-    component: () => import('pages/Index.vue')
+    component: () => import('pages/Index.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/login',
+    component: () => import('pages/Login.vue')
   }
 ]
 
