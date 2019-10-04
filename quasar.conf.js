@@ -60,7 +60,8 @@ module.exports = function (ctx) {
         'QImg',
         'QBanner',
         'QSpace',
-        'QTooltip'
+        'QTooltip',
+        'QChatMessage'
       ],
 
       directives: [

@@ -35,6 +35,7 @@
                 Update your private key. It is required to install the node.
               </q-banner> -->
               <q-btn color="vgreen" class="text-vdark q-mx-xs" label="Get the vDex node" @click=getInstaller />
+              <q-btn color="vdark" class="text-vgrey q-mx-xs" label="Chat" @click="chatDialog=true" />
             </div>
           </div>
         </div>
@@ -363,6 +364,39 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
+        <!-- chat dialog -->
+        <q-dialog v-model="chatDialog">
+          <q-card style="min-width: 50vw; max-width: 50vw;" class="bg-vdark text-vgrey">
+            <q-card-section>
+              <div class="text-h6">Chat</div>
+              <q-banner dense inline-actions class="text-vdark bg-vgreen">
+                The chat widget is currently disabled, the data is artificial.
+              </q-banner>
+            </q-card-section>
+            <q-card-section style="min-height: 40vh; max-height: 40vh" class="scroll bg-vblack q-ma-sm">
+              <div style="width: 100%;">
+                <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+                <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
+                <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+                <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
+                <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+                <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
+                <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+                <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
+              </div>
+            </q-card-section>
+            <q-card-section>
+              <q-input filled autogrow dark >
+                <template v-slot:after>
+                  <q-btn round dense flat icon="send" />
+                </template>
+              </q-input>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Close" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -440,7 +474,8 @@ export default {
       registered_nodes: 0,
       registered_nodes_names: [],
       privateState: 'none',
-      geoData: 'test'
+      geoData: 'test',
+      chatDialog: false
     }
   },
   mounted () {
