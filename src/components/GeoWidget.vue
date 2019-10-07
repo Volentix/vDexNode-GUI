@@ -1,7 +1,7 @@
 <template>
   <div class='bg-vdark inset-shadow'>
-    <q-banner dense inline-actions class="text-vdark bg-vgreen">
-      The map widget is currently disabled, the data is artificial.
+    <q-banner dense inline-actions class="text-vdark bg-vpurple">
+      Live Nodes: The map widget is currently disabled, the data is artificial.
     </q-banner>
     <div id='map'></div>
     <div id='tooltip' class='hidden bg-vgrey'>
@@ -31,7 +31,6 @@ var countries = require('../assets/geoWidgetData/countries.geo.json')
 
 export default {
   name: 'GeoWidget',
-  props: ['geoData'],
   data () {
     return {
       nodeGeoData: []
