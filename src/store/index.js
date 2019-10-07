@@ -11,7 +11,11 @@ Vue.use(Vuex)
 
 function initialState () {
   return {
-    loggedIn: false
+    loggedIn: false,
+    identity: {
+      voted_i: [],
+      voted_for: []
+    }
   }
 }
 
@@ -19,35 +23,63 @@ const store = new Vuex.Store({
   // plugins: [vuexPersist.plugin],
   state: initialState,
   getters: {
-    getLoggedIn: state => {
-      return state.loggedIn
-    }
+    isLoggedIn: state => state.loggedIn,
+    getIdentity: state => state.identity
   },
   mutations: {
-    resetState: (state) => {
+    logout: (state) => {
       Object.assign(state, initialState())
+    },
+    setPrivateKey: (state, privateKey) => {
+      state.identity.privateKey = privateKey
+    },
+    setPublicKey: (state, publicKey) => {
+      state.identity.publicKey = publicKey
+    },
+    setAccountName: (state, accountName) => {
+      state.identity.accountName = accountName
     },
     setLoggedIn: state => {
       state.loggedIn = true
+    },
+    setBalance: (state, balance) => {
+      state.identity.balance = balance
+    },
+    setRank: (state, rank) => {
+      state.identity.rank = rank
+    },
+    setTotalRanks: (state, total) => {
+      state.identity.totalRanks = total
+    },
+    setUptime: (state, uptime) => {
+      state.identity.uptime = uptime
+    },
+    setEarned: (state, earned) => {
+      state.identity.earned = earned
+    },
+    setVotedI: (state, data) => {
+      state.identity.voted_i = data
+    },
+    setVotedFor: (state, data) => {
+      state.identity.voted_for = data
     }
   },
   actions: {
-    // logout: (context) => {
-    //   return new Promise((resolve, reject) => {
-    //     context.commit('resetState')
-    //     resolve()
-    //   })
-    // },
-    // login: ({ context }, privateKey, publicKey, accountName) => {
-    //   console.log(privateKey, publicKey, accountName)
-    //   return new Promise((resolve, reject) => {
-    //     context.commit('setLoggedIn')
-    //     context.commit('setPrivateKey', privateKey)
-    //     context.commit('setPublicKey', publicKey)
-    //     context.commit('setAccountName', accountName)
-    //     resolve()
-    //   })
-    // }
+    login ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        commit('setPrivateKey', data.privateKey)
+        commit('setPublicKey', data.publicKey)
+        commit('setAccountName', data.accountName)
+        commit('setLoggedIn')
+        resolve()
+      })
+    },
+    logout ({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('logout')
+        resolve()
+      })
+    }
   }
 })
 
