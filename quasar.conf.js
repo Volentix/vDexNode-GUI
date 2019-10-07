@@ -61,7 +61,8 @@ module.exports = function (ctx) {
         'QBanner',
         'QSpace',
         'QTooltip',
-        'QChatMessage'
+        'QChatMessage',
+        'QForm'
       ],
 
       directives: [

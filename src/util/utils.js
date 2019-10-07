@@ -1,6 +1,13 @@
+import Vue from 'vue'
 import { shell } from 'electron'
+import EosWrapper from '@/util/EosWrapper'
+import { userError } from '@/util/errorHandler'
+import { userResult } from '@/util/resultHandler'
+import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
+const { app, dialog } = require('electron').remote
+const fs = require('fs')
 
 /**
  * Function returns an array with removed duplicates by any field in the object
@@ -67,17 +74,78 @@ function formatBytes (bytes, decimals) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
-function login (privateKey) {
-  store.dispatch('login', { privateKey }).then(() => {
+async function login (privateKey) {
+  try {
+    var eos = new EosWrapper(privateKey)
+    Vue.prototype.$eos = eos
+  } catch (error) {
+    userError(error, 'Login action: instance of EosWrapper')
+    throw error
+  }
+
+  try {
+    var publicKey = eos.privateToPublic(privateKey)
+  } catch (error) {
+    userError(error, 'Login action: get public key')
+    throw error
+  }
+
+  try {
+    let accounts = await eos.getAccounts(publicKey)
+    var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
+    if (!accountName) {
+      userError('Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.', 'Login action: get account name')
+      throw new Error('EOS account is required')
+    }
+  } catch (error) {
+    userError(error, 'Login action: get account name')
+    throw error
+  }
+
+  store.dispatch('login', { privateKey, publicKey, accountName }).then(() => {
     router.push('/')
-  }).catch(err => {
-    console.log(err)
+  }).catch(error => {
+    userError(error, 'Login action: Saving')
   })
 }
 
 function logout () {
   store.dispatch('logout').then(() => {
     router.push('/login')
+  })
+}
+
+function getInstaller () {
+  let way = process.env.NODE_WAY
+  if (way.includes('readme')) {
+    require('electron').shell.openExternal(process.env.README)
+  } else if (way.includes('installer')) {
+    axios({
+      method: 'get',
+      url: process.env.INSTALLER,
+      responseType: 'arraybuffer'
+    }).then(response => {
+      forceFileDownload(response)
+    }).catch((error) => {
+      userError(error, 'Get Installer action')
+      throw error
+    })
+  }
+}
+
+function forceFileDownload (response) {
+  var options = {
+    title: 'Save installer',
+    defaultPath: 'installer',
+    buttonLabel: 'Save',
+
+    filters: [
+      { name: 'sh', extensions: ['sh'] }
+    ]
+  }
+
+  dialog.showSaveDialog(options, (filename) => {
+    fs.writeFileSync(filename, response.data, 'utf-8')
   })
 }
 
@@ -88,5 +156,6 @@ export {
   formatBytes,
   getUniqueLocations,
   login,
-  logout
+  logout,
+  getInstaller
 }
