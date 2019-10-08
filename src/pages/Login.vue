@@ -5,7 +5,8 @@
         <div class="row background-gradient window-height items-center">
           <div class="col text-center q-pa-xl">
             <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px">
-            <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard</div>
+            <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard </div>
+            <q-badge color="vdark" class="" text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
             <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>
           </div>
           <div class="col q-pa-xl">
@@ -28,14 +29,18 @@
 </template>
 
 <script>
+const { app } = require('electron').remote
+
 export default {
   data () {
     return {
       privateKey: '',
-      isPwd: true
+      isPwd: true,
+      version: ''
     }
   },
   mounted () {
+    this.version = app.getVersion()
     this.$refs.input.focus()
   },
   methods: {
