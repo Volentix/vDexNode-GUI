@@ -6,7 +6,7 @@
         <div class="row q-pb-md">
           <div class="col-md col-sm-12 col-xs-12">
             <div class="row items-center">
-              <div class="text-h6 text-uppercase text-vgrey">vdexnode dashboard<q-badge color="vgreen" class="q-mx-xs" text-color="vblack" align="middle" transparent>{{ version }}</q-badge></div>
+              <div class="text-h6 text-uppercase text-vgrey"><span class="text-weight-bolder">vdexnode</span> dashboard<q-badge color="vgreen" class="q-mx-xs" text-color="vblack" align="middle" transparent>{{ version }}</q-badge></div>
               <q-btn color="vgrey" size="11px" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true" >
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
               </q-btn>
