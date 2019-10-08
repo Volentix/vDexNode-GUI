@@ -4,7 +4,7 @@
       <q-page class="bg-vblack">
         <div class="row background-gradient window-height items-center">
           <div class="col text-center q-pa-xl">
-            <q-img src="statics/icons/icon-512x512.png" spinner-color="vdark" style="height: 150px; max-width: 150px" />
+            <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px">
             <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard</div>
             <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>
           </div>
@@ -19,6 +19,7 @@
               </q-input>
               <q-btn color="black" :disabled="privateKey ? false: true" unelevated rounded outline class="full-width q-mt-md" label="Continue" type="submit" />
             </q-form>
+            <q-btn flat round color="vdark" class="fixed-top-right q-ma-sm" icon="fas fa-link" @click="$utils.openExternal('Volentix')" />
           </div>
         </div>
       </q-page>
