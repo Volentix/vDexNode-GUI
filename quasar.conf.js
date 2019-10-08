@@ -249,7 +249,7 @@ module.exports = function (ctx) {
             'Name': 'vDexNode',
             'GenericName': 'vDexNode',
             'X-GNOME-FullName': 'vDexNode',
-            'Comment': 'vDexode',
+            'Comment': 'vDexNode',
             'Type': 'Application',
             'Terminal': 'false',
             'StartupNotify': 'false',
