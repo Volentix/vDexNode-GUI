@@ -1,8 +1,9 @@
-import { app, BrowserWindow, Menu, shell, Tray, ipcMain, nativeImage, dialog } from 'electron'
+import { app, Notification, BrowserWindow, Menu, shell, Tray, ipcMain, nativeImage, dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
 const path = require('path')
 const log = require('electron-log')
 import vdexnodeMenu from './electron-menu'
+const notifier = require('node-notifier')
 const vdexMenu = vdexnodeMenu(app, shell)
 /**
  * Set `__statics` path to static files in production;
@@ -39,8 +40,6 @@ function createWindow () {
   })
   Menu.setApplicationMenu(Menu.buildFromTemplate(vdexMenu))
 }
-
-app.setAppUserModelId('io.volentix.vdexnode')
 
 let iconPath
 if (process.env.PROD) {
@@ -89,6 +88,13 @@ app.on('ready', () => {
   })
 })
 
+app.on('ready', () => {
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('io.volentix.vdexnode')
+    // app.setAsDefaultProtocolClient('vdexnode')
+  }
+})
+
 const toggleWindow = () => {
   if (mainWindow.isVisible()) {
     mainWindow.hide()
@@ -135,23 +141,22 @@ log.info('App starting...')
 function sendStatusToWindow (text) {
   log.info(text)
   mainWindow.webContents.send('message', text)
+  // notifier.notify({
+  //   title: 'vDexNode',
+  //   message: text
+  // })
 }
 
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') {
-    log.info('Setup check for updates and notify')
-    autoUpdater.checkForUpdatesAndNotify()
-  }
-})
+// autoUpdater.on('checking-for-update', () => {
+//   sendStatusToWindow('Checking for update...')
+// })
 
-autoUpdater.on('download-progress', (progressObj) => {
-  let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
-  logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
-  logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-  sendStatusToWindow(logMessage)
-})
+// autoUpdater.on('update-not-available', (info) => {
+//   sendStatusToWindow('Update not available.')
+// })
 
 autoUpdater.on('update-available', (info) => {
+  sendStatusToWindow('Update available. Once the download is complete you will need to quit and restart Verto.')
   try {
     app.dock.setBadge('update')
   } catch (e) {
@@ -162,11 +167,17 @@ autoUpdater.on('update-available', (info) => {
   } catch (e) {
     log.info('setImage() does not work on windows')
   }
-  sendStatusToWindow('Update available. Once the download is complete you will need to quit and restart Verto.')
 })
 
 autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err)
+})
+
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
+  logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
+  logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
+  sendStatusToWindow(logMessage)
 })
 
 autoUpdater.on('update-downloaded', function (event) {
@@ -182,9 +193,10 @@ autoUpdater.on('update-downloaded', function (event) {
     }
   })
 })
-// autoUpdater.on('checking-for-update', () => {
-//   sendStatusToWindow('Checking for update...')
-// })
-// autoUpdater.on('update-not-available', (info) => {
-//   sendStatusToWindow('Update not available.')
-// })
+
+app.on('ready', () => {
+  if (process.env.NODE_ENV === 'production') {
+    log.info('Setup check for updates and notify')
+    autoUpdater.checkForUpdatesAndNotify()
+  }
+})

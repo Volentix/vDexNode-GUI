@@ -37,6 +37,7 @@
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
     "node-fetch": "^2.6.0",
+    "node-notifier": "^6.0.0",
     "quasar": "^1.1.7",
     "topojson": "^3.0.2",
     "vue-i18n": "^8.14.1"
