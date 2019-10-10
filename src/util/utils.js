@@ -8,6 +8,19 @@ import store from '@/store'
 import router from '@/router'
 const { app, dialog } = require('electron').remote
 const fs = require('fs')
+// import ScatterJS from '@scatterjs/core'
+// import ScatterEOS from '@scatterjs/eosjs2'
+// import { Api, JsonRpc } from 'eosjs'
+
+// ScatterJS.plugins(new ScatterEOS())
+
+// const network = ScatterJS.Network.fromJson({
+//   blockchain: 'eos',
+//   chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+//   host: 'nodes.get-scatter.com',
+//   port: 443,
+//   protocol: 'https'
+// })
 
 /**
  * Function returns an array with removed duplicates by any field in the object
@@ -92,6 +105,8 @@ async function login (privateKey) {
     userError(error, 'Login action: get public key')
     throw error
   }
+  // TODO: Here we can delete the private key or encrypt and store in the store.
+  privateKey = ''
 
   try {
     let accounts = await eos.getAccounts(publicKey)
@@ -111,6 +126,37 @@ async function login (privateKey) {
     userError(error, 'Login action: Saving')
   })
 }
+
+// function scatterLogin () {
+//   ScatterJS.connect('vdexnode', { network }).then(connected => {
+//     if (!connected) return console.error('No Scatter Running')
+//     const rpc = new JsonRpc(network.fullhost())
+//     const eos = ScatterJS.eos(network, Api, { rpc })
+
+//     ScatterJS.login().then(id => {
+//       if (!id) return console.error('no identity')
+//       const account = ScatterJS.account('eos')
+//       console.log(account)
+//       let balance = eos.transact({
+//         actions: [{
+//           account: 'vtxdistribut',
+//           name: 'uptime',
+//           authorization: [{
+//             actor: account.name,
+//             permission: 'active'
+//           }],
+//           data: {
+//             account: account.name
+//           }
+//         }]
+//       }, {
+//         blocksBehind: 3,
+//         expireSeconds: 30
+//       })
+//       console.log(balance)
+//     })
+//   })
+// }
 
 function logout () {
   store.dispatch('logout').then(() => {
@@ -150,6 +196,29 @@ function forceFileDownload (response) {
   dialog.showSaveDialog(options, (filename) => {
     fs.writeFileSync(filename, response.data, 'utf-8')
   })
+}
+
+/**
+ * STUB for future notification center in renderer process
+ */
+function notifyMe () {
+  // Let's check if the browser supports notifications
+  if (!('Notification' in window)) {
+    alert('This browser does not support desktop notification')
+  } else if (Notification.permission === 'granted') {
+    // If it's okay let's create a notification
+    var notification = new Notification('Hi there!')
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === 'granted') {
+        var notification = new Notification('Hi there!')
+      }
+    })
+  }
+
+  // At last, if the user has denied notifications, and you
+  // want to be respectful there is no need to bother them any more.
 }
 
 export {
