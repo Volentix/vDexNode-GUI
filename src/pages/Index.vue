@@ -70,7 +70,7 @@
                 </q-item-section>
                 <q-item-section side top>
                     <q-item-label caption :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-vpurple'">{{ identity.balance }}</q-item-label>
-                    <q-badge color="vpurple" class="text-vgrey pointer-cursor" @click="$utils.openExternal('VTX')" v-if="parseFloat(identity.balance) == 0">
+                    <q-badge color="vpurple" class="text-vgrey pointer-cursor" @click="$utils.openExternal('https://www.stex.com/')" v-if="parseFloat(identity.balance) == 0">
                       Get VTX
                       <q-tooltip content-class="bg-vpurple text-vgrey" content-style="font-size: 16px" :offset="[10, 10]">Click to get VTX</q-tooltip>
                     </q-badge>
@@ -186,7 +186,7 @@
                 <q-item v-for="node in nodes" :key="node.id">
                   <q-item-section>
                     <q-item-label class="code"> {{ node.key }}</q-item-label>
-                    <q-item-label caption><q-btn dense flat size="sm" :color="parseFloat(node.balance) > 0 ? 'vgreen' : 'vpurple'" class="code" @click="$utils.openExternal(node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
+                    <q-item-label caption><q-btn dense flat size="sm" :color="parseFloat(node.balance) > 0 ? 'vgreen' : 'vpurple'" class="code" @click="$utils.openExternal('https://bloks.io/account/', node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
                   </q-item-section>
                   <q-item-section side center>
                     <q-item-label class="code" :class="parseFloat(node.balance) > 0 ? 'text-vgreen' : 'text-vpurple'" caption> {{ node.balance }}</q-item-label>
@@ -447,7 +447,7 @@ export default {
     this.m1 = this.getInfoRare()
     this.m2 = this.getInfoOften()
     this.m3 = setInterval(() => this.getInfoOften(), 60000)
-    this.m4 = setInterval(() => this.checkAccountRun(), 600000)
+    // this.m4 = setInterval(() => this.checkAccountRun(), 600000)
     this.m5 = setInterval(() => this.refresh(), 300000)
   },
   methods: {

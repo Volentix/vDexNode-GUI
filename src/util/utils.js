@@ -70,15 +70,8 @@ function getUniqueLocations (locations) {
   return data
 }
 
-function openExternal (accountName) {
-  // TODO: Get rid of if-else.
-  if (accountName === 'VTX') {
-    shell.openExternal('https://www.stex.com/')
-  } else if (accountName === 'Volentix') {
-    shell.openExternal('https://volentix.io/')
-  } else {
-    shell.openExternal('https://bloks.io/account/' + accountName)
-  }
+function openExternal (link, parameter = '') {
+  shell.openExternal(link + parameter)
 }
 
 function formatBytes (bytes, decimals) {

@@ -20,7 +20,7 @@
               </q-input>
               <q-btn color="vdark" :disabled="privateKey ? false: true" unelevated rounded outline class="full-width q-mt-md" label="Continue" type="submit" />
             </q-form>
-            <q-btn flat round color="vdark" class="fixed-top-right q-ma-sm" icon="fas fa-link" @click="$utils.openExternal('Volentix')" />
+            <q-btn flat round color="vdark" class="fixed-top-right q-ma-sm" icon="fas fa-link" @click="$utils.openExternal('https://volentix.io/')" />
             <!-- <q-btn outline rounded unelevated color="vdark" class="" label="Scatter" @click="scatterLogin()" /> -->
           </div>
         </div>
