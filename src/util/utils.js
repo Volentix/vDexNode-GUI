@@ -74,6 +74,14 @@ function openExternal (link, parameter = '') {
   shell.openExternal(link + parameter)
 }
 
+function getVersion () {
+  return app.getVersion()
+}
+
+function getTime () {
+  return Math.floor((new Date()).getTime() / 1000)
+}
+
 function formatBytes (bytes, decimals) {
   if (bytes === 0) return '0 Bytes'
   var k = 1024,
@@ -222,5 +230,7 @@ export {
   getUniqueLocations,
   login,
   logout,
-  getInstaller
+  getInstaller,
+  getVersion,
+  getTime
 }

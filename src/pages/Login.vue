@@ -30,8 +30,6 @@
 </template>
 
 <script>
-const { app } = require('electron').remote
-
 export default {
   data () {
     return {
@@ -41,7 +39,7 @@ export default {
     }
   },
   mounted () {
-    this.version = app.getVersion()
+    this.version = this.$utils.getVersion()
     this.$refs.input.focus()
   },
   methods: {

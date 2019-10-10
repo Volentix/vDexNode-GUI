@@ -50,15 +50,6 @@
             <q-list bordered separator class="bg-vdark text-vgrey inset-shadow">
               <q-item>
                 <q-item-section>
-                    <q-item-label>Private key</q-item-label>
-                    <q-item-label class="code text-vgreen" caption v-bind:style="{ display: privateState }">{{ identity.privateKey }}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn size="md" flat round color="vgreen" :icon="isPrvt ? 'visibility_off' : 'visibility'" @click="showPrivate" />
-                </q-item-section>
-              </q-item>
-              <q-item>
-                <q-item-section>
                     <q-item-label>Public key</q-item-label>
                     <q-item-label class="code text-vgreen" caption>{{ identity.publicKey }}</q-item-label>
                 </q-item-section>
@@ -375,7 +366,6 @@
 
 <script>
 import GeoWidget from '../components/GeoWidget.vue'
-const { app } = require('electron').remote
 
 /**
  * Main page. Loads other components
@@ -425,8 +415,6 @@ export default {
       rankDialog: false,
       votedDialog: false,
       rulesDialog: false,
-      isPrvt: true,
-      privateState: 'none',
       nodes: [],
       registered_nodes: [],
       voting_list: []
@@ -441,25 +429,16 @@ export default {
     }
   },
   mounted () {
-    this.version = app.getVersion()
+    this.version = this.$utils.getVersion()
     this.$store.commit('setEarned', '0.0000')
-    this.status.time = Math.floor((new Date()).getTime() / 1000)
+    this.status.time = this.$utils.getTime()
     this.m1 = this.getInfoRare()
     this.m2 = this.getInfoOften()
     this.m3 = setInterval(() => this.getInfoOften(), 60000)
-    // this.m4 = setInterval(() => this.checkAccountRun(), 600000)
+    // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000)
   },
   methods: {
-    showPrivate () {
-      if (this.isPrvt) {
-        this.isPrvt = false
-        this.privateState = ''
-      } else {
-        this.isPrvt = true
-        this.privateState = 'none'
-      }
-    },
     checkAccountRun () {
       if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.accountName)) {
         this.$userError('Oops, I can\'t see your node in the list. Try to update the list or check your node.', 'Check node running action')
