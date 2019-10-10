@@ -20,11 +20,11 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    minWidth: 850,
-    minHeight: 600,
+    minWidth: 1280,
+    minHeight: 720,
     useContentSize: true,
     resizable: true,
-    title: 'vDexNode GUI',
+    title: 'vDexNode Dashboard',
     center: true,
     webPreferences: {
       backgroundThrottling: false,
