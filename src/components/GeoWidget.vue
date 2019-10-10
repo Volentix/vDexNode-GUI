@@ -7,7 +7,7 @@
     <div id='tooltip' class='hidden bg-vgrey'>
       <p>Location: <span id='city'>Unknown</span></p>
       <p>Quantity: <span id='mass'>Unknown</span></p>
-      <p>Nodes: <span id='nodes'>Unknown</span></p>
+      <!-- <p>Nodes: <span id='nodes'>Unknown</span></p> -->
     </div>
   </div>
 </template>
