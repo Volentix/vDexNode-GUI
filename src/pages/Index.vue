@@ -575,6 +575,7 @@ export default {
     retreiveReward () {
       this.$utils.retreiveReward(this.identity.accountName).then(() => {
         setTimeout(() => this.getInfoOften(), 3000)
+        setTimeout(() => this.$utils.getUserUptime(this.identity.accountName), 3000)
       }).catch((error) => {
         throw new Error(error)
       })
