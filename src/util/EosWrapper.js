@@ -1,6 +1,7 @@
 import { Api, JsonRpc } from 'eosjs'
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
 import { userError } from '@/util/errorHandler'
+import { userResult } from '@/util/resultHandler'
 import ecc from 'eosjs-ecc'
 const { TextEncoder, TextDecoder } = require('util')
 const fetch = require('node-fetch')
@@ -72,6 +73,31 @@ class EosAPI {
     if (arguments.length) {
       const signatureProvider = new JsSignatureProvider([keyProvider])
       this.api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
+    }
+  }
+
+  async transaction (contractAccount, action, authActor, data, successMessage, errorMessage) {
+    try {
+      const result = await this.api.transact({
+        actions: [{
+          account: contractAccount,
+          name: action,
+          authorization: [{
+            actor: authActor,
+            permission: 'active'
+          }],
+          data: data
+        }]
+      }, {
+        blocksBehind: 3,
+        expireSeconds: 30
+      })
+      userResult(successMessage, result)
+    } catch (error) {
+      userError(error, errorMessage)
+      if (error.message.includes('unable to complete by deadline')) {
+        userError('Try at a later time when EOSIO network is not as busy or get more CPU.', 'Vote action')
+      }
     }
   }
 }

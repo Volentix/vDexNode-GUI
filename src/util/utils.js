@@ -155,6 +155,148 @@ function notifyMe () {
   // want to be respectful there is no need to bother them any more.
 }
 
+async function accountAdded (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
+    let nodeStats = result.find(row => row.account === accountName)
+    if (nodeStats) {
+      store.commit('setAccountAdded', true)
+    } else {
+      userResult('Account: ' + accountName + ' is not added to the distribution contract. Please Add it.')
+      store.commit('setAccountAdded', false)
+    }
+  } catch (error) {
+    userError(error, 'Account add status check')
+    throw error
+  }
+}
+
+async function accountRegistered (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+    let nodeStats = result.find(row => row.owner === accountName)
+    if (nodeStats) {
+      store.commit('setAccountRegistered', true)
+    } else {
+      userResult('Account: ' + accountName + ' is not registered to the voting contract. Please Register it.')
+      store.commit('setAccountRegistered', false)
+    }
+  } catch (error) {
+    userError(error, 'Account register status check')
+    throw error
+  }
+}
+
+async function accountRun (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+    let nodeStats = result.find(row => row.account === accountName)
+    if (nodeStats) {
+      store.commit('setAccountRun', true)
+    } else {
+      userResult('Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.')
+      store.commit('setAccountRun', false)
+    }
+  } catch (error) {
+    userError(error, 'Account run status check')
+    throw error
+  }
+}
+
+async function getUserUptime (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+    let nodeStats = result.find(row => row.account === accountName)
+    if (nodeStats) {
+      store.commit('setUptime', Math.floor((store.state.status.time - nodeStats.last_timestamp) / 86400))
+    } else {
+      userError('Couldn\'t find ' + accountName + ' in the uptimes table for getting the Uptime', 'Get uptime action')
+    }
+  } catch (error) {
+    userError(error, 'Get uptime action')
+  }
+}
+
+async function getUserRank (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+    let voteStats = result.find(row => row.owner === accountName)
+    if (voteStats) {
+      let ranks = []
+      result.forEach(item => {
+        let owner = item.owner
+        let votes = item.total_votes
+        ranks.push({ owner, votes })
+      })
+      ranks.sort((a, b) => (b.votes - a.votes))
+      store.commit('setRank', ranks.map((e) => (e.owner)).indexOf(accountName) + 1)
+      store.commit('setTotalRanks', ranks.length)
+    } else {
+      userError('Couldn\'t calculate the Rank for ' + accountName, 'Get rank action')
+    }
+  } catch (error) {
+    userError(error, 'Get rank action')
+  }
+}
+
+async function getUserBalance (accountName) {
+  try {
+    let balance = await Vue.prototype.$rpc.getBalance(accountName)
+    store.commit('setBalance', balance)
+  } catch (error) {
+    userError(error, 'Get balance action')
+  }
+}
+
+async function getUserResources (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getResources(accountName)
+    store.commit('setAccountResources', {
+      'ram': result.ram ? result.ram : 'unknown',
+      'cpu': result.cpu ? result.cpu : 'unknown',
+      'net': result.net ? result.net : 'unknown'
+    })
+  } catch (error) {
+    userError(error, 'Get account resources action')
+  }
+}
+
+async function getUserVoted (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'voters')
+    let nodeStats = result.find(row => row.owner === accountName)
+    if (nodeStats) {
+      store.commit('setVotedI', nodeStats.producers)
+    }
+    var votedFor = []
+    result.forEach(function (item) {
+      if (item.producers.includes(accountName)) {
+        votedFor.push(item.owner)
+      }
+    })
+    store.commit('setVotedFor', votedFor)
+  } catch (error) {
+    userError(error, 'Get voted lists action')
+  }
+}
+
+async function getRegisteredNodes () {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+    var registeredNodes = []
+    result.forEach(function (item) {
+      registeredNodes.push(item.owner)
+    })
+    if (registeredNodes.length) {
+      store.commit('setRegisteredNodes', registeredNodes)
+    } else {
+      throw Error
+    }
+  } catch (error) {
+    userError(error, 'Get registered nodes action')
+  }
+}
+
 async function login (privateKey) {
   try {
     var rpc = new EosRPC()
@@ -240,5 +382,14 @@ export {
   logout,
   getInstaller,
   getVersion,
-  getTime
+  getTime,
+  accountAdded,
+  accountRegistered,
+  accountRun,
+  getUserUptime,
+  getUserRank,
+  getUserBalance,
+  getUserResources,
+  getUserVoted,
+  getRegisteredNodes
 }

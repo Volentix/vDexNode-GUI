@@ -15,7 +15,16 @@ function initialState () {
     identity: {
       voted_i: [],
       voted_for: []
-    }
+    },
+    status: {
+      accountAdded: false,
+      accountRegistered: false,
+      accountRun: false,
+      ram: '',
+      cpu: '',
+      net: ''
+    },
+    registered_nodes: []
   }
 }
 
@@ -24,7 +33,9 @@ const store = new Vuex.Store({
   state: initialState,
   getters: {
     isLoggedIn: state => state.loggedIn,
-    getIdentity: state => state.identity
+    getIdentity: state => state.identity,
+    getStatus: state => state.status,
+    getRegisteredNodes: state => state.registered_nodes
   },
   mutations: {
     logout: (state) => {
@@ -62,6 +73,23 @@ const store = new Vuex.Store({
     },
     setVotedFor: (state, data) => {
       state.identity.voted_for = data
+    },
+    setAccountAdded: (state, added) => {
+      state.status.accountAdded = added
+    },
+    setAccountRegistered: (state, registered) => {
+      state.status.accountRegistered = registered
+    },
+    setAccountRun: (state, run) => {
+      state.status.accountRun = run
+    },
+    setAccountResources: (state, data) => {
+      state.status.ram = data.ram
+      state.status.cpu = data.cpu
+      state.status.net = data.net
+    },
+    setRegisteredNodes: (state, data) => {
+      state.registered_nodes = data
     }
   },
   actions: {
