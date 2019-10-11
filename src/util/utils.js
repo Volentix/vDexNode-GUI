@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import { shell } from 'electron'
-import EosWrapper from '@/util/EosWrapper'
+import { EosRPC, EosAPI } from '@/util/EosWrapper'
 import { userError } from '@/util/errorHandler'
 import { userResult } from '@/util/resultHandler'
+import { Dialog } from 'quasar'
 import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
@@ -91,74 +92,6 @@ function formatBytes (bytes, decimals) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
-async function login (privateKey) {
-  try {
-    var eos = new EosWrapper(privateKey)
-    Vue.prototype.$eos = eos
-  } catch (error) {
-    userError(error, 'Login action: instance of EosWrapper')
-    throw error
-  }
-
-  try {
-    var publicKey = eos.privateToPublic(privateKey)
-  } catch (error) {
-    userError(error, 'Login action: get public key')
-    throw error
-  }
-  // TODO: Here we can delete the private key or encrypt and store in the store.
-  privateKey = ''
-
-  try {
-    let accounts = await eos.getAccounts(publicKey)
-    var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
-    if (!accountName) {
-      userError('Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.', 'Login action: get account name')
-      throw new Error('EOS account is required')
-    }
-  } catch (error) {
-    userError(error, 'Login action: get account name')
-    throw error
-  }
-
-  store.dispatch('login', { privateKey, publicKey, accountName }).then(() => {
-    router.push('/')
-  }).catch(error => {
-    userError(error, 'Login action: Saving')
-  })
-}
-
-// function scatterLogin () {
-//   ScatterJS.connect('vdexnode', { network }).then(connected => {
-//     if (!connected) return console.error('No Scatter Running')
-//     const rpc = new JsonRpc(network.fullhost())
-//     const eos = ScatterJS.eos(network, Api, { rpc })
-
-//     ScatterJS.login().then(id => {
-//       if (!id) return console.error('no identity')
-//       const account = ScatterJS.account('eos')
-//       console.log(account)
-//       let balance = eos.transact({
-//         actions: [{
-//           account: 'vtxdistribut',
-//           name: 'uptime',
-//           authorization: [{
-//             actor: account.name,
-//             permission: 'active'
-//           }],
-//           data: {
-//             account: account.name
-//           }
-//         }]
-//       }, {
-//         blocksBehind: 3,
-//         expireSeconds: 30
-//       })
-//       console.log(balance)
-//     })
-//   })
-// }
-
 function logout () {
   store.dispatch('logout').then(() => {
     router.push('/login')
@@ -221,6 +154,81 @@ function notifyMe () {
   // At last, if the user has denied notifications, and you
   // want to be respectful there is no need to bother them any more.
 }
+
+async function login (privateKey) {
+  try {
+    var rpc = new EosRPC()
+    Vue.prototype.$rpc = rpc
+  } catch (error) {
+    userError(error, 'Login action: instance of EosRPC')
+    throw error
+  }
+
+  try {
+    var eos = new EosAPI(rpc.rpc, privateKey)
+    Vue.prototype.$eos = eos
+  } catch (error) {
+    userError(error, 'Login action: instance of EosAPI')
+    throw error
+  }
+
+  try {
+    var publicKey = rpc.privateToPublic(privateKey)
+  } catch (error) {
+    userError(error, 'Login action: get public key')
+    throw error
+  }
+  privateKey = ''
+
+  try {
+    let accounts = await rpc.getAccounts(publicKey)
+    var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
+    if (!accountName) {
+      userError('Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.', 'Login action: get account name')
+      throw new Error('EOS account is required')
+    }
+  } catch (error) {
+    userError(error, 'Login action: get account name')
+    throw error
+  }
+
+  store.dispatch('login', { privateKey, publicKey, accountName }).then(() => {
+    router.push('/')
+  }).catch(error => {
+    userError(error, 'Login action: Saving')
+  })
+}
+
+// function scatterLogin () {
+//   ScatterJS.connect('vdexnode', { network }).then(connected => {
+//     if (!connected) return console.error('No Scatter Running')
+//     const rpc = new JsonRpc(network.fullhost())
+//     const eos = ScatterJS.eos(network, Api, { rpc })
+
+//     ScatterJS.login().then(id => {
+//       if (!id) return console.error('no identity')
+//       const account = ScatterJS.account('eos')
+//       console.log(account)
+//       let balance = eos.transact({
+//         actions: [{
+//           account: 'vtxdistribut',
+//           name: 'uptime',
+//           authorization: [{
+//             actor: account.name,
+//             permission: 'active'
+//           }],
+//           data: {
+//             account: account.name
+//           }
+//         }]
+//       }, {
+//         blocksBehind: 3,
+//         expireSeconds: 30
+//       })
+//       console.log(balance)
+//     })
+//   })
+// }
 
 export {
   getUnique,

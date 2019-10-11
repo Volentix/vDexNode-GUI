@@ -8,7 +8,6 @@ module.exports = function (ctx) {
       'i18n',
       'axios',
       'utils',
-      'eos',
       'errorHandler',
       'resultHandler'
     ],
@@ -72,7 +71,8 @@ module.exports = function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
     },
 
