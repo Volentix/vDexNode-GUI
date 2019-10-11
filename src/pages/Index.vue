@@ -445,6 +445,12 @@ export default {
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
     this.m6 = setInterval(() => this.$utils.getUserResources(this.identity.accountName), 5000)
   },
+  beforeDestroy () {
+    clearInterval(this.m3)
+    // clearInterval(this.m4)
+    clearInterval(this.m5)
+    clearInterval(this.m6)
+  },
   methods: {
     checkAccountRun () {
       if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.accountName)) {
