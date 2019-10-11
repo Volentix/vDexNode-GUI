@@ -297,6 +297,70 @@ async function getRegisteredNodes () {
   }
 }
 
+async function addNode (accountName) {
+  await Vue.prototype.$eos.transaction(
+    'vtxdistribut',
+    'addnode',
+    accountName,
+    {
+      'account': accountName
+    },
+    'The account added successfully!',
+    'Add the account action')
+}
+
+async function registerNode (accountName) {
+  await Vue.prototype.$eos.transaction(
+    'vdexdposvote',
+    'regproducer',
+    accountName,
+    {
+      'producer': accountName,
+      'producer_name': 'test',
+      'url': 'test',
+      'key': 'test',
+      'node_id': 'test_node_1'
+    },
+    'The account registered successfully!',
+    'Register the account action'
+  )
+}
+
+async function retreiveReward (accountName) {
+  await Vue.prototype.$eos.transaction(
+    'vtxdistribut',
+    'uptime',
+    accountName,
+    {
+      'account': accountName
+    },
+    'Transaction \'Retreive reward\' executed successfully!',
+    'Retreive reward action'
+  )
+}
+
+async function vote (votingList, accountName) {
+  let nodesToVote = []
+  for (var i = 0; i < votingList.length; i++) {
+    nodesToVote.push(votingList[i].account)
+  }
+  if (nodesToVote.length) {
+    Vue.prototype.$eos.transaction(
+      'vdexdposvote',
+      'voteproducer',
+      accountName,
+      {
+        'voter_name': accountName,
+        'producers': nodesToVote
+      },
+      'Voted successfully!',
+      'Vote action'
+    )
+  } else {
+    userError('Oops, I can not build the voting object', 'Vote action')
+  }
+}
+
 async function login (privateKey) {
   try {
     var rpc = new EosRPC()
@@ -391,5 +455,9 @@ export {
   getUserBalance,
   getUserResources,
   getUserVoted,
-  getRegisteredNodes
+  getRegisteredNodes,
+  addNode,
+  registerNode,
+  retreiveReward,
+  vote
 }

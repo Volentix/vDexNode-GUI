@@ -553,68 +553,33 @@ export default {
         this.$userError(error, 'Get account name action')
       }
     },
-    async addNode () {
-      this.$eos.transaction(
-        'vtxdistribut',
-        'addnode',
-        this.identity.accountName,
-        {
-          'account': this.identity.accountName
-        },
-        'The account added successfully!',
-        'Add the account action')
+    addNode () {
+      this.$utils.addNode(this.identity.accountName).then(() => {
+      }).catch((error) => {
+        console.log('error')
+        throw new Error(error)
+      })
     },
-    async registerNode () {
-      this.$eos.transaction(
-        'vdexdposvote',
-        'regproducer',
-        this.identity.accountName,
-        {
-          'producer': this.identity.accountName,
-          'producer_name': 'test',
-          'url': 'test',
-          'key': 'test',
-          'node_id': 'test_node_1'
-        },
-        'The account registered successfully!',
-        'Register the account action'
-      )
+    registerNode () {
+      this.$utils.registerNode(this.identity.accountName).then(() => {
+      }).catch((error) => {
+        throw new Error(error)
+      })
     },
-    async retreiveReward () {
-      this.$eos.transaction(
-        'vtxdistribut',
-        'uptime',
-        this.identity.accountName,
-        {
-          'account': this.identity.accountName
-        },
-        'Transaction \'Retreive reward\' executed successfully!',
-        'Retreive reward action'
-      )
-      setInterval(() => this.getInfoOften(), 3000)
+    retreiveReward () {
+      this.$utils.retreiveReward(this.identity.accountName).then(() => {
+        setTimeout(() => this.getInfoOften(), 3000)
+      }).catch((error) => {
+        throw new Error(error)
+      })
     },
-    async vote () {
-      let nodesToVote = []
-      for (var i = 0; i < this.voting_list.length; i++) {
-        nodesToVote.push(this.voting_list[i].account)
-      }
-      if (nodesToVote.length) {
-        this.$eos.transaction(
-          'vdexdposvote',
-          'voteproducer',
-          this.identity.accountName,
-          {
-            'voter_name': this.identity.accountName,
-            'producers': nodesToVote
-          },
-          'Voted successfully!',
-          'Vote action'
-        )
+    vote () {
+      this.$utils.vote(this.voting_list, this.identity.accountName).then(() => {
         this.voting_list = []
-        setInterval(() => this.getInfoOften(), 3000)
-      } else {
-        this.$userError('Oops, I can not build the voting object', 'Vote action')
-      }
+        setTimeout(() => this.getInfoOften(), 3000)
+      }).catch((error) => {
+        throw new Error(error)
+      })
     }
   }
 }
