@@ -443,6 +443,7 @@ export default {
     // TODO: uncomment when API fix the issue with different number of nodes in response
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
+    this.m6 = setInterval(() => this.$utils.getUserResources(this.identity.accountName), 5000)
   },
   methods: {
     checkAccountRun () {
@@ -475,7 +476,6 @@ export default {
     },
     getInfoOften () {
       this.$utils.getUserBalance(this.identity.accountName)
-      this.$utils.getUserResources(this.identity.accountName)
       this.$utils.getUserVoted(this.identity.accountName)
     },
     getVoteBackList (option) {
