@@ -402,21 +402,12 @@ export default {
   data () {
     return {
       version: '',
-      status: {
-        accountAdded: '',
-        accountRegistered: '',
-        accountRun: '',
-        ram: '',
-        cpu: '',
-        net: ''
-      },
       helpDialog: false,
       chatDialog: false,
       rankDialog: false,
       votedDialog: false,
       rulesDialog: false,
       nodes: [],
-      registered_nodes: [],
       voting_list: []
     }
   },
@@ -429,18 +420,29 @@ export default {
     },
     identity: function () {
       return this.$store.getters.getIdentity
+    },
+    status: function () {
+      return this.$store.getters.getStatus
+    },
+    registered_nodes: function () {
+      return this.$store.getters.getRegisteredNodes
     }
   },
   mounted () {
     this.version = this.$utils.getVersion()
+    this.$utils.accountAdded(this.identity.accountName)
+    this.$utils.accountRegistered(this.identity.accountName)
+    this.$utils.accountRun(this.identity.accountName)
+    this.$utils.getUserUptime(this.identity.accountName)
+    // TODO: not implemented yet
     this.$store.commit('setEarned', '0.0000')
-    this.status.time = this.$utils.getTime()
+    this.$store.state.status.time = this.$utils.getTime()
     this.m1 = this.getInfoRare()
     this.m2 = this.getInfoOften()
-    this.m3 = setInterval(() => this.getInfoOften(), 60000)
+    this.m3 = setInterval(() => this.getInfoOften(), 60000) // 60 sec
     // TODO: uncomment when API fix the issue with different number of nodes in response
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
-    this.m5 = setInterval(() => this.refresh(), 300000)
+    this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
   },
   methods: {
     checkAccountRun () {
@@ -461,24 +463,20 @@ export default {
       }
     },
     refresh () {
-      this.registered_nodes = []
       this.nodes = []
       this.voting_list = []
-      this.getListOfNodes()
+      this.getInfoRare()
       this.getInfoOften()
     },
     getInfoRare () {
       this.getListOfNodes()
-      this.accountAdded()
-      this.accountRegistered()
-      this.accountRun()
-      this.getRank()
-      this.getUptime()
+      this.$utils.getUserRank(this.identity.accountName)
+      this.$utils.getRegisteredNodes()
     },
     getInfoOften () {
-      this.getBalance()
-      this.getResources()
-      this.getVoted()
+      this.$utils.getUserBalance(this.identity.accountName)
+      this.$utils.getUserResources(this.identity.accountName)
+      this.$utils.getUserVoted(this.identity.accountName)
     },
     getVoteBackList (option) {
       let self = this
@@ -510,202 +508,8 @@ export default {
         }
       }
     },
-    async accountAdded () {
-      try {
-        let accountName = this.identity.accountName
-        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
-        let nodeStats = result.find(row => row.account === accountName)
-        if (nodeStats) {
-          this.status.accountAdded = true
-        } else {
-          this.$userResult('Account: ' + accountName + ' is not added to the distribution contract. Please Add it.')
-          this.status.accountAdded = false
-        }
-      } catch (error) {
-        this.$userError(error, 'Account add status check')
-        throw error
-      }
-    },
-    async accountRegistered () {
-      try {
-        let accountName = this.identity.accountName
-        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-        let nodeStats = result.find(row => row.owner === accountName)
-        if (nodeStats) {
-          this.status.accountRegistered = true
-        } else {
-          this.$userResult('Account: ' + accountName + ' is not registered to the voting contract. Please Register it.')
-          this.status.accountRegistered = false
-        }
-      } catch (error) {
-        this.$userError(error, 'Account register status check')
-        throw error
-      }
-    },
-    async accountRun () {
-      try {
-        let accountName = this.identity.accountName
-        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
-        let nodeStats = result.find(row => row.account === accountName)
-        if (nodeStats) {
-          this.status.accountRun = true
-        } else {
-          this.$userResult('Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.')
-          this.status.accountRun = false
-        }
-      } catch (error) {
-        this.$userError(error, 'Account run status check')
-        throw error
-      }
-    },
-    async getBalance () {
-      try {
-        let balance = await this.$rpc.getBalance(this.identity.accountName)
-        this.$store.commit('setBalance', balance)
-      } catch (error) {
-        this.$userError(error, 'Get balance action')
-      }
-    },
-    async getResources () {
-      try {
-        const result = await this.$rpc.getResources(this.identity.accountName)
-        this.status.ram = result.ram ? result.ram : 'unknown'
-        this.status.cpu = result.cpu ? result.cpu : 'unknown'
-        this.status.net = result.net ? result.net : 'unknown'
-      } catch (error) {
-        this.$userError(error, 'Get account resources action')
-      }
-    },
-    async getRank () {
-      try {
-        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-        let voteStats = result.find(row => row.owner === this.identity.accountName)
-        if (voteStats) {
-          let ranks = []
-          result.forEach(item => {
-            let owner = item.owner
-            let votes = item.total_votes
-            ranks.push({ owner, votes })
-          })
-          ranks.sort((a, b) => (b.votes - a.votes))
-          this.$store.commit('setRank', ranks.map((e) => (e.owner)).indexOf(this.identity.accountName) + 1)
-          this.$store.commit('setTotalRanks', ranks.length)
-        } else {
-          this.$userError('Couldn\'t calculate the Rank for ' + this.identity.accountName, 'Get rank action')
-        }
-      } catch (error) {
-        this.$userError(error, 'Get rank action')
-      }
-    },
-    async getUptime () {
-      try {
-        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
-        let nodeStats = result.find(row => row.account === this.identity.accountName)
-        if (nodeStats) {
-          this.$store.commit('setUptime', Math.floor((this.status.time - nodeStats.last_timestamp) / 86400))
-        } else {
-          this.$userError('Couldn\'t find ' + this.identity.accountName + ' in the uptimes table for getting the Uptime', 'Get uptime action')
-        }
-      } catch (error) {
-        this.$userError(error, 'Get uptime action')
-      }
-    },
-    async getVoted () {
-      try {
-        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'voters')
-        let nodeStats = result.find(row => row.owner === this.identity.accountName)
-        if (nodeStats) {
-          this.$store.commit('setVotedI', nodeStats.producers)
-        }
-        var votedFor = []
-        var self = this
-        result.forEach(function (item) {
-          if (item.producers.includes(self.identity.accountName)) {
-            votedFor.push(item.owner)
-          }
-        })
-        this.$store.commit('setVotedFor', votedFor)
-      } catch (error) {
-        this.$userError(error, 'Get voted lists action')
-      }
-    },
-    async addNode () {
-      try {
-        const result = await this.$eos.api.transact({
-          actions: [{
-            account: 'vtxdistribut',
-            name: 'addnode',
-            authorization: [{
-              actor: this.identity.accountName,
-              permission: 'active'
-            }],
-            data: {
-              account: this.identity.accountName
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        this.$userResult('The account added successfully!', result)
-      } catch (error) {
-        this.$userError(error, 'Add the account action')
-      }
-    },
-    async registerNode () {
-      try {
-        const result = await this.$eos.api.transact({
-          actions: [{
-            account: 'vdexdposvote',
-            name: 'regproducer',
-            authorization: [{
-              actor: this.identity.accountName,
-              permission: 'active'
-            }],
-            data: {
-              producer: this.identity.accountName,
-              producer_name: 'test',
-              url: 'test',
-              key: 'test',
-              node_id: 'test_node_1'
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        this.$userResult('The account registered successfully!', result)
-      } catch (error) {
-        this.$userError(error, 'Register the account action')
-      }
-    },
-    async retreiveReward () {
-      try {
-        const result = await this.$eos.api.transact({
-          actions: [{
-            account: 'vtxdistribut',
-            name: 'uptime',
-            authorization: [{
-              actor: this.identity.accountName,
-              permission: 'active'
-            }],
-            data: {
-              account: this.identity.accountName
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        this.$userResult('Transaction \'Retreive reward\' executed successfully!', result)
-        setInterval(() => this.getInfoOften(), 3000)
-      } catch (error) {
-        this.$userError(error, 'Retreive reward action')
-      }
-    },
     async getListOfNodes () {
       await this.getNodes()
-      this.getRegisteredNodes()
       for (var id in this.nodes) {
         this.getAccountName(id, this.nodes[id].key)
       }
@@ -726,17 +530,6 @@ export default {
           this.$userError(error, 'Get nodes action')
         })
       })
-    },
-    async getRegisteredNodes () {
-      try {
-        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-        var self = this
-        result.forEach(function (item) {
-          self.registered_nodes.push(item.owner)
-        })
-      } catch (error) {
-        this.$userError(error, 'Get registered nodes action')
-      }
     },
     async getAccountName (id, key) {
       try {
@@ -760,37 +553,67 @@ export default {
         this.$userError(error, 'Get account name action')
       }
     },
+    async addNode () {
+      this.$eos.transaction(
+        'vtxdistribut',
+        'addnode',
+        this.identity.accountName,
+        {
+          'account': this.identity.accountName
+        },
+        'The account added successfully!',
+        'Add the account action')
+    },
+    async registerNode () {
+      this.$eos.transaction(
+        'vdexdposvote',
+        'regproducer',
+        this.identity.accountName,
+        {
+          'producer': this.identity.accountName,
+          'producer_name': 'test',
+          'url': 'test',
+          'key': 'test',
+          'node_id': 'test_node_1'
+        },
+        'The account registered successfully!',
+        'Register the account action'
+      )
+    },
+    async retreiveReward () {
+      this.$eos.transaction(
+        'vtxdistribut',
+        'uptime',
+        this.identity.accountName,
+        {
+          'account': this.identity.accountName
+        },
+        'Transaction \'Retreive reward\' executed successfully!',
+        'Retreive reward action'
+      )
+      setInterval(() => this.getInfoOften(), 3000)
+    },
     async vote () {
       let nodesToVote = []
       for (var i = 0; i < this.voting_list.length; i++) {
         nodesToVote.push(this.voting_list[i].account)
       }
-      try {
-        const result = await this.$eos.api.transact({
-          actions: [{
-            account: 'vdexdposvote',
-            name: 'voteproducer',
-            authorization: [{
-              actor: this.identity.accountName,
-              permission: 'active'
-            }],
-            data: {
-              voter_name: this.identity.accountName,
-              producers: nodesToVote
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 30
-        })
-        this.$userResult('Voted successfully!', result)
+      if (nodesToVote.length) {
+        this.$eos.transaction(
+          'vdexdposvote',
+          'voteproducer',
+          this.identity.accountName,
+          {
+            'voter_name': this.identity.accountName,
+            'producers': nodesToVote
+          },
+          'Voted successfully!',
+          'Vote action'
+        )
         this.voting_list = []
         setInterval(() => this.getInfoOften(), 3000)
-      } catch (error) {
-        this.$userError(error, 'Vote action')
-        if (error.message.includes('unable to complete by deadline')) {
-          this.$userError('Try at a later time when EOSIO network is not as busy or get more CPU.', 'Vote action')
-        }
+      } else {
+        this.$userError('Oops, I can not build the voting object', 'Vote action')
       }
     }
   }
