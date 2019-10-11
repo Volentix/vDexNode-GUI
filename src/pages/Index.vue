@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="bg-vblack q-px-lg q-pt-sm">
+      <q-page class="bg-vblack q-px-lg q-pt-sm" :class="blur ? 'blur': ''">
         <!-- Topbar -->
         <div class="row q-pb-md">
           <div class="col-md col-sm-12 col-xs-12">
@@ -421,6 +421,9 @@ export default {
     }
   },
   computed: {
+    blur: function () {
+      return this.helpDialog || this.chatDialog || this.rankDialog || this.votedDialog || this.rulesDialog
+    },
     loggedIn: function () {
       return this.$store.getters.isLoggedIn
     },
@@ -435,6 +438,7 @@ export default {
     this.m1 = this.getInfoRare()
     this.m2 = this.getInfoOften()
     this.m3 = setInterval(() => this.getInfoOften(), 60000)
+    // TODO: uncomment when API fix the issue with different number of nodes in response
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000)
   },
@@ -476,10 +480,40 @@ export default {
       this.getResources()
       this.getVoted()
     },
+    getVoteBackList (option) {
+      let self = this
+      let bank = this.nodes.filter(function (item) {
+        return self.identity.voted_for.includes(item.account)
+      })
+
+      if (bank.length <= 21) {
+        bank.forEach((item) => {
+          this.addToVote(item)
+        })
+        bank = []
+      } else {
+        if (option === 'random') {
+          for (let i = 0; i < 21; i++) {
+            let rand = Math.random()
+            let total = bank.length
+            let randIndex = Math.floor(rand * total)
+            this.addToVote(bank[randIndex])
+            bank.splice(randIndex, 1)
+          }
+          bank = []
+        } else if (option === 'top') {
+          bank.sort((a, b) => (parseFloat(b.balance) - parseFloat(a.balance)))
+          let top = bank.slice(0, 21)
+          top.forEach(item => {
+            this.addToVote(item)
+          })
+        }
+      }
+    },
     async accountAdded () {
       try {
         let accountName = this.identity.accountName
-        const result = await this.$eos.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
+        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
         let nodeStats = result.find(row => row.account === accountName)
         if (nodeStats) {
           this.status.accountAdded = true
@@ -495,7 +529,7 @@ export default {
     async accountRegistered () {
       try {
         let accountName = this.identity.accountName
-        const result = await this.$eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
         let nodeStats = result.find(row => row.owner === accountName)
         if (nodeStats) {
           this.status.accountRegistered = true
@@ -511,7 +545,7 @@ export default {
     async accountRun () {
       try {
         let accountName = this.identity.accountName
-        const result = await this.$eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
         let nodeStats = result.find(row => row.account === accountName)
         if (nodeStats) {
           this.status.accountRun = true
@@ -526,15 +560,15 @@ export default {
     },
     async getBalance () {
       try {
-        let balance = await this.$eos.getBalance(this.identity.accountName)
-        this.$store.commit('setBalance', balance[0] ? balance[0] : '0 VTX')
+        let balance = await this.$rpc.getBalance(this.identity.accountName)
+        this.$store.commit('setBalance', balance)
       } catch (error) {
         this.$userError(error, 'Get balance action')
       }
     },
     async getResources () {
       try {
-        const result = await this.$eos.getResources(this.identity.accountName)
+        const result = await this.$rpc.getResources(this.identity.accountName)
         this.status.ram = result.ram ? result.ram : 'unknown'
         this.status.cpu = result.cpu ? result.cpu : 'unknown'
         this.status.net = result.net ? result.net : 'unknown'
@@ -544,7 +578,7 @@ export default {
     },
     async getRank () {
       try {
-        const result = await this.$eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
         let voteStats = result.find(row => row.owner === this.identity.accountName)
         if (voteStats) {
           let ranks = []
@@ -565,7 +599,7 @@ export default {
     },
     async getUptime () {
       try {
-        const result = await this.$eos.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
+        const result = await this.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
         let nodeStats = result.find(row => row.account === this.identity.accountName)
         if (nodeStats) {
           this.$store.commit('setUptime', Math.floor((this.status.time - nodeStats.last_timestamp) / 86400))
@@ -578,7 +612,7 @@ export default {
     },
     async getVoted () {
       try {
-        const result = await this.$eos.getTable('vdexdposvote', 'vdexdposvote', 'voters')
+        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'voters')
         let nodeStats = result.find(row => row.owner === this.identity.accountName)
         if (nodeStats) {
           this.$store.commit('setVotedI', nodeStats.producers)
@@ -695,7 +729,7 @@ export default {
     },
     async getRegisteredNodes () {
       try {
-        const result = await this.$eos.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+        const result = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
         var self = this
         result.forEach(function (item) {
           self.registered_nodes.push(item.owner)
@@ -706,12 +740,12 @@ export default {
     },
     async getAccountName (id, key) {
       try {
-        let accounts = await this.$eos.getAccounts(key)
+        let accounts = await this.$rpc.getAccounts(key)
         let name = accounts.account_names[0] ? accounts.account_names[0] : ''
         if (name) {
-          let balance = await this.$eos.getBalance(name)
+          let balance = await this.$rpc.getBalance(name)
           this.nodes[id].account = name
-          this.nodes[id].balance = balance[0] ? balance[0] : '0 VTX'
+          this.nodes[id].balance = balance
           if (this.registered_nodes.includes(name)) {
             this.nodes[id].vote = true
           } else {
@@ -724,36 +758,6 @@ export default {
         }
       } catch (error) {
         this.$userError(error, 'Get account name action')
-      }
-    },
-    getVoteBackList (option) {
-      let self = this
-      let bank = this.nodes.filter(function (item) {
-        return self.identity.voted_for.includes(item.account)
-      })
-
-      if (bank.length <= 21) {
-        bank.forEach((item) => {
-          this.addToVote(item)
-        })
-        bank = []
-      } else {
-        if (option === 'random') {
-          for (let i = 0; i < 21; i++) {
-            let rand = Math.random()
-            let total = bank.length
-            let randIndex = Math.floor(rand * total)
-            this.addToVote(bank[randIndex])
-            bank.splice(randIndex, 1)
-          }
-          bank = []
-        } else if (option === 'top') {
-          bank.sort((a, b) => (parseFloat(b.balance) - parseFloat(a.balance)))
-          let top = bank.slice(0, 21)
-          top.forEach(item => {
-            this.addToVote(item)
-          })
-        }
       }
     },
     async vote () {
