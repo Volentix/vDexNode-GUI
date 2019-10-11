@@ -11,16 +11,41 @@
     opacity: 0;
   }
 }
+
 .background-gradient {
   background-image: linear-gradient(to bottom right, #00F7A9, #A000FD);
 }
 
+.background-gradient-blur {
+  background-image: linear-gradient(to bottom right, #00F7A9, #A000FD);
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: blur(10px);
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
 .blur {
-  -webkit-filter: blur(5px) grayscale(90%);
-  -moz-filter: blur(5px) grayscale(90%);
-  -o-filter: blur(5px) grayscale(90%);
-  -ms-filter: blur(5px) grayscale(90%);
-  filter: blur(5px) grayscale(90%);
+  opacity: 0.9;
+  -webkit-filter: blur(10px) grayscale(90%);
+  -moz-filter: blur(10px) grayscale(90%);
+  -o-filter: blur(10px) grayscale(90%);
+  -ms-filter: blur(10px) grayscale(90%);
+  filter: blur(10px) grayscale(90%);
 }
 
 // app global css
