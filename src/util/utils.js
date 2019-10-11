@@ -388,20 +388,55 @@ async function login (privateKey) {
 
   try {
     let accounts = await rpc.getAccounts(publicKey)
-    var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
-    if (!accountName) {
-      userError('Seems like you don\'t have an EOS account. An account is required to work with a vDexNode. Please create one using your public key.', 'Login action: get account name')
-      throw new Error('EOS account is required')
+    if (accounts.account_names.length === 1) {
+      var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
+      if (accountName) auth(privateKey, publicKey, accountName)
+      else throw Error('There is no account for this key')
+    } else if (accounts.account_names.length > 1) {
+      chooseAccount(accounts.account_names, (result) => {
+        var accountName = result
+        if (accountName) auth(privateKey, publicKey, accountName)
+        else throw Error('There is no account for this key')
+      })
+    } else {
+      userError('Oops, no account found for this key. You have to create one.', 'Login action: Get accounts ')
     }
   } catch (error) {
     userError(error, 'Login action: get account name')
     throw error
   }
+}
 
+function auth (privateKey, publicKey, accountName) {
   store.dispatch('login', { privateKey, publicKey, accountName }).then(() => {
     router.push('/')
   }).catch(error => {
-    userError(error, 'Login action: Saving')
+    userError(error, 'Auth action: Saving')
+  })
+}
+
+function chooseAccount (accounts, callback) {
+  const acc = []
+  accounts.forEach((account) => {
+    acc.push({ label: account, value: account })
+  })
+  Dialog.create({
+    title: 'Choose account',
+    dark: true,
+    color: 'vgreen',
+    message: 'Found more than one account for this key, please choose one',
+    options: {
+      type: 'radio',
+      model: '',
+      items: acc
+    },
+    cancel: true,
+    persistent: true
+  }).onOk(data => {
+    if (data) callback(data)
+    else userError('You have to choose an account to continue', 'Login action: Choosing account')
+  }).onCancel(() => {
+  }).onDismiss(() => {
   })
 }
 

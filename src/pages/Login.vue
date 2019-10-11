@@ -1,9 +1,8 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="background-gradient">
-        <div class="background-gradient-blur"></div>
-        <div class="row content window-height items-center">
+      <q-page class="bg-vblack">
+        <div class="row background-gradient window-height items-center">
           <div class="col-xs-12 col-sm-12 col-md col-lg text-center q-pa-xl">
             <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px">
             <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard </div>
