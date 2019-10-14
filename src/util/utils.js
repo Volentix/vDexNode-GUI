@@ -210,7 +210,7 @@ async function getUserUptime (accountName) {
     if (nodeStats) {
       store.commit('setUptime', Math.floor((store.state.status.time - nodeStats.last_timestamp) / 86400))
     } else {
-      userError('Couldn\'t find ' + accountName + ' in the uptimes table for getting the Uptime', 'Get uptime action')
+      store.commit('setUptime', 0)
     }
   } catch (error) {
     userError(error, 'Get uptime action')
@@ -232,7 +232,8 @@ async function getUserRank (accountName) {
       store.commit('setRank', ranks.map((e) => (e.owner)).indexOf(accountName) + 1)
       store.commit('setTotalRanks', ranks.length)
     } else {
-      userError('Couldn\'t calculate the Rank for ' + accountName, 'Get rank action')
+      store.commit('setRank', 0)
+      store.commit('setTotalRanks', 0)
     }
   } catch (error) {
     userError(error, 'Get rank action')
@@ -267,6 +268,8 @@ async function getUserVoted (accountName) {
     let nodeStats = result.find(row => row.owner === accountName)
     if (nodeStats) {
       store.commit('setVotedI', nodeStats.producers)
+    } else {
+      store.commit('setVotedI', [])
     }
     var votedFor = []
     result.forEach(function (item) {
