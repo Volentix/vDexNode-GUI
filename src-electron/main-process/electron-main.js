@@ -35,9 +35,19 @@ function createWindow () {
   mainWindow.maximize()
   mainWindow.loadURL(process.env.APP_URL)
 
+  // Hide on close
+  // mainWindow.on('close', (event) => {
+  //   event.preventDefault()
+  //   // mainWindow = null
+  //   mainWindow.hide()
+  // })
+
+  // Exit on close
   mainWindow.on('closed', () => {
     mainWindow = null
+    app.quit()
   })
+
   Menu.setApplicationMenu(Menu.buildFromTemplate(vdexMenu))
 }
 
