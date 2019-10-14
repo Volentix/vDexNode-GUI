@@ -61,7 +61,8 @@ module.exports = function (ctx) {
         'QSpace',
         'QTooltip',
         'QChatMessage',
-        'QForm'
+        'QForm',
+        'QLinearProgress'
       ],
 
       directives: [

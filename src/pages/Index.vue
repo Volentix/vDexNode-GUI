@@ -172,6 +172,7 @@
                 <q-btn size="md" outline color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" :disabled="nodes.length && nodes.every(item => item.balance && item.account) ? false : true" v-on:click="refresh()" />
               </template>
             </q-banner>
+            <q-linear-progress dark indeterminate track-color="vdark" color="vgreen" v-if="nodes.length === 0" />
             <q-scroll-area style="height: 300pt;">
               <q-list bordered separator class="bg-vdark inset-shadow text-vgrey" v-if="nodes.length > 0">
                 <q-item v-for="node in nodes" :key="node.id">
@@ -447,6 +448,7 @@ export default {
   },
   beforeDestroy () {
     clearInterval(this.m3)
+    // TODO: uncomment when feature will be enabled
     // clearInterval(this.m4)
     clearInterval(this.m5)
     clearInterval(this.m6)
@@ -514,6 +516,35 @@ export default {
         }
       }
     },
+    addNode () {
+      this.$utils.addNode(this.identity.accountName).then(() => {
+      }).catch((error) => {
+        console.log('error')
+        throw new Error(error)
+      })
+    },
+    registerNode () {
+      this.$utils.registerNode(this.identity.accountName).then(() => {
+      }).catch((error) => {
+        throw new Error(error)
+      })
+    },
+    retreiveReward () {
+      this.$utils.retreiveReward(this.identity.accountName).then(() => {
+        setTimeout(() => this.getInfoOften(), 3000)
+        setTimeout(() => this.$utils.getUserUptime(this.identity.accountName), 3000)
+      }).catch((error) => {
+        throw new Error(error)
+      })
+    },
+    vote () {
+      this.$utils.vote(this.voting_list, this.identity.accountName).then(() => {
+        this.voting_list = []
+        setTimeout(() => this.getInfoOften(), 3000)
+      }).catch((error) => {
+        throw new Error(error)
+      })
+    },
     async getListOfNodes () {
       await this.getNodes()
       for (var id in this.nodes) {
@@ -558,35 +589,6 @@ export default {
       } catch (error) {
         this.$userError(error, 'Get account name action')
       }
-    },
-    addNode () {
-      this.$utils.addNode(this.identity.accountName).then(() => {
-      }).catch((error) => {
-        console.log('error')
-        throw new Error(error)
-      })
-    },
-    registerNode () {
-      this.$utils.registerNode(this.identity.accountName).then(() => {
-      }).catch((error) => {
-        throw new Error(error)
-      })
-    },
-    retreiveReward () {
-      this.$utils.retreiveReward(this.identity.accountName).then(() => {
-        setTimeout(() => this.getInfoOften(), 3000)
-        setTimeout(() => this.$utils.getUserUptime(this.identity.accountName), 3000)
-      }).catch((error) => {
-        throw new Error(error)
-      })
-    },
-    vote () {
-      this.$utils.vote(this.voting_list, this.identity.accountName).then(() => {
-        this.voting_list = []
-        setTimeout(() => this.getInfoOften(), 3000)
-      }).catch((error) => {
-        throw new Error(error)
-      })
     }
   }
 }
