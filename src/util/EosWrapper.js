@@ -57,9 +57,11 @@ class EosRPC {
     try {
       let resources = await this.rpc.get_account(name)
 
-      let cpu = resources.cpu_limit.available / 1000 + 'ms'
-      let ram = utils.formatBytes(resources.ram_usage, 2) + '/' + utils.formatBytes(resources.ram_quota, 2)
-      let net = utils.formatBytes(resources.net_limit.used, 2) + '/' + utils.formatBytes(resources.net_limit.max, 2)
+      let cpu = resources.cpu_limit.available / 1000 + ' ms'
+      let ram = Math.floor((resources.ram_usage / resources.ram_quota) * 100) + ' %'
+      // let ram = utils.formatBytes(resources.ram_usage, 2) + '/' + utils.formatBytes(resources.ram_quota, 2)
+      let net = Math.floor((resources.net_limit.used / resources.net_limit.max) * 100) + ' %'
+      // let net = utils.formatBytes(resources.net_limit.used, 2) + '/' + utils.formatBytes(resources.net_limit.max, 2)
       return { ram, cpu, net }
     } catch (error) {
       userError(error, 'Get resources')
