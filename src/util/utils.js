@@ -242,7 +242,8 @@ async function getUserRank (accountName) {
 
 async function getUserBalance (accountName) {
   try {
-    let balance = await Vue.prototype.$rpc.getBalance(accountName)
+    let result = await Vue.prototype.$rpc.getBalance(accountName)
+    let balance = parseFloat(result.balance).toFixed(4) + ' ' + result.token
     store.commit('setBalance', balance)
   } catch (error) {
     userError(error, 'Get balance action')

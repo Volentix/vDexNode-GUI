@@ -34,8 +34,15 @@ class EosRPC {
 
   async getBalance (name) {
     try {
-      let balance = await this.rpc.get_currency_balance('volentixgsys', name, 'VTX')
-      return balance.length ? balance[0] : '0 VTX'
+      var balance = 0.0000
+      var token = 'VTX'
+      let result = await this.rpc.get_currency_balance('volentixgsys', name, 'VTX')
+      if (result.length) {
+        let tok = result[0].split(' ')
+        balance = parseFloat(tok[0]).toFixed(8)
+        token = tok[1]
+      }
+      return { balance, token }
     } catch (error) {
       userError(error, 'Get balance')
       throw error
