@@ -60,7 +60,7 @@ if (process.env.PROD) {
 
 let tray = null
 app.on('ready', () => {
-  tray = new Tray(nativeImage.createFromPath(iconPath + '/vdexnodeTemplate.png'))
+  tray = new Tray(nativeImage.createFromPath(iconPath + '/trayTemplate.png'))
   const contextMenu = Menu.buildFromTemplate([
     { label: app.getName() + ': ' + app.getVersion(), enabled: false },
     { type: 'separator' },
@@ -173,7 +173,7 @@ autoUpdater.on('update-available', (info) => {
     log.info('setBadge() does not work on windows.')
   }
   try {
-    tray.setImage(nativeImage.createFromPath(iconPath + '/vdexnodeUpdateTemplate.png'))
+    tray.setImage(nativeImage.createFromPath(iconPath + '/trayUpdateTemplate.png'))
   } catch (e) {
     log.info('setImage() does not work on windows')
   }
