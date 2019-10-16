@@ -6,7 +6,7 @@ class ResultHandler {
       position: 'top-right',
       textColor: 'vdark',
       timeout: 5000,
-      color: 'vgreen',
+      color: 'vgrey',
       icon: 'fas fa-check-circle',
       multiLine: true,
       html: true,
