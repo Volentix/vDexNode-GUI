@@ -154,8 +154,20 @@
                         </q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">Voted for you: {{ this.identity.voted_for.length }}</q-badge>
-                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">I voted for: {{ this.identity.voted_i.length }}</q-badge>
+                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">Voted for you: {{ this.identity.voted_for.length }}
+                      <q-tooltip content-class="bg-grey text-dark">
+                        <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_for" :key="node">
+                          {{ node }}
+                        </q-badge>
+                      </q-tooltip>
+                    </q-badge>
+                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">I voted for: {{ this.identity.voted_i.length }}
+                      <q-tooltip content-class="bg-grey text-dark">
+                        <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_i" :key="node">
+                          {{ node }}
+                        </q-badge>
+                      </q-tooltip>
+                    </q-badge>
                   </div>
                 </div>
               </div>
@@ -741,6 +753,8 @@ export default {
           this.nodes[id].account = name
           this.nodes[id].balance = Math.floor(balance.balance)
           this.nodes[id].vote = this.registered_nodes.includes(name)
+          this.nodes[id].voted_for = this.identity.voted_for.includes(name)
+          this.nodes[id].voted_i = this.identity.voted_i.includes(name)
 
           let voteStats = ranks.find(row => row.owner === name)
           if (voteStats) {
@@ -752,12 +766,14 @@ export default {
             })
             rk.sort((a, b) => (b.votes - a.votes))
             this.nodes[id].rank = rk.map((e) => (e.owner)).indexOf(name) + 1
+          } else {
+            this.nodes[id].rank = 'unknown'
           }
         } else {
           this.nodes[id].account = 'No account found'
           this.nodes[id].balance = 0
           this.nodes[id].vote = false
-          this.nodes[id].rank = 0
+          this.nodes[id].rank = 'unknown'
         }
       } catch (error) {
         this.$userError(error, 'Get account name action')
