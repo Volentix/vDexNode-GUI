@@ -62,7 +62,13 @@ module.exports = function (ctx) {
         'QTooltip',
         'QChatMessage',
         'QForm',
-        'QLinearProgress'
+        'QLinearProgress',
+        'QSeparator',
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd',
+        'QVirtualScroll'
       ],
 
       directives: [
