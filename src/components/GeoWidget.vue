@@ -1,8 +1,5 @@
 <template>
-  <div class='bg-vdark inset-shadow'>
-    <q-banner dense inline-actions class="text-vdark bg-vpurple">
-      Live Nodes: The map widget is currently disabled, the data is artificial.
-    </q-banner>
+  <div class='bg-vdark' id="content">
     <div id='map'></div>
     <div id='tooltip' class='hidden bg-vgrey'>
       <p>Location: <span id='city'>Unknown</span></p>
@@ -111,7 +108,7 @@ export default {
       // d3.json(countries, function (json) {
       var json = countries
       var w = Math.round(window.getComputedStyle(document.getElementById('map')).width.split('px')[0])
-      var h = 400
+      var h = 280
 
       // container svg
       var svg = d3.select('#map')
