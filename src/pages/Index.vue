@@ -4,7 +4,7 @@
       <q-page class="bg-vblack q-pa-lg" :class="blur ? 'blur': ''">
         <!-- Topbar -->
         <div class="row bg-vdark items-center q-mb-lg titilium">
-          <div class="col-3 q-py-sm q-px-md">
+          <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey border-right titilium"><span class="text-weight-bolder">vdexnode</span> dashboard<q-badge color="vpurple" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge></div>
             <div class="row items-center border-right">
               <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
@@ -13,12 +13,12 @@
               </q-btn>
             </div>
           </div>
-          <div class="col-3 q-py-sm q-px-sm">
+          <div class="col q-py-sm q-px-lg">
             <div class="text-h6 text-vgreen text-weight-bolder titilium">VDEXNODE</div>
             <div class="text-vgrey titilium">Distributed in-memory data store</div>
           </div>
 
-          <div class="col q-py-sm q-px-sm">
+          <div class="col-5 q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.getInstaller()" />
               <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$utils.logout()" />
@@ -428,8 +428,15 @@
               <div class="text-h6">Public key</div>
               <q-separator dark />
             </q-card-section>
-            <q-card-section style="max-height: 60vh" class="scroll">
-              {{ identity.publicKey }}
+            <q-card-section>
+              <q-list bordered round class="bg-vgrey text-vdark">
+                <q-item clickable v-ripple @click="$utils.copyToClipboard(identity.publicKey)">
+                  <q-item-section>{{ identity.publicKey }}</q-item-section>
+                  <q-item-section avatar>
+                    <q-icon color="vdark" name="fas fa-copy" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn outline rounded color="vgreen" label="Got it" v-close-popup />

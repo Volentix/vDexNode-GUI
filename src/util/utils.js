@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { shell } from 'electron'
+import { shell, clipboard } from 'electron'
 import { EosRPC, EosAPI } from '@/util/EosWrapper'
 import { userError } from '@/util/errorHandler'
 import { userResult } from '@/util/resultHandler'
@@ -73,6 +73,16 @@ function getUniqueLocations (locations) {
 
 function openExternal (link, parameter = '') {
   shell.openExternal(link + parameter)
+}
+
+function copyToClipboard (data) {
+  try {
+    clipboard.writeText(data)
+  } catch (error) {
+    userError(error, 'Copy to clipboard action')
+  } finally {
+    userResult('Copied')
+  }
 }
 
 function getVersion () {
@@ -498,5 +508,6 @@ export {
   addNode,
   registerNode,
   retreiveReward,
-  vote
+  vote,
+  copyToClipboard
 }
