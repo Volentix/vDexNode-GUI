@@ -180,6 +180,7 @@
             </q-banner>
             <q-separator dark />
             <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.length === 0" />
+            <!-- <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.every(item => !item.rank && !item.account)" /> -->
             <!-- Working example of bad styled list -->
             <!-- <q-list separator dense class="bg-vdark text-vgrey" v-if="nodes.length > 0">
               <q-item>
