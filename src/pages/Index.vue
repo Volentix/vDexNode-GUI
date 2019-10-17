@@ -73,10 +73,11 @@
                 </q-item-section>
                 <q-item-section class="text-right">
                     <q-item-label class="text-weight-bolder" :class="parseFloat(identity.balance) > 0 ? 'text-vgreen' : 'text-vpurple'">{{ identity.balance }}</q-item-label>
-                    <q-badge color="vpurple" class="text-vgrey pointer-cursor" @click="$utils.openExternal('https://www.stex.com/')" v-if="parseFloat(identity.balance) == 0">
-                      Get VTX
-                      <q-tooltip content-class="bg-vpurple text-vgrey" content-style="font-size: 16px" :offset="[10, 10]">Click to get VTX</q-tooltip>
-                    </q-badge>
+                </q-item-section>
+              </q-item>
+              <q-item v-if="parseFloat(identity.balance) == 0">
+                <q-item-section>
+                  <q-btn label="Get VTX" outline rounded color="vpurple" @click="$utils.openExternal('https://www.stex.com/')" />
                 </q-item-section>
               </q-item>
               <q-item>
