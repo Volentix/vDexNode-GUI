@@ -1,6 +1,6 @@
 {
   "name": "vdexnode",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "vDexNode Dashboard",
   "productName": "vDexNode",
   "cordovaId": "org.cordova.vdexnode",

@@ -4,7 +4,7 @@ const path = require('path')
 const log = require('electron-log')
 import vdexnodeMenu from './electron-menu'
 const notifier = require('node-notifier')
-const vdexMenu = vdexnodeMenu(app, shell)
+
 /**
  * Set `__statics` path to static files in production;
  * The reason we are setting it here is that the path needs to be evaluated at runtime
@@ -35,19 +35,17 @@ function createWindow () {
   mainWindow.maximize()
   mainWindow.loadURL(process.env.APP_URL)
 
-  // Hide on close
-  // mainWindow.on('close', (event) => {
-  //   event.preventDefault()
-  //   // mainWindow = null
-  //   mainWindow.hide()
-  // })
+  mainWindow.on('close', (event) => {
+    event.preventDefault()
+    toggleWindow()
+  })
 
-  // Exit on close
   mainWindow.on('closed', () => {
     mainWindow = null
     app.quit()
   })
 
+  const vdexMenu = vdexnodeMenu(app, shell, mainWindow)
   Menu.setApplicationMenu(Menu.buildFromTemplate(vdexMenu))
 }
 

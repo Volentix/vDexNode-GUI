@@ -695,7 +695,6 @@ export default {
     addNode () {
       this.$utils.addNode(this.identity.accountName).then(() => {
       }).catch((error) => {
-        console.log('error')
         throw new Error(error)
       })
     },
