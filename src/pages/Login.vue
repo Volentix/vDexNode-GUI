@@ -30,6 +30,8 @@
 </template>
 
 <script>
+// const ipcRenderer = require('electron').ipcRenderer
+
 export default {
   data () {
     return {
@@ -41,6 +43,7 @@ export default {
   mounted () {
     this.version = this.$utils.getVersion()
     this.$refs.input.focus()
+    // this.updater()
   },
   methods: {
     login () {
@@ -49,7 +52,12 @@ export default {
     },
     async scatterLogin () {
       this.$utils.scatterLogin()
-    }
+    },
+    // updater () {
+    //   ipcRenderer.on('message', (event, data) => {
+    //     this.$userResult(data)
+    //   })
+    // }
   }
 }
 </script>
