@@ -8,6 +8,11 @@
             <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard </div>
             <q-badge color="vdark" class="" text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
             <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>
+
+            <div class="q-mt-lg" v-show="progress > 0 && progress < 1">
+              <q-linear-progress :value="progress" rounded color="vdark" track-color="vgrey" style="height: 20px" />
+              <div class="text-subtitle1 text-vdark">Update downloading: {{ Math.round(progress*100) }} %</div>
+            </div>
           </div>
           <div class="col-xs-12 col-sm-12 col-md col-lg q-pa-xl">
             <div class="text-h5">Import private key</div>
@@ -37,7 +42,8 @@ export default {
     return {
       privateKey: '',
       isPwd: true,
-      version: ''
+      version: '',
+      progress: 0
     }
   },
   mounted () {
@@ -55,9 +61,15 @@ export default {
     },
     updater () {
       // TODO: Update
-      // ipcRenderer.on('message', (event, data) => {
-      //   this.$userResult(data)
-      // })
+      ipcRenderer.on('error', (event, data) => {
+        this.$userError(data, 'Auto updater')
+      })
+      ipcRenderer.on('notification', (event, data) => {
+        this.$userResult(data)
+      })
+      ipcRenderer.on('message', (event, data) => {
+        this.progress = data / 100
+      })
     }
   }
 }

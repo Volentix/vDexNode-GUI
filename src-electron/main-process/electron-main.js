@@ -146,9 +146,9 @@ autoUpdater.logger = log
 autoUpdater.logger.transports.file.level = 'info'
 log.info('App starting...')
 
-function sendStatusToWindow (text) {
+function sendStatusToWindow (type = 'message', text) {
   log.info(text)
-  mainWindow.webContents.send('message', text)
+  mainWindow.webContents.send(type, text)
   // notifier.notify({
   //   title: 'vDexNode',
   //   message: text
@@ -164,7 +164,7 @@ function sendStatusToWindow (text) {
 // })
 
 autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.')
+  sendStatusToWindow('notification', 'Update available.')
   try {
     app.dock.setBadge('update')
   } catch (e) {
@@ -178,25 +178,11 @@ autoUpdater.on('update-available', (info) => {
 })
 
 autoUpdater.on('error', (err) => {
-  sendStatusToWindow('Error in auto-updater. ' + err)
+  sendStatusToWindow('error', 'Error in auto-updater. ' + err)
 })
 
 autoUpdater.on('download-progress', (obj) => {
-  // dialog.showMessageBox({
-  //   type: 'info',
-  //   buttons: ['Restart', 'Later'],
-  //   title: 'Download' + app.getName(),
-  //   message: ('The new version has been downloaded.'),
-  //   detail: obj.percent
-  // }, (index) => {
-  //   if (!index) {
-  //     autoUpdater.quitAndInstall()
-  //   }
-  // })
-  // let logMessage = 'Download speed: ' + progressObj.bytesPerSecond
-  // logMessage = logMessage + ' - Downloaded ' + progressObj.percent + '%'
-  // logMessage = logMessage + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-  sendStatusToWindow('Downloaded: ' + obj.percent + '%')
+  sendStatusToWindow('message', obj.percent)
 })
 
 autoUpdater.on('update-downloaded', function (event) {
