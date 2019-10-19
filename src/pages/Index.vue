@@ -330,44 +330,9 @@
 
         <!-- Map, chat -->
         <div class="row q-col-gutter-x-lg titilium">
-          <!-- Map -->
+          <!-- Map Widget -->
           <div class="col">
-            <q-banner dense inline-actions class="text-vdark bg-vpurple">
-              The map widget is currently disabled, the data is artificial.
-            </q-banner>
-            <div class="row bg-vdark text-vgrey">
-              <div class="col-8">
-                <q-banner dense inline-actions class="text-vgrey bg-vdark q-px-md">
-                  <div class="text-uppercase ">Live Nodes</div>
-                    <template v-slot:action>
-                      <q-btn outline rounded dense color="vpurple" size="sm" class="q-px-sm" label="Show my node" />
-                    </template>
-                </q-banner>
-                <GeoWidget/>
-              </div>
-              <div class="col-4 bg-vdarker text-vgrey">
-                <q-banner dense class="text-vgrey bg-vdarker q-px-md">
-                  <div class="text-uppercase ">Distribution</div>
-                </q-banner>
-                <q-list>
-                  <q-item clickable>
-                    <q-item-section>
-                      <q-item-label>Item 1</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable>
-                    <q-item-section>
-                      <q-item-label>Item 2</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable>
-                    <q-item-section>
-                      <q-item-label>Item 3</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-            </div>
+            <!-- <MapWidget/> -->
           </div>
           <!-- Chat -->
           <div class="col">
@@ -530,7 +495,7 @@
 </template>
 
 <script>
-import GeoWidget from '../components/GeoWidget.vue'
+// import MapWidget from '../components/MapWidget.vue'
 
 /**
  * Main page. Loads other components
@@ -562,7 +527,7 @@ import GeoWidget from '../components/GeoWidget.vue'
 export default {
   name: 'index',
   components: {
-    GeoWidget
+    // MapWidget
   },
   data () {
     return {
@@ -590,7 +555,9 @@ export default {
         { name: 'vote', align: 'center', label: 'Vote', field: 'vote' }
       ],
       nodesPagination: {
-        rowsPerPage: 0
+        rowsPerPage: 0,
+        sortBy: 'rank',
+        descending: false
       }
     }
   },
