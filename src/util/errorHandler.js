@@ -11,7 +11,13 @@ class ErrorHandler extends Error {
       multiLine: true,
       html: true,
       actions: [
-        { label: 'Got it', color: 'vgrey', handler: () => { /* console.log('wooow') */ } }
+        {
+          label: 'Got it',
+          color: 'vgrey',
+          handler: () => {
+            /* console.log('wooow') */
+          }
+        }
       ]
     })
     const error = super(err)

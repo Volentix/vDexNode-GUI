@@ -11,7 +11,13 @@ class ResultHandler {
       multiLine: true,
       html: true,
       actions: [
-        { label: 'Got it', color: 'vdark', handler: () => { /* console.log('wooow') */ } }
+        {
+          label: 'Got it',
+          color: 'vdark',
+          handler: () => {
+            /* console.log('wooow') */
+          }
+        }
       ]
     })
     const details = JSON.stringify(stack, null, 2)

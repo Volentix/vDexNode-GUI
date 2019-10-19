@@ -34,7 +34,7 @@ class EosRPC {
 
   async getBalance (name) {
     try {
-      var balance = 0.0000
+      var balance = 0.0
       var token = 'VTX'
       let result = await this.rpc.get_currency_balance('volentixgsys', name, 'VTX')
       if (result.length) {
@@ -52,7 +52,13 @@ class EosRPC {
   async getTable (code, scope, table) {
     // TODO: Made async query with chunks instead of limits
     try {
-      const resp = await this.rpc.get_table_rows({ code: code, scope: scope, table: table, json: true, limit: 999999999999 })
+      const resp = await this.rpc.get_table_rows({
+        code: code,
+        scope: scope,
+        table: table,
+        json: true,
+        limit: 999999999999
+      })
       return resp.rows
     } catch (error) {
       userError(error, 'Get table')
@@ -81,26 +87,38 @@ class EosAPI {
   constructor (rpc, keyProvider) {
     if (arguments.length) {
       const signatureProvider = new JsSignatureProvider([keyProvider])
-      this.api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
+      this.api = new Api({
+        rpc,
+        signatureProvider,
+        textDecoder: new TextDecoder(),
+        textEncoder: new TextEncoder()
+      })
     }
   }
 
   async transaction (contractAccount, action, authActor, data, successMessage, errorMessage) {
     try {
-      const result = await this.api.transact({
-        actions: [{
-          account: contractAccount,
-          name: action,
-          authorization: [{
-            actor: authActor,
-            permission: 'active'
-          }],
-          data: data
-        }]
-      }, {
-        blocksBehind: 3,
-        expireSeconds: 30
-      })
+      const result = await this.api.transact(
+        {
+          actions: [
+            {
+              account: contractAccount,
+              name: action,
+              authorization: [
+                {
+                  actor: authActor,
+                  permission: 'active'
+                }
+              ],
+              data: data
+            }
+          ]
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      )
       userResult(successMessage, result)
     } catch (error) {
       userError(error, errorMessage)
@@ -111,7 +129,4 @@ class EosAPI {
   }
 }
 
-export {
-  EosRPC,
-  EosAPI
-}
+export { EosRPC, EosAPI }

@@ -38,7 +38,7 @@ const store = new Vuex.Store({
     getRegisteredNodes: state => state.registered_nodes
   },
   mutations: {
-    logout: (state) => {
+    logout: state => {
       Object.assign(state, initialState())
     },
     setPrivateKey: (state, privateKey) => {

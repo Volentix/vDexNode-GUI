@@ -4,17 +4,9 @@ module.exports = function (ctx) {
   return {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
-    boot: [
-      'i18n',
-      'axios',
-      'utils',
-      'errorHandler',
-      'resultHandler'
-    ],
+    boot: ['i18n', 'axios', 'utils', 'errorHandler', 'resultHandler'],
 
-    css: [
-      'app.styl'
-    ],
+    css: ['app.styl'],
 
     extras: [
       'ionicons-v4',
@@ -71,16 +63,10 @@ module.exports = function (ctx) {
         'QVirtualScroll'
       ],
 
-      directives: [
-        'Ripple',
-        'ClosePopup'
-      ],
+      directives: ['Ripple', 'ClosePopup'],
 
       // Quasar plugins
-      plugins: [
-        'Notify',
-        'Dialog'
-      ]
+      plugins: ['Notify', 'Dialog']
     },
 
     supportIE: false,
@@ -135,29 +121,29 @@ module.exports = function (ctx) {
         theme_color: '#027be3',
         icons: [
           {
-            'src': 'statics/icons/icon-128x128.png',
-            'sizes': '128x128',
-            'type': 'image/png'
+            src: 'statics/icons/icon-128x128.png',
+            sizes: '128x128',
+            type: 'image/png'
           },
           {
-            'src': 'statics/icons/icon-192x192.png',
-            'sizes': '192x192',
-            'type': 'image/png'
+            src: 'statics/icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
           },
           {
-            'src': 'statics/icons/icon-256x256.png',
-            'sizes': '256x256',
-            'type': 'image/png'
+            src: 'statics/icons/icon-256x256.png',
+            sizes: '256x256',
+            type: 'image/png'
           },
           {
-            'src': 'statics/icons/icon-384x384.png',
-            'sizes': '384x384',
-            'type': 'image/png'
+            src: 'statics/icons/icon-384x384.png',
+            sizes: '384x384',
+            type: 'image/png'
           },
           {
-            'src': 'statics/icons/icon-512x512.png',
-            'sizes': '512x512',
-            'type': 'image/png'
+            src: 'statics/icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
           }
         ]
       }
@@ -178,23 +164,21 @@ module.exports = function (ctx) {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
 
       builder: {
         // https://www.electron.build/configuration/configuration
-        'productName': 'vDexNode',
-        'appId': 'io.volentix.vdexnode',
+        productName: 'vDexNode',
+        appId: 'io.volentix.vdexnode',
         /* eslint-disable */
-        'artifactName': '${name}-${os}-${version}.${ext}',
+        artifactName: '${name}-${os}-${version}.${ext}',
         /* eslint-enable */
         // "directories": {
         //   "output": "build"
@@ -202,75 +186,73 @@ module.exports = function (ctx) {
         // "files": [
         //   "dist/electron/**/*"
         // ],
-        'extraResources': [
-          'resources/**'
-        ],
-        'dmg': {
-          'background': 'src-electron/icons/background.tiff',
+        extraResources: ['resources/**'],
+        dmg: {
+          background: 'src-electron/icons/background.tiff',
           /* eslint-disable */
-          'title': '${productName}-${version}',
+          title: '${productName}-${version}',
           /* eslint-enable */
-          'contents': [{
-            'x': 520,
-            'y': 225,
-            'type': 'link',
-            'path': '/Applications'
-          },
-          {
-            'x': 280,
-            'y': 230,
-            'type': 'file'
-          }
+          contents: [
+            {
+              x: 520,
+              y: 225,
+              type: 'link',
+              path: '/Applications'
+            },
+            {
+              x: 280,
+              y: 230,
+              type: 'file'
+            }
           ]
         },
-        'mac': {
+        mac: {
           // 'icon': 'src/statics/icons/icon.icns',
-          'target': [
-            'zip',
-            'dmg'
-          ],
-          'extendInfo': {
-            'NSAppTransportSecurity': {
-              'NSAllowsArbitraryLoads': false
+          target: ['zip', 'dmg'],
+          extendInfo: {
+            NSAppTransportSecurity: {
+              NSAllowsArbitraryLoads: false
             },
-            'NSExceptionDomains': {
-              'localhost': {
-                'NSTemporaryExceptionAllowsInsecureHTTPSLoads': false,
-                'NSIncludesSubdomains': false,
-                'NSTemporaryExceptionAllowsInsecureHTTPLoads': true,
-                'NSTemporaryExceptionMinimumTLSVersion': '1.0',
-                'NSTemporaryExceptionRequiresForwardSecrecy': false
+            NSExceptionDomains: {
+              localhost: {
+                NSTemporaryExceptionAllowsInsecureHTTPSLoads: false,
+                NSIncludesSubdomains: false,
+                NSTemporaryExceptionAllowsInsecureHTTPLoads: true,
+                NSTemporaryExceptionMinimumTLSVersion: '1.0',
+                NSTemporaryExceptionRequiresForwardSecrecy: false
               }
             }
           }
         },
-        'win': {
+        win: {
           // 'icon': 'src/statics/icons/icon.ico',
-          'target': 'nsis',
-          'publisherName': 'Volentix Labs, Inc.'
+          target: 'nsis',
+          publisherName: 'Volentix Labs, Inc.'
         },
-        'linux': {
-          'category': 'Network',
-          'description': 'vDexNode',
-          'desktop': {
-            'Name': 'vDexNode',
-            'GenericName': 'vDexNode',
+        linux: {
+          category: 'Network',
+          description: 'vDexNode',
+          desktop: {
+            Name: 'vDexNode',
+            GenericName: 'vDexNode',
             'X-GNOME-FullName': 'vDexNode',
-            'Comment': 'vDexNode',
-            'Type': 'Application',
-            'Terminal': 'false',
-            'StartupNotify': 'false',
-            'Categories': 'Network;'
+            Comment: 'vDexNode',
+            Type: 'Application',
+            Terminal: 'false',
+            StartupNotify: 'false',
+            Categories: 'Network;'
           },
           // 'icon': 'src/statics/icons/...',
-          'target': ['deb', 'AppImage']
+          target: ['deb', 'AppImage']
         },
-        'publish': [{
-          'owner': 'Volentix',
-          'provider': 'github',
-          'releaseType': 'draft',
-          'url': 'https://github.com/Volentix/vdexnode-gui.git'
-        }]
+        publish: [
+          {
+            owner: 'Volentix',
+            provider: 'github',
+            releaseType: 'draft',
+            url: 'https://github.com/Volentix/vdexnode-gui.git'
+          }
+        ]
       }
     }
   }

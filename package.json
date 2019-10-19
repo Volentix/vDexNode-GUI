@@ -33,15 +33,14 @@
     "@scatterjs/core": "^2.7.45",
     "@scatterjs/eosjs2": "^1.5.27",
     "axios": "^0.18.1",
-    "d3": "^3.5.12",
     "electron-log": "^3.0.8",
     "electron-updater": "^4.1.2",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
+    "leaflet": "^1.5.1",
     "node-fetch": "^2.6.0",
     "node-notifier": "^6.0.0",
     "quasar": "^1.1.7",
-    "topojson": "^3.0.2",
     "vue-i18n": "^8.14.1"
   },
   "devDependencies": {
