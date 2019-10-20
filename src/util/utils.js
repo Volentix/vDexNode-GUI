@@ -36,11 +36,13 @@ const fs = require('fs')
  *    unique = [{'key':1}, {'key':2}, {'key':3}]
  */
 function getUnique (arr, comp) {
-  const unique = arr.map(e => e[comp])
+  const unique = arr
+    .map(e => e[comp])
     // store the keys of the unique objects
     .map((e, i, final) => final.indexOf(e) === i && i)
     // eliminate the dead keys & store unique objects
-    .filter(e => arr[e]).map(e => arr[e])
+    .filter(e => arr[e])
+    .map(e => arr[e])
   return unique
 }
 
@@ -55,7 +57,7 @@ function sortByKey (array, key) {
   return array.sort(function (a, b) {
     var x = a[key]
     var y = b[key]
-    return ((x < y) ? -1 : ((x > y) ? 1 : 0))
+    return x < y ? -1 : x > y ? 1 : 0
   })
 }
 
@@ -65,7 +67,7 @@ function getUniqueLocations (locations) {
     if (data.some(item => item.city === locations[i].city)) {
       data.find(item => item.city === locations[i].city).ids.push(locations[i].id)
     } else {
-      data.push({ 'city': locations[i].city, 'lat': locations[i].lat, 'long': locations[i].long, 'ids': [locations[i].id] })
+      data.push({ city: locations[i].city, lat: locations[i].lat, long: locations[i].long, ids: [locations[i].id] })
     }
   }
   return data
@@ -90,7 +92,7 @@ function getVersion () {
 }
 
 function getTime () {
-  return Math.floor((new Date()).getTime() / 1000)
+  return Math.floor(new Date().getTime() / 1000)
 }
 
 function formatBytes (bytes, decimals) {
@@ -117,12 +119,14 @@ function getInstaller () {
       method: 'get',
       url: process.env.INSTALLER,
       responseType: 'arraybuffer'
-    }).then(response => {
-      forceFileDownload(response)
-    }).catch((error) => {
-      userError(error, 'Get Installer action')
-      throw error
     })
+      .then(response => {
+        forceFileDownload(response)
+      })
+      .catch(error => {
+        userError(error, 'Get Installer action')
+        throw error
+      })
   }
 }
 
@@ -132,12 +136,10 @@ function forceFileDownload (response) {
     defaultPath: 'installer',
     buttonLabel: 'Save',
 
-    filters: [
-      { name: 'sh', extensions: ['sh'] }
-    ]
+    filters: [{ name: 'sh', extensions: ['sh'] }]
   }
 
-  dialog.showSaveDialog(options, (filename) => {
+  dialog.showSaveDialog(options, filename => {
     fs.writeFileSync(filename, response.data, 'utf-8')
   })
 }
@@ -204,7 +206,11 @@ async function accountRun (accountName) {
     if (nodeStats) {
       store.commit('setAccountRun', true)
     } else {
-      userResult('Account: ' + accountName + ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.')
+      userResult(
+        'Account: ' +
+          accountName +
+          ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.'
+      )
       store.commit('setAccountRun', false)
     }
   } catch (error) {
@@ -238,8 +244,8 @@ async function getUserRank (accountName) {
         let votes = item.total_votes
         ranks.push({ owner, votes })
       })
-      ranks.sort((a, b) => (b.votes - a.votes))
-      store.commit('setRank', ranks.map((e) => (e.owner)).indexOf(accountName) + 1)
+      ranks.sort((a, b) => b.votes - a.votes)
+      store.commit('setRank', ranks.map(e => e.owner).indexOf(accountName) + 1)
       store.commit('setTotalRanks', ranks.length)
     } else {
       store.commit('setRank', 0)
@@ -264,9 +270,9 @@ async function getUserResources (accountName) {
   try {
     const result = await Vue.prototype.$rpc.getResources(accountName)
     store.commit('setAccountResources', {
-      'ram': result.ram ? result.ram : 'unknown',
-      'cpu': result.cpu ? result.cpu : 'unknown',
-      'net': result.net ? result.net : 'unknown'
+      ram: result.ram ? result.ram : 'unknown',
+      cpu: result.cpu ? result.cpu : 'unknown',
+      net: result.net ? result.net : 'unknown'
     })
   } catch (error) {
     userError(error, 'Get account resources action')
@@ -317,10 +323,11 @@ async function addNode (accountName) {
     'addnode',
     accountName,
     {
-      'account': accountName
+      account: accountName
     },
     'The account added successfully!',
-    'Add the account action')
+    'Add the account action'
+  )
 }
 
 async function registerNode (accountName) {
@@ -329,11 +336,11 @@ async function registerNode (accountName) {
     'regproducer',
     accountName,
     {
-      'producer': accountName,
-      'producer_name': 'test',
-      'url': 'test',
-      'key': 'test',
-      'node_id': 'test_node_1'
+      producer: accountName,
+      producer_name: 'test',
+      url: 'test',
+      key: 'test',
+      node_id: 'test_node_1'
     },
     'The account registered successfully!',
     'Register the account action'
@@ -346,9 +353,9 @@ async function retreiveReward (accountName) {
     'uptime',
     accountName,
     {
-      'account': accountName
+      account: accountName
     },
-    'Transaction \'Retreive reward\' executed successfully!',
+    "Transaction 'Retreive reward' executed successfully!",
     'Retreive reward action'
   )
 }
@@ -364,8 +371,8 @@ async function vote (votingList, accountName) {
       'voteproducer',
       accountName,
       {
-        'voter_name': accountName,
-        'producers': nodesToVote
+        voter_name: accountName,
+        producers: nodesToVote
       },
       'Voted successfully!',
       'Vote action'
@@ -407,7 +414,7 @@ async function login (privateKey) {
       if (accountName) auth(privateKey, publicKey, accountName)
       else throw Error('There is no account for this key')
     } else if (accounts.account_names.length > 1) {
-      chooseAccount(accounts.account_names, (result) => {
+      chooseAccount(accounts.account_names, result => {
         var accountName = result
         if (accountName) auth(privateKey, publicKey, accountName)
         else throw Error('There is no account for this key')
@@ -422,16 +429,19 @@ async function login (privateKey) {
 }
 
 function auth (privateKey, publicKey, accountName) {
-  store.dispatch('login', { privateKey, publicKey, accountName }).then(() => {
-    router.push('/')
-  }).catch(error => {
-    userError(error, 'Auth action: Saving')
-  })
+  store
+    .dispatch('login', { privateKey, publicKey, accountName })
+    .then(() => {
+      router.push('/')
+    })
+    .catch(error => {
+      userError(error, 'Auth action: Saving')
+    })
 }
 
 function chooseAccount (accounts, callback) {
   const acc = []
-  accounts.forEach((account) => {
+  accounts.forEach(account => {
     acc.push({ label: account, value: account })
   })
   Dialog.create({
@@ -446,12 +456,13 @@ function chooseAccount (accounts, callback) {
     },
     cancel: true,
     persistent: true
-  }).onOk(data => {
-    if (data) callback(data)
-    else userError('You have to choose an account to continue', 'Login action: Choosing account')
-  }).onCancel(() => {
-  }).onDismiss(() => {
   })
+    .onOk(data => {
+      if (data) callback(data)
+      else userError('You have to choose an account to continue', 'Login action: Choosing account')
+    })
+    .onCancel(() => {})
+    .onDismiss(() => {})
 }
 
 // function scatterLogin () {
