@@ -4,9 +4,11 @@
       <q-page class="bg-vblack">
         <div class="row background-gradient window-height items-center">
           <div class="col-xs-12 col-sm-12 col-md col-lg text-center q-pa-xl">
-            <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px">
-            <div class="text-h5 text-vdark"><span class="text-weight-bolder">vDexNode</span> dashboard </div>
-            <q-badge color="vdark" class="" text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
+            <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px" />
+            <div class="text-h5 text-vdark">
+              <span class="text-weight-bolder">vDexNode</span> dashboard
+            </div>
+            <q-badge color="vdark" class text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
             <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>
 
             <div class="q-mt-lg" v-show="progress > 0 && progress < 1">

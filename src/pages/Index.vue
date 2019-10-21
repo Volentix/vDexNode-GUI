@@ -7,32 +7,12 @@
           <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey border-right titilium">
               <span class="text-weight-bolder">vdexnode</span> dashboard
-              <q-badge
-                color="vpurple"
-                class="q-mx-sm"
-                text-color="vblack"
-                align="top"
-                transparent
-              >{{ version }}</q-badge>
+              <q-badge color="vpurple" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
             </div>
             <div class="row items-center border-right">
-              <div
-                class="text-italic text-vgrey titilium"
-              >Contribute to the Node Network and get VTX</div>
-              <q-btn
-                color="vgrey"
-                size="xs"
-                flat
-                round
-                icon="fas fa-question"
-                class="q-mx-xs"
-                @click="helpDialog = true"
-              >
-                <q-tooltip
-                  content-class="bg-vgreen text-vdark"
-                  content-style="font-size: 16px"
-                  :offset="[10, 10]"
-                >Click to know more</q-tooltip>
+              <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
+              <q-btn color="vgrey" size="xs" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true">
+                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
               </q-btn>
             </div>
           </div>
@@ -43,22 +23,8 @@
 
           <div class="col-5 q-py-sm q-px-sm">
             <div class="row justify-end">
-              <q-btn
-                outline
-                rounded
-                color="vgreen"
-                class="q-mx-xs"
-                label="Get vDex node"
-                @click="$utils.getInstaller()"
-              />
-              <q-btn
-                outline
-                rounded
-                color="vpurple"
-                class="q-mx-xs"
-                label="Logout"
-                @click="$utils.logout()"
-              />
+              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.getInstaller()" />
+              <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$utils.logout()" />
             </div>
           </div>
         </div>
@@ -73,9 +39,7 @@
                   <div class="text-subtitle2 text-uppercase">Welcome</div>
                 </div>
                 <div class="col text-right">
-                  <div
-                    class="text-subtitle2 text-vgreen text-weight-bolder text-uppercase"
-                  >{{ identity.accountName }}</div>
+                  <div class="text-subtitle2 text-vgreen text-weight-bolder text-uppercase">{{ identity.accountName }}</div>
                 </div>
               </div>
             </q-banner>
@@ -83,61 +47,22 @@
               <q-separator dark />
               <q-item v-if="!status.accountAdded">
                 <q-item-section>
-                  <q-btn
-                    outline
-                    rounded
-                    size="sm"
-                    color="vgreen"
-                    icon="fas fa-user-plus"
-                    class="q-my-xs"
-                    @click="addNode()"
-                    label="Add"
-                  >
-                    <q-tooltip
-                      content-class="bg-vgreen text-vdark"
-                      content-style="font-size: 16px"
-                      :offset="[10, 10]"
-                    >Add the node</q-tooltip>
+                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-user-plus" class="q-my-xs" @click="addNode()" label="Add">
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item v-if="!status.accountRegistered">
                 <q-item-section>
-                  <q-btn
-                    outline
-                    rounded
-                    size="sm"
-                    color="vgreen"
-                    icon="fas fa-address-card"
-                    class="q-my-xs"
-                    @click="registerNode()"
-                    label="Register"
-                  >
-                    <q-tooltip
-                      content-class="bg-vgreen text-vdark"
-                      content-style="font-size: 16px"
-                      :offset="[10, 10]"
-                    >Register the node</q-tooltip>
+                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-address-card" class="q-my-xs" @click="registerNode()" label="Register">
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
                   </q-btn>
                 </q-item-section>
               </q-item>
               <q-item v-if="!status.accountRun">
                 <q-item-section>
-                  <q-btn
-                    outline
-                    rounded
-                    size="sm"
-                    color="vgreen"
-                    icon="fas fa-running"
-                    class="q-my-xs"
-                    @click="retreiveReward()"
-                    label="Run"
-                  >
-                    <q-tooltip
-                      content-class="bg-vgreen text-vdark"
-                      content-style="font-size: 16px"
-                      :offset="[10, 10]"
-                    >
+                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">
                       You need to init your node by pushing the retreive reward
                       action first time.
                     </q-tooltip>
@@ -147,64 +72,30 @@
               <q-item>
                 <q-item-section class="text-left">
                   <q-item-label>
-                    <q-btn
-                      size="sm"
-                      rounded
-                      outline
-                      dense
-                      class="q-my-xs q-px-sm"
-                      color="vgrey"
-                      @click="publicDialog = true"
-                      label="Get public key"
-                    >
-                      <q-tooltip
-                        content-class="bg-vgrey text-vdark"
-                        content-style="font-size: 16px"
-                        :offset="[10, 10]"
-                      >Click to get your public key</q-tooltip>
+                    <q-btn size="sm" rounded outline dense class="q-my-xs q-px-sm" color="vgrey" @click="publicDialog = true" label="Get public key">
+                      <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to get your public key</q-tooltip>
                     </q-btn>
                   </q-item-label>
                 </q-item-section>
                 <q-item-section class="text-right">
-                  <q-item-label
-                    class="text-weight-bolder"
-                    :class="
+                  <q-item-label class="text-weight-bolder" :class="
                       parseFloat(identity.balance) > 0
                         ? 'text-vgreen'
                         : 'text-vpurple'
-                    "
-                  >{{ identity.balance }}</q-item-label>
+                    ">{{ identity.balance }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item v-if="parseFloat(identity.balance) == 0">
                 <q-item-section>
-                  <q-btn
-                    label="Get VTX"
-                    outline
-                    rounded
-                    color="vpurple"
-                    @click="$utils.openExternal('https://www.stex.com/')"
-                  />
+                  <q-btn label="Get VTX" outline rounded color="vpurple" @click="$utils.openExternal('https://www.stex.com/')" />
                 </q-item-section>
               </q-item>
               <q-item>
                 <q-item-section>
                   <q-item-label>
                     Rank:
-                    <q-btn
-                      size="xs"
-                      class="q-mx-xs"
-                      dense
-                      flat
-                      round
-                      icon="fas fa-question"
-                      @click="rankDialog = true"
-                    >
-                      <q-tooltip
-                        content-class="bg-vgrey text-vdark"
-                        content-style="font-size: 16px"
-                        :offset="[10, 10]"
-                      >Click to know more</q-tooltip>
+                    <q-btn size="xs" class="q-mx-xs" dense flat round icon="fas fa-question" @click="rankDialog = true">
+                      <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
                     </q-btn>
                   </q-item-label>
                 </q-item-section>
@@ -268,14 +159,7 @@
               </q-item>
               <q-item>
                 <q-item-section>
-                  <q-btn
-                    label="Retreive reward"
-                    outline
-                    rounded
-                    color="vgreen"
-                    class="q-my-xs"
-                    @click="retreiveReward()"
-                  />
+                  <q-btn label="Retreive reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -289,11 +173,7 @@
                     <div class="text-subtitle2 text-uppercase">
                       List of Nodes on the network
                       <q-btn size="xs" class="q-mx-xs" dense flat round icon="fas fa-question">
-                        <q-tooltip
-                          content-class="bg-vgrey text-vdark"
-                          content-style="font-size: 16px"
-                          :offset="[10, 10]"
-                        >
+                        <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">
                           List of the nodes is automatically updated every 5
                           minutes
                         </q-tooltip>
@@ -305,107 +185,49 @@
                     <q-badge color="vgreen" class="text-vdark q-mr-xs">
                       Registered: {{ registered_nodes.length }}
                       <q-tooltip content-class="bg-grey text-dark">
-                        <q-badge
-                          color="vdark"
-                          class="text-vgrey q-pa-xs q-ma-xs"
-                          v-for="node in registered_nodes"
-                          :key="node"
-                        >{{ node }}</q-badge>
+                        <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge
-                      color="vgreen"
-                      class="text-vdark q-mx-xs"
-                      v-if="identity.voted_for.length > 0"
-                    >
+                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">
                       Voted for you: {{ this.identity.voted_for.length }}
                       <q-tooltip content-class="bg-grey text-dark">
-                        <q-badge
-                          color="vdark"
-                          class="text-vgrey q-pa-xs q-ma-xs"
-                          v-for="node in identity.voted_for"
-                          :key="node"
-                        >{{ node }}</q-badge>
+                        <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_for" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge
-                      color="vgreen"
-                      class="text-vdark q-mx-xs"
-                      v-if="identity.voted_i.length > 0"
-                    >
+                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">
                       I voted for: {{ this.identity.voted_i.length }}
                       <q-tooltip content-class="bg-grey text-dark">
-                        <q-badge
-                          color="vdark"
-                          class="text-vgrey q-pa-xs q-ma-xs"
-                          v-for="node in identity.voted_i"
-                          :key="node"
-                        >{{ node }}</q-badge>
+                        <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_i" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
                   </div>
                 </div>
               </div>
               <template v-slot:action>
-                <q-btn
-                  outline
-                  rounded
-                  size="xs"
-                  dense
-                  :disabled="
+                <q-btn outline rounded size="xs" dense :disabled="
                     !voting_list.length &&
                     nodes.length &&
                     nodes.every(item => item.balance !== '' && item.account)
                       ? false
                       : true
-                  "
-                  color="vgreen"
-                  class="q-px-sm q-mx-xs"
-                  @click="getVoteBackList('random')"
-                  label="Vote back (random)"
-                />
-                <q-btn
-                  outline
-                  rounded
-                  size="xs"
-                  dense
-                  :disabled="
+                  " color="vgreen" class="q-px-sm q-mx-xs" @click="getVoteBackList('random')" label="Vote back (random)" />
+                <q-btn outline rounded size="xs" dense :disabled="
                     !voting_list.length &&
                     nodes.length &&
                     nodes.every(item => item.balance !== '' && item.account)
                       ? false
                       : true
-                  "
-                  color="vgreen"
-                  class="q-px-sm q-mx-xs"
-                  @click="getVoteBackList('top')"
-                  label="Vote back (top)"
-                />
-                <q-btn
-                  outline
-                  flat
-                  round
-                  color="vgreen"
-                  icon="fas fa-sync-alt"
-                  class="q-mx-xs"
-                  :disabled="
+                  " color="vgreen" class="q-px-sm q-mx-xs" @click="getVoteBackList('top')" label="Vote back (top)" />
+                <q-btn outline flat round color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" :disabled="
                     nodes.length &&
                     nodes.every(item => item.balance !== '' && item.account)
                       ? false
                       : true
-                  "
-                  v-on:click="refresh()"
-                />
+                  " v-on:click="refresh()" />
               </template>
             </q-banner>
             <q-separator dark />
-            <q-linear-progress
-              dark
-              indeterminate
-              track-color="vgrey"
-              color="vgreen"
-              v-if="nodes.length === 0"
-            />
+            <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.length === 0" />
             <!-- <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.every(item => !item.rank && !item.account)" /> -->
             <!-- Working example of bad styled list -->
             <!-- <q-list separator dense class="bg-vdark text-vgrey" v-if="nodes.length > 0">
@@ -458,89 +280,44 @@
             </q-list>-->
             <!-- Table example -->
             <div class="bg-vdark">
-              <q-table
-                dense
-                :data="nodes"
-                :columns="nodesColumns"
-                row-key="name"
-                virtual-scroll
-                :pagination.sync="nodesPagination"
-                :rows-per-page-options="[0]"
-                table-style="max-height: 190pt;"
-                hide-bottom
-                class="bg-vdark text-vgrey"
-              >
+              <q-table dense :data="nodes" :columns="nodesColumns" row-key="name" virtual-scroll :pagination.sync="nodesPagination" :rows-per-page-options="[0]" table-style="max-height: 190pt;" hide-bottom class="bg-vdark text-vgrey">
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td key="account" :props="props">
-                      <q-btn
-                        dense
-                        flat
-                        size="sm"
-                        :color="props.row.balance > 0 ? 'vgreen' : 'vpurple'"
-                        class="code"
-                        @click="
+                      <q-btn dense flat size="sm" :color="props.row.balance > 0 ? 'vgreen' : 'vpurple'" class="code" @click="
                           $utils.openExternal(
                             'https://bloks.io/account/',
                             props.row.account
                           )
-                        "
-                        :label="props.row.account"
-                        :disabled="
+                        " :label="props.row.account" :disabled="
                           props.row.account !== 'No account found'
                             ? false
                             : true
-                        "
-                      />
+                        " />
                     </q-td>
                     <q-td key="rank" :props="props" class="code">
                       {{
                       props.row.rank
                       }}
                     </q-td>
-                    <q-td
-                      key="balance"
-                      :props="props"
-                      class="code"
-                      :class="
+                    <q-td key="balance" :props="props" class="code" :class="
                         props.row.balance > 0 ? 'text-vgrey' : 'text-vpurple'
-                      "
-                    >{{ props.row.balance }} VTX</q-td>
+                      ">{{ props.row.balance }} VTX</q-td>
                     <q-td key="voted_for" :props="props">
                       <q-icon name="fas fa-check" class="text-vgreen" v-show="props.row.voted_for" />
-                      <q-icon
-                        name="fas fa-times"
-                        class="text-vblack"
-                        v-show="!props.row.voted_for"
-                      />
+                      <q-icon name="fas fa-times" class="text-vblack" v-show="!props.row.voted_for" />
                     </q-td>
                     <q-td key="voted_i" :props="props">
                       <q-icon name="fas fa-check" class="text-vgreen" v-show="props.row.voted_i" />
                       <q-icon name="fas fa-times" class="text-vblack" v-show="!props.row.voted_i" />
                     </q-td>
                     <q-td key="vote" :props="props">
-                      <div
-                        v-if="
+                      <div v-if="
                           props.row.vote &&
                             props.row.account != identity.accountName
-                        "
-                      >
-                        <q-btn
-                          outline
-                          size="xs"
-                          rounded
-                          color="vgreen"
-                          v-on:click="addToVote(props.row)"
-                          v-if="!voting_list.includes(props.row)"
-                        >Vote</q-btn>
-                        <q-btn
-                          size="xs"
-                          rounded
-                          color="vgreen"
-                          class="text-vdark"
-                          v-on:click="addToVote(props.row)"
-                          v-if="voting_list.includes(props.row)"
-                        >Vote</q-btn>
+                        ">
+                        <q-btn outline size="xs" rounded color="vgreen" v-on:click="addToVote(props.row)" v-if="!voting_list.includes(props.row)">Vote</q-btn>
+                        <q-btn size="xs" rounded color="vgreen" class="text-vdark" v-on:click="addToVote(props.row)" v-if="voting_list.includes(props.row)">Vote</q-btn>
                       </div>
                     </q-td>
                   </q-tr>
@@ -556,77 +333,32 @@
                   <div class="text-uppercase">Voting</div>
                 </div>
                 <div class="col">
-                  <q-btn size="sm" class="full-width" color="vgrey" dense  outline rounded label="Rules" v-if="voting_list.length == 0" @click="rulesDialog = true" >
-                    <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]" >
-                      Click to see the voting rules
-                    </q-tooltip>
+                  <q-btn size="sm" class="full-width" color="vgrey" dense outline rounded label="Rules" v-if="voting_list.length == 0" @click="rulesDialog = true">
+                    <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
                   </q-btn>
-                  <q-badge color="vgreen" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0" >
-                    {{ voting_list.length }}/21
-                  </q-badge>
-                  <q-btn
-                    size="sm"
-                    class="q-mx-xs"
-                    color="vgrey"
-                    flat
-                    round
-                    icon="fas fa-backspace"
-                    v-if="voting_list.length > 0"
-                    @click="voting_list = []"
-                  >
-                    <q-tooltip
-                      content-class="bg-vgrey text-vdark"
-                      content-style="font-size: 16px"
-                      :offset="[10, 10]"
-                    >Click to clear the voting list</q-tooltip>
+                  <q-badge color="vgreen" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
+                  <q-btn size="sm" class="q-mx-xs" color="vgrey" flat round icon="fas fa-backspace" v-if="voting_list.length > 0" @click="voting_list = []">
+                    <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to clear the voting list</q-tooltip>
                   </q-btn>
                 </div>
                 <div class="col-4 q-pa-sm text-right">
                   <div class="text-caption" v-if="voting_list.length == 0">Choose nodes</div>
-                  <q-btn
-                    color="vgreen"
-                    rounded
-                    size="sm"
-                    class="text-vdark text-weight-bolder"
-                    v-on:click="vote()"
-                    v-if="voting_list.length > 0"
-                  >Vote now</q-btn>
+                  <q-btn color="vgreen" rounded size="sm" class="text-vdark text-weight-bolder" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 </div>
               </div>
             </q-banner>
             <q-separator dark />
             <div class="bg-vdark">
-              <q-table
-                v-if="voting_list.length > 0"
-                dense
-                flat
-                :data="voting_list"
-                :columns="voting_listColumns"
-                row-key="name"
-                virtual-scroll
-                :pagination.sync="voting_listPagination"
-                :rows-per-page-options="[0]"
-                table-style="max-height: 190pt;"
-                hide-bottom
-                class="bg-vdark text-vgrey"
-              >
+              <q-table v-if="voting_list.length > 0" dense flat :data="voting_list" :columns="voting_listColumns" row-key="name" virtual-scroll :pagination.sync="voting_listPagination" :rows-per-page-options="[0]" table-style="max-height: 190pt;" hide-bottom class="bg-vdark text-vgrey">
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td key="account" :props="props">
-                      <q-btn
-                        dense
-                        flat
-                        size="sm"
-                        color="vgreen"
-                        class="code"
-                        @click="
+                      <q-btn dense flat size="sm" color="vgreen" class="code" @click="
                           $utils.openExternal(
                             'https://bloks.io/account/',
                             props.row.account
                           )
-                        "
-                        :label="props.row.account"
-                      />
+                        " :label="props.row.account" />
                     </q-td>
                     <q-td key="rank" :props="props">{{ props.row.rank }}</q-td>
                     <q-td key="balance" :props="props">{{ props.row.balance }} VTX</q-td>
@@ -641,16 +373,12 @@
         <div class="row q-col-gutter-x-lg titilium">
           <!-- Map Widget -->
           <div class="col-7">
-            <q-banner dense inline-actions class="text-vdark bg-vpurple">
-              The map widget is currently disabled, the data is artificial.
-            </q-banner>
-            <MapWidget v-bind:nodes="nodes"/>
+            <q-banner dense inline-actions class="text-vdark bg-vpurple">The map widget is currently disabled, the data is artificial.</q-banner>
+            <MapWidget v-bind:nodes="nodes" />
           </div>
           <!-- Chat -->
           <div class="col-5">
-            <q-banner dense inline-actions class="text-vdark bg-vpurple" >
-              The chat widget is currently disabled, the data is artificial.
-            </q-banner>
+            <q-banner dense inline-actions class="text-vdark bg-vpurple">The chat widget is currently disabled, the data is artificial.</q-banner>
             <div class="row">
               <div class="col-4 text-vgrey bg-vdark">
                 <q-banner dense class="text-vgrey bg-vdark q-px-md q-pt-md">
@@ -677,7 +405,7 @@
               </div>
               <div class="col-8 bg-vdarker">
                 <div class="column">
-                  <div class="col scroll q-px-md text-vgrey" style="min-height: 30vh; max-height: 30vh" >
+                  <div class="col scroll q-px-md text-vgrey" style="min-height: 30vh; max-height: 30vh">
                     <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
                     <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
                     <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
@@ -685,7 +413,7 @@
                     <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
                     <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
                     <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
-                    <q-chat-message  name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
+                    <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
                   </div>
                   <div class="col q-px-md q-my-md">
                     <q-input dense rounded outlined dark color="vgreen">

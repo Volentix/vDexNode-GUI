@@ -1109,10 +1109,10 @@
   resolved "https://registry.yarnpkg.com/@positron/stack-trace/-/stack-trace-1.0.0.tgz#14fcc712a530038ef9be1ce6952315a839f466a8"
   integrity sha1-FPzHEqUwA475vhzmlSMVqDn0Zqg=
 
-"@quasar/app@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@quasar/app/-/app-1.1.4.tgz#2f4a04d4bf3c242388c78d189ceaca174a0ebfe1"
-  integrity sha512-jAzRi+rFVN6VPHCTlCcpH4ui6KHqA6pOPHqSdKnncYkkXGxqDwFumnTFjQfV1Iz5/+a0x3056y3i6n8QOFZ6Og==
+"@quasar/app@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@quasar/app/-/app-1.2.2.tgz#ded118f5329b7c8fd1245898a409be1b0802c7e3"
+  integrity sha512-Z/l2j9EL6xXiO5eLTMPYcoHDSRf9gd+TC0F+2piJcG1OSEil51aeMWlvZBoxN4jz2Gm5ZiUwmq8mwttlzEeQMg==
   dependencies:
     "@quasar/babel-preset-app" "1.1.6"
     "@quasar/fastclick" "1.1.4"
@@ -1221,10 +1221,10 @@
     dotenv "^8.1.0"
     fs "^0.0.2"
 
-"@quasar/quasar-app-extension-icon-genie@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@quasar/quasar-app-extension-icon-genie/-/quasar-app-extension-icon-genie-1.1.0.tgz#0260687c3e9ae694f774a17b47bc9234eb13c3ab"
-  integrity sha512-hGZp1TiaafMEzQgq+dRNuNJXTn2qkqHeK7B4/U4GqALEsSCi+3SAy6sMUKjiV1vS0twEfTROuGqoyNqhpmXt2w==
+"@quasar/quasar-app-extension-icon-genie@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@quasar/quasar-app-extension-icon-genie/-/quasar-app-extension-icon-genie-1.1.1.tgz#4f7d237f0ce613d96f088123f315516bcfb79903"
+  integrity sha512-VBlzuDMVmPECcDOeQTOK9+ZTTxbKppoTLM2gXmKOswibtpVdkBaRadUfkqZuFWjGV5nHTKBJfzdM5+jVKvJzwQ==
   dependencies:
     elementtree "^0.1.7"
     execa "^2.0.4"
@@ -1246,6 +1246,18 @@
   version "2.7.45"
   resolved "https://registry.yarnpkg.com/@scatterjs/core/-/core-2.7.45.tgz#fba9bad149b7ab5236f82f718f8f30d636b04976"
   integrity sha512-MDmMY1dJlsIIyBqjoPxnrJKFNVBcx2CafBbk3yL5GU1tod3Acg02IuMrCmbkkG1hlY2CKL/+nTHLiTqShNhEGQ==
+  dependencies:
+    create-hash "^1.2.0"
+    device-uuid "^1.0.4"
+    es6-promise "^4.2.4"
+    get-random-values "^1.2.0"
+    isomorphic-ws "^4.0.1"
+    ws "^6.1.0"
+
+"@scatterjs/core@^2.7.47":
+  version "2.7.47"
+  resolved "https://registry.yarnpkg.com/@scatterjs/core/-/core-2.7.47.tgz#ea86a7c72039f03fef956ecd05bb8eb4774c6f2a"
+  integrity sha512-txPYHTvOXL5mBgnxZksGcmzMwkXQ8+qxkmw6orGwi8yfs6xnLdEHN2fGfczdRR+uetj9PYArEBmLs2KlNACV5Q==
   dependencies:
     create-hash "^1.2.0"
     device-uuid "^1.0.4"
@@ -4051,10 +4063,10 @@ electron-updater@^4.1.2:
     pako "^1.0.10"
     semver "^6.2.0"
 
-electron@^6.0.11:
-  version "6.0.11"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-6.0.11.tgz#64effa71397045779a1ddbf51312a41ccf26f491"
-  integrity sha512-mi1oHmeFIQrg+CDQ6lbugZAloOxuWPm/ecEKYe1230PGlDoWND7SYStiWQ2eI4YXAEOL/NvuY88ogemu1qhdBg==
+electron@^6.0.12:
+  version "6.0.12"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-6.0.12.tgz#85bf0061e32f660256cfde95488f1cb75253bc94"
+  integrity sha512-70ODZa1RP6K0gE9IV9YLCXPSyhLjXksCuYSSPb3MljbfwfHo5uE6X0CGxzm+54YuPdE2e7EPnWZxOOsJYrS5iQ==
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"
@@ -4248,7 +4260,7 @@ eslint-import-resolver-node@^0.3.2:
     debug "^2.6.9"
     resolve "^1.5.0"
 
-eslint-loader@^3.0.0:
+eslint-loader@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/eslint-loader/-/eslint-loader-3.0.2.tgz#5a627316a51d6f41d357b9f6f0554e91506cdd6e"
   integrity sha512-S5VnD+UpVY1PyYRqeBd/4pgsmkvSokbHqTXAQMpvCyRr3XN2tvSLo9spm2nEpqQqh9dezw3os/0zWihLeOg2Rw==
@@ -4344,12 +4356,19 @@ eslint-utils@^1.3.1, eslint-utils@^1.4.2:
   dependencies:
     eslint-visitor-keys "^1.0.0"
 
+eslint-utils@^1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/eslint-utils/-/eslint-utils-1.4.3.tgz#74fec7c54d0776b6f67e0251040b5806564e981f"
+  integrity sha512-fbBN5W2xdY45KulGXmLHZ3c3FHfVYmKg0IrAKGOkT/464PQsx2UeIzfz1RmEci+KLm1bBaAzZAh8+/E+XAeZ8Q==
+  dependencies:
+    eslint-visitor-keys "^1.1.0"
+
 eslint-visitor-keys@^1.0.0, eslint-visitor-keys@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.1.0.tgz#e2a82cea84ff246ad6fb57f9bde5b46621459ec2"
   integrity sha512-8y9YjtM1JBJU/A9Kc+SbaOV4y29sSWckBwMHa+FGtVj5gN/sbnKDf6xJUl+8g7FAij9LVaP8C24DUiH/f/2Z9A==
 
-eslint@^6.4.0:
+eslint@^6.5.1:
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-6.5.1.tgz#828e4c469697d43bb586144be152198b91e96ed6"
   integrity sha512-32h99BoLYStT1iq1v2P9uwpyznQ4M2jRiFB6acitKz52Gqn+vPaMDUTB1bYi1WN4Nquj2w+t+bimYUG83DC55A==
@@ -9105,10 +9124,10 @@ qs@~6.5.2:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
 
-quasar@^1.1.7:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/quasar/-/quasar-1.1.7.tgz#68803a898a2a34c3c0b8d9ea30d40298c4a8c976"
-  integrity sha512-MNL3vSnz2fbc0OVXldJd9dxD5hRPvlKF4HZ4GWJ6u7uFDnbXUaeqUb0Sc3zwFhT1ozKRtJg/rcVsF2hSbOrixQ==
+quasar@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/quasar/-/quasar-1.2.4.tgz#9987bc13ea22d0b8dbb02a615553f14b5bfa591d"
+  integrity sha512-PFA7W2Homm5qSnxs7Za7qAiyYHppifgPgAAcFu1skexfy3fgQaD+8R1GFFJYsIp/ce3vm/pcVvBDm4lKbwh43w==
 
 query-string@^4.1.0:
   version "4.3.4"
@@ -11192,10 +11211,10 @@ vue-hot-reload-api@^2.3.0:
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
 
-vue-i18n@^8.14.1:
-  version "8.14.1"
-  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.14.1.tgz#0ca0a2742c14e0144481655157fffcc7cc313e50"
-  integrity sha512-uHzw5GTFyf/TmjJXveSl3L4CG61KI4lvhKOQvx8W4Y8P2LZ3v3l/qw4KRs1C6pWyjkfY9p0rezYNFO5YzMEQ8A==
+vue-i18n@^8.15.0:
+  version "8.15.0"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.15.0.tgz#9b11ef8e7a124f67cdf788c8c90a81f3606240ed"
+  integrity sha512-juJ/avAP39bOMycC+qQDLJ8U9z9LtLF/9PsRoJLBSfsYZo9bqYntyyX5QPicwlb1emJKjgxhZ3YofHiQcXBu0Q==
 
 vue-loader@15.7.1:
   version "15.7.1"

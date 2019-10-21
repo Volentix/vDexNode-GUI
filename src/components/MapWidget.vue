@@ -100,7 +100,7 @@ export default {
                 mass: locations[i].ids.length,
                 city: locations[i].city,
                 nodes: locations[i].ids
-              })
+              });
             }
             /* eslint-enable */
             resolve()
@@ -142,7 +142,7 @@ export default {
               mass: locations[i].ids.length,
               city: locations[i].city,
               nodes: locations[i].ids
-            })
+            });
           }
           /* eslint-enable */
         }, 1000)
@@ -156,7 +156,8 @@ export default {
       this.map.setView([53.505, -3.09], 10)
     },
     mapLoad () {
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -168,14 +169,19 @@ export default {
     }, // end of mapLoad
     markersLoad () {
       for (var i = 0; i < this.nodeGeoData.length; ++i) {
-        L.circle([this.nodeGeoData[i].lat, this.nodeGeoData[i].long],
-          {
-            color: '#A000FD',
-            fillColor: '#7000B1',
-            fillOpacity: 0.8,
-            radius: this.nodeGeoData[i].mass * 100
-          })
-          .bindPopup('<ul><li>City: ' + this.nodeGeoData[i].city + '</li><li>Nodes: ' + this.nodeGeoData[i].mass + '</li></ul>')
+        L.circle([this.nodeGeoData[i].lat, this.nodeGeoData[i].long], {
+          color: '#A000FD',
+          fillColor: '#7000B1',
+          fillOpacity: 0.8,
+          radius: this.nodeGeoData[i].mass * 100
+        })
+          .bindPopup(
+            '<ul><li>City: ' +
+              this.nodeGeoData[i].city +
+              '</li><li>Nodes: ' +
+              this.nodeGeoData[i].mass +
+              '</li></ul>'
+          )
           .addTo(this.map)
       }
     }
