@@ -1,5 +1,6 @@
 <template>
   <q-layout>
+    <div class="titlebar"></div>
     <q-page-container>
       <q-page class="bg-vblack">
         <div class="row background-gradient window-height items-center">

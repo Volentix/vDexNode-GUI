@@ -1,5 +1,6 @@
 <template>
   <q-layout>
+    <div class="titlebar"></div>
     <q-page-container>
       <q-page class="bg-vblack q-pa-lg" :class="blur ? 'blur' : ''">
         <!-- Topbar -->

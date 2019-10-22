@@ -10,7 +10,9 @@ const notifier = require('node-notifier')
  * The reason we are setting it here is that the path needs to be evaluated at runtime
  */
 if (process.env.PROD) {
-  global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
+  global.__statics = require('path')
+    .join(__dirname, 'statics')
+    .replace(/\\/g, '\\\\')
 }
 
 let mainWindow
@@ -29,13 +31,14 @@ function createWindow () {
     webPreferences: {
       backgroundThrottling: false,
       nodeIntegration: true
-    }
+    },
+    titleBarStyle: 'hidden'
   })
 
   mainWindow.maximize()
   mainWindow.loadURL(process.env.APP_URL)
 
-  mainWindow.on('close', (event) => {
+  mainWindow.on('close', event => {
     event.preventDefault()
     toggleWindow()
   })
@@ -163,7 +166,7 @@ function sendStatusToWindow (type = 'message', text) {
 //   sendStatusToWindow('Update not available.')
 // })
 
-autoUpdater.on('update-available', (info) => {
+autoUpdater.on('update-available', info => {
   sendStatusToWindow('notification', 'Update available.')
   try {
     app.dock.setBadge('update')
@@ -177,26 +180,29 @@ autoUpdater.on('update-available', (info) => {
   }
 })
 
-autoUpdater.on('error', (err) => {
+autoUpdater.on('error', err => {
   sendStatusToWindow('error', 'Error in auto-updater. ' + err)
 })
 
-autoUpdater.on('download-progress', (obj) => {
+autoUpdater.on('download-progress', obj => {
   sendStatusToWindow('message', obj.percent)
 })
 
 autoUpdater.on('update-downloaded', function (event) {
-  dialog.showMessageBox({
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Update the' + app.getName(),
-    message: ('The new version has been downloaded.'),
-    detail: 'Please restart the application to apply the updates.'
-  }, (index) => {
-    if (!index) {
-      autoUpdater.quitAndInstall()
+  dialog.showMessageBox(
+    {
+      type: 'info',
+      buttons: ['Restart', 'Later'],
+      title: 'Update the' + app.getName(),
+      message: 'The new version has been downloaded.',
+      detail: 'Please restart the application to apply the updates.'
+    },
+    index => {
+      if (!index) {
+        autoUpdater.quitAndInstall()
+      }
     }
-  })
+  )
 })
 
 app.on('ready', () => {
