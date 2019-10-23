@@ -23,24 +23,16 @@
           </q-banner>
         </div>
         <div class="col bg-vdark">
-          <q-separator dark />
-          <q-list>
-            <q-item clickable>
-              <q-item-section>
-                <q-item-label>Item 1</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable>
-              <q-item-section>
-                <q-item-label>Item 2</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item clickable>
-              <q-item-section>
-                <q-item-label>Item 3</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <q-table v-if="nodeGeoData.length > 0" dense flat :data="nodeGeoData" :columns="nodeGeoDataColumns" row-key="name" virtual-scroll :pagination.sync="nodeGeoDataPagination" :rows-per-page-options="[0]" table-style="max-height: 250pt;" hide-bottom class="bg-vdark text-vgrey">
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td key="city" :props="props">
+                  <q-btn dense flat size="sm" color="vgrey" class="code" @click="mapCentering(props.row.lat, props.row.long)" :label="props.row.city" />
+                </q-td>
+                <q-td key="mass" :props="props">{{ props.row.mass }}</q-td>
+              </q-tr>
+            </template>
+          </q-table>
         </div>
       </div>
     </div>
@@ -56,7 +48,28 @@ export default {
   data () {
     return {
       map: '',
-      nodeGeoData: []
+      nodeGeoData: [],
+      nodeGeoDataColumns: [
+        {
+          name: 'city',
+          align: 'left',
+          label: 'City',
+          field: 'city',
+          sortable: true
+        },
+        {
+          name: 'mass',
+          align: 'center',
+          label: 'Nodes',
+          field: 'mass',
+          sortable: true
+        }
+      ],
+      nodeGeoDataPagination: {
+        rowsPerPage: 0,
+        sortBy: 'mass',
+        descending: true
+      }
     }
   },
   mounted () {
@@ -100,7 +113,7 @@ export default {
                 mass: locations[i].ids.length,
                 city: locations[i].city,
                 nodes: locations[i].ids
-              });
+              })
             }
             /* eslint-enable */
             resolve()
@@ -142,7 +155,7 @@ export default {
               mass: locations[i].ids.length,
               city: locations[i].city,
               nodes: locations[i].ids
-            });
+            })
           }
           /* eslint-enable */
         }, 1000)
@@ -151,21 +164,30 @@ export default {
     mapInit () {
       this.map = L.map('mapid').setView([51.505, -0.09], 1)
     },
-    mapCentering () {
-      // TODO: get the user's node coordinates
-      this.map.setView([53.505, -3.09], 10)
+    mapCentering (lat, long) {
+      if (!arguments.length) {
+        let account = this.nodes.find(row => row.account === this.$store.state.identity.accountName)
+        if (account) {
+          for (let i = 0; i < this.nodeGeoData.length; i++) {
+            if (this.nodeGeoData[i].nodes.includes(account.id)) {
+              this.map.setView([this.nodeGeoData[i].lat, this.nodeGeoData[i].long], 10)
+            }
+          }
+        } else {
+          this.$userError("Oops, I can't find your node id in the list. Is it running?", "Get user's node location")
+        }
+      } else {
+        this.map.setView([lat, long], 10)
+      }
     },
     mapLoad () {
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: 'abcd',
-          maxZoom: 19,
-          minZoom: 1
-        }
-      ).addTo(this.map)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19,
+        minZoom: 1
+      }).addTo(this.map)
     }, // end of mapLoad
     markersLoad () {
       for (var i = 0; i < this.nodeGeoData.length; ++i) {
@@ -176,11 +198,7 @@ export default {
           radius: this.nodeGeoData[i].mass * 100
         })
           .bindPopup(
-            '<ul><li>City: ' +
-              this.nodeGeoData[i].city +
-              '</li><li>Nodes: ' +
-              this.nodeGeoData[i].mass +
-              '</li></ul>'
+            '<ul><li>City: ' + this.nodeGeoData[i].city + '</li><li>Nodes: ' + this.nodeGeoData[i].mass + '</li></ul>'
           )
           .addTo(this.map)
       }
