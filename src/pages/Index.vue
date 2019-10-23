@@ -206,9 +206,7 @@
               </div>
               <template v-slot:action>
                 <q-btn outline rounded size="xs" dense :disabled="
-                    !voting_list.length &&
-                    nodes.length &&
-                    nodes.every(item => item.balance !== '' && item.account)
+                    !voting_list.length && nodes.length && nodes.every(item => item.balance !== '' && item.account)
                       ? false
                       : true
                   " color="vgreen" class="q-px-sm q-mx-xs" @click="getVoteBackList('random')" label="Vote back (random)" />
@@ -622,39 +620,11 @@ export default {
       },
       nodes: [],
       nodesColumns: [
-        {
-          name: 'account',
-          align: 'left',
-          label: 'Account',
-          field: 'account',
-          sortable: true
-        },
-        {
-          name: 'rank',
-          align: 'center',
-          label: 'Rank',
-          field: 'rank',
-          sortable: true
-        },
-        {
-          name: 'balance',
-          align: 'right',
-          label: 'Balance',
-          field: 'balance',
-          sortable: true
-        },
-        {
-          name: 'voted_for',
-          align: 'center',
-          label: 'Voted for you',
-          field: 'voted_for'
-        },
-        {
-          name: 'voted_i',
-          align: 'center',
-          label: 'I voted for',
-          field: 'voted_i'
-        },
+        { name: 'account', align: 'left', label: 'Account', field: 'account', sortable: true },
+        { name: 'rank', align: 'center', label: 'Rank', field: 'rank', sortable: true },
+        { name: 'balance', align: 'right', label: 'Balance', field: 'balance', sortable: true },
+        { name: 'voted_for', align: 'center', label: 'Voted for you', field: 'voted_for' },
+        { name: 'voted_i', align: 'center', label: 'I voted for', field: 'voted_i' },
         { name: 'vote', align: 'center', label: 'Vote', field: 'vote' }
       ],
       nodesPagination: {
@@ -666,12 +636,7 @@ export default {
   },
   computed: {
     blur: function () {
-      return (
-        this.helpDialog ||
-        this.rankDialog ||
-        this.rulesDialog ||
-        this.publicDialog
-      )
+      return this.helpDialog || this.rankDialog || this.rulesDialog || this.publicDialog
     },
     loggedIn: function () {
       return this.$store.getters.isLoggedIn
@@ -701,10 +666,7 @@ export default {
     // TODO: uncomment when API fix the issue with different number of nodes in response
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
-    this.m6 = setInterval(
-      () => this.$utils.getUserResources(this.identity.accountName),
-      5000
-    )
+    this.m6 = setInterval(() => this.$utils.getUserResources(this.identity.accountName), 5000)
   },
   beforeDestroy () {
     clearInterval(this.m3)
@@ -715,10 +677,7 @@ export default {
   },
   methods: {
     checkAccountRun () {
-      if (
-        this.nodes.length > 0 &&
-        !this.nodes.some(item => item.account === this.identity.accountName)
-      ) {
+      if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.accountName)) {
         this.$userError(
           "Oops, I can't see your node in the list. Try to update the list or check your node.",
           'Check node running action'
@@ -733,10 +692,7 @@ export default {
         if (this.voting_list.length !== 21) {
           this.voting_list.push(node)
         } else {
-          this.$userError(
-            'You can vote for no more than 21 nodes',
-            'Add to vote action'
-          )
+          this.$userError('You can vote for no more than 21 nodes', 'Add to vote action')
         }
       }
     },
@@ -809,10 +765,7 @@ export default {
         .retreiveReward(this.identity.accountName)
         .then(() => {
           setTimeout(() => this.getInfoOften(), 3000)
-          setTimeout(
-            () => this.$utils.getUserUptime(this.identity.accountName),
-            3000
-          )
+          setTimeout(() => this.$utils.getUserUptime(this.identity.accountName), 3000)
         })
         .catch(error => {
           throw new Error(error)
@@ -831,11 +784,7 @@ export default {
     },
     async getListOfNodes () {
       await this.getNodes()
-      const ranks = await this.$rpc.getTable(
-        'vdexdposvote',
-        'vdexdposvote',
-        'producers'
-      )
+      const ranks = await this.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
       for (var id in this.nodes) {
         this.getNodesData(id, this.nodes[id].key, ranks)
       }
