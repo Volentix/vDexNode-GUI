@@ -405,7 +405,7 @@ async function login (privateKey) {
     userError(error, 'Login action: get public key')
     throw error
   }
-  privateKey = ''
+  // privateKey = ''
 
   try {
     let accounts = await rpc.getAccounts(publicKey)

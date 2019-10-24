@@ -12,6 +12,7 @@ Vue.use(Vuex)
 function initialState () {
   return {
     loggedIn: false,
+    method: '',
     identity: {
       voted_i: [],
       voted_for: []
@@ -33,6 +34,7 @@ const store = new Vuex.Store({
   state: initialState,
   getters: {
     isLoggedIn: state => state.loggedIn,
+    getMethod: state => state.method,
     getIdentity: state => state.identity,
     getStatus: state => state.status,
     getRegisteredNodes: state => state.registered_nodes
@@ -52,6 +54,9 @@ const store = new Vuex.Store({
     },
     setLoggedIn: state => {
       state.loggedIn = true
+    },
+    setMethod: (state, method) => {
+      state.method = method
     },
     setBalance: (state, balance) => {
       state.identity.balance = balance
@@ -99,6 +104,7 @@ const store = new Vuex.Store({
         commit('setPublicKey', data.publicKey)
         commit('setAccountName', data.accountName)
         commit('setLoggedIn')
+        commit('setMethod', 'private')
         resolve()
       })
     },
