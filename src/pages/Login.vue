@@ -56,11 +56,11 @@ export default {
   },
   methods: {
     login () {
-      this.$utils.login(this.privateKey)
+      this.$configManager.login(this.privateKey)
       this.privateKey = ''
     },
     async scatterLogin () {
-      this.$utils.scatterLogin()
+      this.$configManager.scatterLogin()
     },
     updater () {
       // TODO: Update

@@ -92,7 +92,7 @@ export default {
     async getLocationsData () {
       return new Promise(resolve => {
         this.$http
-          .get(process.env.NODES_API + '/getNodesLocation')
+          .get(this.$configStore.get('node_api') + '/getNodesLocation')
           .then(result => {
             let locations = []
             for (var key in result.data) {

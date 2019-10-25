@@ -26,7 +26,7 @@
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.getInstaller()" />
               <q-btn flat round color="vgreen" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
-              <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$utils.logout()" />
+              <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
             </div>
           </div>
         </div>
@@ -354,10 +354,7 @@
                   <q-tr :props="props">
                     <q-td key="account" :props="props">
                       <q-btn dense flat size="sm" color="vgreen" class="code" @click="
-                          $utils.openExternal(
-                            'https://bloks.io/account/',
-                            props.row.account
-                          )
+                          $utils.openExternal('https://bloks.io/account/',  props.row.account )
                         " :label="props.row.account" />
                     </q-td>
                     <q-td key="rank" :props="props">{{ props.row.rank }}</q-td>
@@ -611,10 +608,10 @@ export default {
   },
   mounted () {
     this.version = this.$utils.getVersion()
-    this.$utils.accountAdded(this.identity.accountName)
-    this.$utils.accountRegistered(this.identity.accountName)
-    this.$utils.accountRun(this.identity.accountName)
-    this.$utils.getUserUptime(this.identity.accountName)
+    this.$configManager.accountAdded(this.identity.accountName)
+    this.$configManager.accountRegistered(this.identity.accountName)
+    this.$configManager.accountRun(this.identity.accountName)
+    this.$configManager.getUserUptime(this.identity.accountName)
     // TODO: not implemented yet
     this.$store.commit('setEarned', '0.0000')
     this.$store.state.status.time = this.$utils.getTime()
@@ -624,7 +621,7 @@ export default {
     // TODO: uncomment when API fix the issue with different number of nodes in response
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
-    this.m6 = setInterval(() => this.$utils.getUserResources(this.identity.accountName), 5000)
+    this.m6 = setInterval(() => this.$configManager.getUserResources(this.identity.accountName), 5000)
   },
   beforeDestroy () {
     clearInterval(this.m3)
@@ -662,12 +659,12 @@ export default {
     },
     getInfoRare () {
       this.getListOfNodes()
-      this.$utils.getUserRank(this.identity.accountName)
-      this.$utils.getRegisteredNodes()
+      this.$configManager.getUserRank(this.identity.accountName)
+      this.$configManager.getRegisteredNodes()
     },
     getInfoOften () {
-      this.$utils.getUserBalance(this.identity.accountName)
-      this.$utils.getUserVoted(this.identity.accountName)
+      this.$configManager.getUserBalance(this.identity.accountName)
+      this.$configManager.getUserVoted(this.identity.accountName)
     },
     getVoteBackList (option) {
       let self = this
@@ -703,7 +700,7 @@ export default {
       this.nodes = this.$utils.sortByKey(this.nodes, field)
     },
     addNode () {
-      this.$utils
+      this.$configManager
         .addNode(this.identity.accountName)
         .then(() => {})
         .catch(error => {
@@ -711,7 +708,7 @@ export default {
         })
     },
     registerNode () {
-      this.$utils
+      this.$configManager
         .registerNode(this.identity.accountName)
         .then(() => {})
         .catch(error => {
@@ -719,18 +716,18 @@ export default {
         })
     },
     retreiveReward () {
-      this.$utils
+      this.$configManager
         .retreiveReward(this.identity.accountName)
         .then(() => {
           setTimeout(() => this.getInfoOften(), 3000)
-          setTimeout(() => this.$utils.getUserUptime(this.identity.accountName), 3000)
+          setTimeout(() => this.$configManager.getUserUptime(this.identity.accountName), 3000)
         })
         .catch(error => {
           throw new Error(error)
         })
     },
     vote () {
-      this.$utils
+      this.$configManager
         .vote(this.voting_list, this.identity.accountName)
         .then(() => {
           this.voting_list = []
@@ -750,7 +747,7 @@ export default {
     async getNodes () {
       return new Promise(resolve => {
         this.$http
-          .get(process.env.NODES_API + '/getConnectedNodes')
+          .get(this.$configStore.get('node_api') + '/getConnectedNodes')
           .then(result => {
             // TODO: Handler if the object is empty of has result: null or result: try later
             for (var key in result.data) {
