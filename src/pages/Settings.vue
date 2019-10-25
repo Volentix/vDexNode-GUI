@@ -65,6 +65,22 @@
             <q-list dark dense separator class="bg-vdark text-vgrey q-px-md">
               <q-item>
                 <q-item-section>
+                  <q-item-label>Vue version</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="code">{{ vueVersion }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label>Quasar version</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="code">{{ $q.version }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
                   <q-item-label>Get vDexNode option</q-item-label>
                 </q-item-section>
                 <q-item-section side>
@@ -112,11 +128,13 @@
 <script>
 import Vue from 'vue'
 import { EosRPC, EosAPI } from '@/util/EosWrapper'
+const { app } = require('electron').remote
 
 export default {
   data () {
     return {
       version: this.$utils.getVersion(),
+      vueVersion: Vue.version,
       eosEndpointStatus: false,
       nodeApiStatus: false,
       editEosEndpointDialog: false,
