@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { shell, clipboard } from 'electron'
 import { userError } from '@/util/errorHandler'
 import { userResult } from '@/util/resultHandler'
@@ -144,6 +145,46 @@ function notifyMe () {
   // want to be respectful there is no need to bother them any more.
 }
 
+async function checkEosEndpoint (url) {
+  return new Promise(resolve => {
+    Vue.prototype
+      .$http({
+        method: 'get',
+        url: url + '/v1/chain/get_info',
+        responseType: 'arraybuffer'
+      })
+      .then(response => {
+        if (response.status === 200) resolve(true)
+        else resolve(false)
+      })
+      .catch(error => {
+        userError(error, 'Check Node API')
+        resolve(false)
+        throw error
+      })
+  })
+}
+
+async function checkNodeApi (url) {
+  return new Promise(resolve => {
+    Vue.prototype
+      .$http({
+        method: 'get',
+        url: url,
+        responseType: 'arraybuffer'
+      })
+      .then(response => {
+        if (response.status === 200) resolve(true)
+        else resolve(false)
+      })
+      .catch(error => {
+        userError(error, 'Check Node API')
+        resolve(false)
+        throw error
+      })
+  })
+}
+
 export {
   getUnique,
   sortByKey,
@@ -153,5 +194,7 @@ export {
   getInstaller,
   getVersion,
   getTime,
-  copyToClipboard
+  copyToClipboard,
+  checkEosEndpoint,
+  checkNodeApi
 }
