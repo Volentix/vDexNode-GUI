@@ -2,6 +2,7 @@ import { Api, JsonRpc } from 'eosjs'
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
 import { userError } from '@/util/errorHandler'
 import { userResult } from '@/util/resultHandler'
+import * as configManager from '@/util/configManager'
 import ecc from 'eosjs-ecc'
 const { TextEncoder, TextDecoder } = require('util')
 const fetch = require('node-fetch')
@@ -9,7 +10,7 @@ import * as utils from '@/util/utils'
 
 class EosRPC {
   constructor () {
-    this.rpc = new JsonRpc(process.env.EOS_ENDPOINT, { fetch })
+    this.rpc = new JsonRpc(configManager.configStore.get('eos_endpoint'), { fetch })
   }
 
   privateToPublic (wif) {

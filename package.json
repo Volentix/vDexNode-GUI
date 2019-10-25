@@ -34,6 +34,7 @@
     "@scatterjs/eosjs2": "^1.5.27",
     "axios": "^0.18.1",
     "electron-log": "^3.0.8",
+    "electron-store": "^5.0.0",
     "electron-updater": "^4.1.2",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
