@@ -91,7 +91,7 @@ function getInstaller () {
   // TODO: Redo the env variables with electron-store
   let way = process.env.NODE_WAY
   if (way.includes('readme')) {
-    require('electron').shell.openExternal(this.$configStore.get('readme'))
+    require('electron').shell.openExternal(this.$configStore.get('node_readme'))
   } else if (way.includes('installer')) {
     axios({
       method: 'get',

@@ -24,8 +24,8 @@
 
           <div class="col-5 q-py-sm q-px-sm">
             <div class="row justify-end">
-              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.getInstaller()" />
-              <q-btn flat round color="vgreen" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
+              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
+              <q-btn disable flat round color="vgreen" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
               <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
             </div>
           </div>
