@@ -8,18 +8,17 @@
           <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey titilium">
               <span class="text-weight-bolder">vdexnode</span> dashboard
-              <q-badge color="vpurple" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
+              <q-badge color="vgold" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
             </div>
           </div>
           <div class="col-5 q-py-sm q-px-sm">
             <div class="row justify-end">
-              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Home" to="/" />
-              <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
+              <q-btn outline rounded color="vgold" class="q-mx-xs" label="Home" to="/" />
+              <q-btn outline rounded color="vgold" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
             </div>
           </div>
         </div>
         <!-- Settings -->
-        <q-banner dense inline-actions class="text-vdark bg-vpurple">Settings page is under development.</q-banner>
         <div class="row q-col-gutter-x-lg q-mb-lg titilium">
           <div class="col-5">
             <q-banner dense class="text-vgrey bg-vdark q-pa-md">
@@ -131,7 +130,7 @@ import { EosRPC, EosAPI } from '@/util/EosWrapper'
 const { app } = require('electron').remote
 
 export default {
-  data () {
+  data() {
     return {
       version: this.$utils.getVersion(),
       vueVersion: Vue.version,
@@ -144,19 +143,19 @@ export default {
     }
   },
   computed: {
-    blur: function () {
+    blur: function() {
       return this.editNodeApiDialog || this.editEosEndpointDialog
     }
   },
-  mounted () {
+  mounted() {
     this.checkStatus()
     this.s1 = setInterval(() => this.checkStatus(), 60000)
   },
-  beforeDestroy () {
+  beforeDestroy() {
     clearInterval(this.s1)
   },
   methods: {
-    checkStatus () {
+    checkStatus() {
       this.$utils.checkEosEndpoint(this.$configStore.get('eos_endpoint')).then(response => {
         this.eosEndpointStatus = response
       })
@@ -164,12 +163,12 @@ export default {
         this.nodeApiStatus = response
       })
     },
-    updateNodeAPI () {
+    updateNodeAPI() {
       // TODO: to config manager
       this.$configStore.set('node_api', this.newNodeApi)
       this.checkStatus()
     },
-    updateEosEndpoint () {
+    updateEosEndpoint() {
       // TODO: to config manager
       this.$configStore.set('eos_endpoint', this.newEosEndpoint)
       this.checkStatus()
