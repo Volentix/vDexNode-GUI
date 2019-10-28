@@ -7,7 +7,7 @@
         <div class="row bg-vdark items-center q-mb-lg titilium">
           <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey border-right titilium">
-              <span class="text-weight-bolder">vdexnode</span> dashboard
+              <span class="text-weight-bolder">Volentix Node</span> Control Panel
               <q-badge color="vpurple" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
             </div>
             <div class="row items-center border-right">
@@ -22,7 +22,7 @@
             <div class="text-vgrey titilium">Distributed in-memory data store</div>
           </div>
 
-          <div class="col-5 q-py-sm q-px-sm">
+          <div class="col q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
               <q-btn disable flat round color="vgreen" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
