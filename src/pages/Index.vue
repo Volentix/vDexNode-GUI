@@ -7,8 +7,8 @@
         <div class="row bg-vdark items-center q-mb-lg titilium">
           <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey border-right titilium">
-              <span class="text-weight-bolder">vdexnode</span> dashboard
-              <q-badge color="vpurple" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
+              <span class="text-weight-bolder">Volentix Node</span> Control Panel
+              <q-badge color="vgold" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
             </div>
             <div class="row items-center border-right">
               <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
@@ -22,11 +22,11 @@
             <div class="text-vgrey titilium">Distributed in-memory data store</div>
           </div>
 
-          <div class="col-5 q-py-sm q-px-sm">
+          <div class="col q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
-              <q-btn disable flat round color="vgreen" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
-              <q-btn outline rounded color="vpurple" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
+              <q-btn disable flat round color="vgold" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
+              <q-btn outline rounded color="vgold" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
             </div>
           </div>
         </div>
@@ -45,8 +45,8 @@
                 </div>
               </div>
             </q-banner>
-            <q-list dense separator class="bg-vdark text-vgrey q-px-md">
-              <q-separator dark />
+            <q-separator dark />
+            <q-list dense separator class="bg-vdark text-vgrey">
               <q-item v-if="!status.accountAdded">
                 <q-item-section>
                   <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-user-plus" class="q-my-xs" @click="addNode()" label="Add">
@@ -54,6 +54,7 @@
                   </q-btn>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" v-if="!status.accountAdded" />
               <q-item v-if="!status.accountRegistered">
                 <q-item-section>
                   <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-address-card" class="q-my-xs" @click="registerNode()" label="Register">
@@ -61,6 +62,7 @@
                   </q-btn>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" v-if="!status.accountRegistered" />
               <q-item v-if="!status.accountRun">
                 <q-item-section>
                   <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
@@ -71,6 +73,7 @@
                   </q-btn>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" v-if="!status.accountRun" />
               <q-item>
                 <q-item-section class="text-left">
                   <q-item-label>
@@ -80,23 +83,21 @@
                   </q-item-label>
                 </q-item-section>
                 <q-item-section class="text-right">
-                  <q-item-label class="text-weight-bolder" :class="
-                      parseFloat(identity.balance) > 0
-                        ? 'text-vgreen'
-                        : 'text-vpurple'
-                    ">{{ identity.balance }}</q-item-label>
+                  <q-item-label class="text-weight-bolder" :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-red' ">{{ identity.balance }}</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" />
               <q-item v-if="parseFloat(identity.balance) == 0">
                 <q-item-section>
-                  <q-btn label="Get VTX" outline rounded color="vpurple" @click="$utils.openExternal('https://www.stex.com/')" />
+                  <q-btn label="Get VTX" outline rounded color="red" @click="$utils.openExternal('https://www.stex.com/')" />
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" v-if="parseFloat(identity.balance) == 0" />
               <q-item>
                 <q-item-section>
                   <q-item-label>
                     Rank:
-                    <q-btn size="xs" class="q-mx-xs" dense flat round icon="fas fa-question" @click="rankDialog = true">
+                    <q-btn size="7px" class="q-mx-xs" dense flat round icon="fas fa-question" @click="rankDialog = true">
                       <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
                     </q-btn>
                   </q-item-label>
@@ -104,10 +105,11 @@
                 <q-item-section>
                   <q-item-label caption class="text-vgrey">Total ranks: {{ identity.totalRanks }}</q-item-label>
                 </q-item-section>
-                <q-item-section avatar class="text-weight-bolder text-vgreen">
+                <q-item-section avatar class="text-weight-bolder text-vgrey">
                   <q-item-label>#{{ identity.rank }}</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" />
               <q-item>
                 <q-item-section disabled>
                   <q-item-label>Uptime:</q-item-label>
@@ -116,6 +118,7 @@
                   <q-item-label>{{ identity.uptime }} days</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" />
               <q-item>
                 <q-item-section disabled>
                   <q-item-label>VTX earned:</q-item-label>
@@ -124,42 +127,32 @@
                   <q-item-label>{{ identity.earned }} VTX</q-item-label>
                 </q-item-section>
               </q-item>
+              <q-separator color="vseparator" />
               <q-item>
-                <q-item-section align="center">
+                <q-item-section align="left">
                   <q-item-label>
                     RAM
                     <sup>(used)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.ram
-                    }}
-                  </q-item-label>
+                  <q-item-label class="text-vgrey">{{ status.ram }}</q-item-label>
                 </q-item-section>
                 <q-item-section align="center">
                   <q-item-label>
                     NET
                     <sup>(used)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.net
-                    }}
-                  </q-item-label>
+                  <q-item-label class="text-vgrey">{{ status.net }}</q-item-label>
                 </q-item-section>
-                <q-item-section align="center">
+                <q-item-section align="right">
                   <q-item-label>
                     CPU
                     <sup>(avail)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.cpu
-                    }}
-                  </q-item-label>
+                  <q-item-label :class="parseFloat(status.cpu) == 0 ? 'text-red' : 'text-vgrey'">{{ status.cpu }}</q-item-label>
                 </q-item-section>
               </q-item>
-              <q-item>
+              <q-separator color="vseparator" />
+              <q-item align="center">
                 <q-item-section>
                   <q-btn label="Retreive reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
                 </q-item-section>
@@ -183,20 +176,20 @@
                     </div>
                   </div>
                   <div class="col">
-                    <q-badge color="vgreen" class="text-vdark q-mr-xs">Running: {{ nodes.length }}</q-badge>
-                    <q-badge color="vgreen" class="text-vdark q-mr-xs">
+                    <q-badge color="vgrey" class="text-vdark q-mr-xs">Running: {{ nodes.length }}</q-badge>
+                    <q-badge color="vgrey" class="text-vdark q-mr-xs">
                       Registered: {{ registered_nodes.length }}
                       <q-tooltip content-class="bg-grey text-dark">
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">
+                    <q-badge color="vgrey" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">
                       Voted for you: {{ this.identity.voted_for.length }}
                       <q-tooltip content-class="bg-grey text-dark">
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_for" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge color="vgreen" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">
+                    <q-badge color="vgrey" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">
                       I voted for: {{ this.identity.voted_i.length }}
                       <q-tooltip content-class="bg-grey text-dark">
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_i" :key="node">{{ node }}</q-badge>
@@ -206,109 +199,29 @@
                 </div>
               </div>
               <template v-slot:action>
-                <q-btn outline rounded size="xs" dense :disabled="
-                    !voting_list.length && nodes.length && nodes.every(item => item.balance !== '' && item.account)
-                      ? false
-                      : true
-                  " color="vgreen" class="q-px-sm q-mx-xs" @click="getVoteBackList('random')" label="Vote back (random)" />
-                <q-btn outline rounded size="xs" dense :disabled="
-                    !voting_list.length &&
-                    nodes.length &&
-                    nodes.every(item => item.balance !== '' && item.account)
-                      ? false
-                      : true
-                  " color="vgreen" class="q-px-sm q-mx-xs" @click="getVoteBackList('top')" label="Vote back (top)" />
-                <q-btn outline flat round color="vgreen" icon="fas fa-sync-alt" class="q-mx-xs" :disabled="
-                    nodes.length &&
-                    nodes.every(item => item.balance !== '' && item.account)
-                      ? false
-                      : true
-                  " v-on:click="refresh()" />
+                <q-btn outline rounded size="xs" dense :disabled="!voting_list.length && nodes.length && nodes.every(item => item.balance !== '' && item.account) ? false : true " color="vgold" class="q-px-sm q-mx-xs" @click="getVoteBackList('random')" label="Vote back (random)" />
+                <q-btn outline rounded size="xs" dense :disabled="!voting_list.length && nodes.length && nodes.every(item => item.balance !== '' && item.account) ? false : true " color="vgold" class="q-px-sm q-mx-xs" @click="getVoteBackList('top')" label="Vote back (top)" />
+                <q-btn outline flat round color="vgold" size="sm" icon="fas fa-sync-alt" class="q-mx-xs" :disabled="nodes.length && nodes.every(item => item.balance !== '' && item.account) ? false : true " v-on:click="refresh()" />
               </template>
             </q-banner>
             <q-separator dark />
             <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.length === 0" />
-            <!-- <q-linear-progress dark indeterminate track-color="vgrey" color="vgreen" v-if="nodes.every(item => !item.rank && !item.account)" /> -->
-            <!-- Working example of bad styled list -->
-            <!-- <q-list separator dense class="bg-vdark text-vgrey" v-if="nodes.length > 0">
-              <q-item>
-                <q-item-section avatar align="center" style="width: 100px;">
-                  <q-item-label>Account <q-btn dense round flat size="xs" color="vgrey" @click="sortByField('account')" icon="fas fa-sort-alpha-down" :disabled="nodes.length > 0 ? false : true"/></q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 70px;">
-                  <q-item-label>Rank <q-btn dense round flat size="xs" color="vgrey" @click="sortByField('rank')" icon="fas fa-sort-numeric-down" :disabled="nodes.length > 0 ? false : true"/></q-item-label>
-                </q-item-section>
-                <q-item-section align="center">
-                  <q-item-label>Balance <q-btn dense round flat size="xs" color="vgrey" @click="sortByField('balance')" icon="fas fa-sort-numeric-down" :disabled="nodes.length > 0 ? false : true"/></q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 100px;">
-                  <q-item-label>Voted for</q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 100px;">
-                  <q-item-label>I voted</q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 70px;">
-                  <q-item-label>Vote</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-scroll-area style="height: 160pt;">
-              <q-item v-for="node in nodes" :key="node.id">
-                <q-item-section avatar style="width: 100px;">
-                  <q-item-label><q-btn dense flat size="sm" :color="node.balance > 0 ? 'vgreen' : 'vpurple'" class="code" @click="$utils.openExternal('https://bloks.io/account/', node.account)" :label="node.account" :disabled="node.account !== 'No account found' ? false : true"/></q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 70px;">
-                  <q-item-label class="code"> {{ node.rank }}</q-item-label>
-                </q-item-section>
-                <q-item-section class="text-right" style="width: 150px;">
-                  <q-item-label class="code" :class="node.balance > 0 ? 'text-vgreen' : 'text-vpurple'" caption> {{ node.balance }} VTX</q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 100px;">
-                  <q-item-label><q-icon name="fas fa-check" :class="node.voted_for ? 'text-vgreen' : 'text-vblack' "/></q-item-label>
-                </q-item-section>
-                <q-item-section avatar align="center" style="width: 100px;">
-                  <q-item-label><q-icon name="fas fa-check" :class="node.voted_i ? 'text-vgreen' : 'text-vblack' "/></q-item-label>
-                </q-item-section>
-                <q-item-section avatar v-if="node.vote && node.account != identity.accountName">
-                    <q-btn outline size="sm" rounded color="vgreen" v-on:click="addToVote(node)" v-if="!voting_list.includes(node)">Vote</q-btn>
-                    <q-btn size="sm" rounded color="vgreen" class="text-vdark" v-on:click="addToVote(node)" v-if="voting_list.includes(node)">Vote</q-btn>
-                </q-item-section>
-                <q-item-section avatar v-else>
-                    <q-btn outline size="sm" rounded color="vblack" disabled>Vote</q-btn>
-                </q-item-section>
-              </q-item>
-              </q-scroll-area>
-            </q-list>-->
             <!-- Table example -->
             <div class="bg-vdark">
               <q-table dense :data="nodes" :columns="nodesColumns" row-key="name" virtual-scroll :pagination.sync="nodesPagination" :rows-per-page-options="[0]" table-style="max-height: 190pt;" hide-bottom class="bg-vdark text-vgrey">
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td key="account" :props="props">
-                      <q-btn dense flat size="sm" :color="props.row.balance > 0 ? 'vgreen' : 'vpurple'" class="code" @click="
-                          $utils.openExternal(
-                            'https://bloks.io/account/',
-                            props.row.account
-                          )
-                        " :label="props.row.account" :disabled="
-                          props.row.account !== 'No account found'
-                            ? false
-                            : true
-                        " />
+                      <q-btn dense flat size="sm" :color="props.row.balance > 0 ? 'vgreen' : 'vgold'" class="code" @click="$utils.openExternal('https://bloks.io/account/', props.row.account ) " :label="props.row.account" :disabled="props.row.account !== 'No account found' ? false : true " />
                     </q-td>
-                    <q-td key="rank" :props="props" class="code">
-                      {{
-                      props.row.rank
-                      }}
-                    </q-td>
-                    <q-td key="balance" :props="props" class="code" :class="
-                        props.row.balance > 0 ? 'text-vgrey' : 'text-vpurple'
-                      ">{{ props.row.balance }} VTX</q-td>
+                    <q-td key="rank" :props="props" class="code">{{ props.row.rank }}</q-td>
+                    <q-td key="balance" :props="props" class="code" :class="props.row.balance > 0 ? 'text-vgrey' : 'text-vgold'">{{ props.row.balance }} VTX</q-td>
                     <q-td key="voted_for" :props="props">
-                      <q-icon name="fas fa-check" class="text-vgreen" v-show="props.row.voted_for" />
+                      <q-icon name="fas fa-check" class="text-vgrey" v-show="props.row.voted_for" />
                       <q-icon name="fas fa-times" class="text-vblack" v-show="!props.row.voted_for" />
                     </q-td>
                     <q-td key="voted_i" :props="props">
-                      <q-icon name="fas fa-check" class="text-vgreen" v-show="props.row.voted_i" />
+                      <q-icon name="fas fa-check" class="text-vgrey" v-show="props.row.voted_i" />
                       <q-icon name="fas fa-times" class="text-vblack" v-show="!props.row.voted_i" />
                     </q-td>
                     <q-td key="vote" :props="props">
@@ -316,8 +229,8 @@
                           props.row.vote &&
                             props.row.account != identity.accountName
                         ">
-                        <q-btn outline size="xs" rounded color="vgreen" v-on:click="addToVote(props.row)" v-if="!voting_list.includes(props.row)">Vote</q-btn>
-                        <q-btn size="xs" rounded color="vgreen" class="text-vdark" v-on:click="addToVote(props.row)" v-if="voting_list.includes(props.row)">Vote</q-btn>
+                        <q-btn outline dense size="xs" class="q-px-md" rounded color="vgold" v-on:click="addToVote(props.row)" v-if="!voting_list.includes(props.row)">Vote</q-btn>
+                        <q-btn size="xs" dense rounded color="vgold" class="text-vdark q-px-md" v-on:click="addToVote(props.row)" v-if="voting_list.includes(props.row)">Vote</q-btn>
                       </div>
                     </q-td>
                   </q-tr>
@@ -336,14 +249,14 @@
                   <q-btn size="sm" class="full-width" color="vgrey" dense outline rounded label="Rules" v-if="voting_list.length == 0" @click="rulesDialog = true">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
                   </q-btn>
-                  <q-badge color="vgreen" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
+                  <q-badge color="vgrey" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
                   <q-btn size="sm" class="q-mx-xs" color="vgrey" flat round icon="fas fa-backspace" v-if="voting_list.length > 0" @click="voting_list = []">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to clear the voting list</q-tooltip>
                   </q-btn>
                 </div>
                 <div class="col-4 q-pa-sm text-right">
                   <div class="text-caption" v-if="voting_list.length == 0">Choose nodes</div>
-                  <q-btn color="vgreen" rounded size="sm" class="text-vdark text-weight-bolder" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
+                  <q-btn color="vgold" rounded size="sm" dense class="text-vdark text-weight-bolder q-px-md" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 </div>
               </div>
             </q-banner>
@@ -370,12 +283,12 @@
         <div class="row q-col-gutter-x-lg titilium">
           <!-- Map Widget -->
           <div class="col-7">
-            <q-banner dense inline-actions class="text-vdark bg-vpurple">The map widget is currently disabled, the data is artificial.</q-banner>
+            <q-banner dense inline-actions class="text-vgrey bg-vdarkgrey">The map widget is currently disabled, the data is artificial.</q-banner>
             <MapWidget v-bind:nodes="nodes" />
           </div>
           <!-- Chat -->
           <div class="col-5">
-            <q-banner dense inline-actions class="text-vdark bg-vpurple">The chat widget is currently disabled, the data is artificial.</q-banner>
+            <q-banner dense inline-actions class="text-vgrey bg-vdarkgrey">The chat widget is currently disabled, the data is artificial.</q-banner>
             <ChatWidget />
           </div>
         </div>

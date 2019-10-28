@@ -26,13 +26,13 @@
     <div class="col-8 bg-vdarker">
       <div class="column">
         <div class="col scroll q-px-md text-vgrey" style="min-height: 30vh; max-height: 30vh">
-          <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+          <q-chat-message name="me" bg-color="vgrey" :text="['hey, how are you?']" sent />
           <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
-          <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+          <q-chat-message name="me" bg-color="vgrey" :text="['hey, how are you?']" sent />
           <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
-          <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+          <q-chat-message name="me" bg-color="vgrey" :text="['hey, how are you?']" sent />
           <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
-          <q-chat-message name="me" bg-color="vgreen" :text="['hey, how are you?']" sent />
+          <q-chat-message name="me" bg-color="vgrey" :text="['hey, how are you?']" sent />
           <q-chat-message name="Support" bg-color="vdark" text-color="white" :text="['doing fine, how r you?']" />
         </div>
         <div class="col q-px-md q-my-md">

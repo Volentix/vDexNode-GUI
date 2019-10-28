@@ -6,7 +6,7 @@
           <q-banner dense inline-actions class="text-vgrey bg-vdark q-px-md q-pt-md">
             <div class="text-subtitle2 text-uppercase">Live Nodes</div>
             <template v-slot:action>
-              <q-btn color="vgreen" size="sm" rounded outline @click="mapCentering()" label="Find my node" />
+              <q-btn color="vgrey" size="sm" rounded outline @click="mapCentering()" label="Find my node" />
             </template>
           </q-banner>
         </div>
@@ -192,8 +192,8 @@ export default {
     markersLoad () {
       for (var i = 0; i < this.nodeGeoData.length; ++i) {
         L.circle([this.nodeGeoData[i].lat, this.nodeGeoData[i].long], {
-          color: '#A000FD',
-          fillColor: '#7000B1',
+          color: '#c5c6a6',
+          fillColor: '#b2a987',
           fillOpacity: 0.8,
           radius: this.nodeGeoData[i].mass * 100
         })
