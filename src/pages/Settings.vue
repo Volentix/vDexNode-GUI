@@ -130,7 +130,7 @@ import { EosRPC, EosAPI } from '@/util/EosWrapper'
 const { app } = require('electron').remote
 
 export default {
-  data() {
+  data () {
     return {
       version: this.$utils.getVersion(),
       vueVersion: Vue.version,
@@ -143,19 +143,19 @@ export default {
     }
   },
   computed: {
-    blur: function() {
+    blur: function () {
       return this.editNodeApiDialog || this.editEosEndpointDialog
     }
   },
-  mounted() {
+  mounted () {
     this.checkStatus()
     this.s1 = setInterval(() => this.checkStatus(), 60000)
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.s1)
   },
   methods: {
-    checkStatus() {
+    checkStatus () {
       this.$utils.checkEosEndpoint(this.$configStore.get('eos_endpoint')).then(response => {
         this.eosEndpointStatus = response
       })
@@ -163,12 +163,12 @@ export default {
         this.nodeApiStatus = response
       })
     },
-    updateNodeAPI() {
+    updateNodeAPI () {
       // TODO: to config manager
       this.$configStore.set('node_api', this.newNodeApi)
       this.checkStatus()
     },
-    updateEosEndpoint() {
+    updateEosEndpoint () {
       // TODO: to config manager
       this.$configStore.set('eos_endpoint', this.newEosEndpoint)
       this.checkStatus()
