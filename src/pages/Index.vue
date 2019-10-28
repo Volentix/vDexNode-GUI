@@ -45,7 +45,7 @@
                 </div>
               </div>
             </q-banner>
-            <q-list dense separator class="bg-vdark text-vgrey q-px-md">
+            <q-list dark dense separator class="bg-vdark text-vgrey q-px-md">
               <q-separator dark />
               <q-item v-if="!status.accountAdded">
                 <q-item-section>
@@ -80,11 +80,7 @@
                   </q-item-label>
                 </q-item-section>
                 <q-item-section class="text-right">
-                  <q-item-label class="text-weight-bolder" :class="
-                      parseFloat(identity.balance) > 0
-                        ? 'text-vgreen'
-                        : 'text-vpurple'
-                    ">{{ identity.balance }}</q-item-label>
+                  <q-item-label class="text-weight-bolder" :class="parseFloat(identity.balance) > 0 ? 'text-vgreen' : 'text-vpurple' ">{{ identity.balance }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item v-if="parseFloat(identity.balance) == 0">
@@ -125,38 +121,26 @@
                 </q-item-section>
               </q-item>
               <q-item>
-                <q-item-section align="center">
+                <q-item-section align="left">
                   <q-item-label>
                     RAM
                     <sup>(used)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.ram
-                    }}
-                  </q-item-label>
+                  <q-item-label class="text-vgreen">{{ status.ram }}</q-item-label>
                 </q-item-section>
                 <q-item-section align="center">
                   <q-item-label>
                     NET
                     <sup>(used)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.net
-                    }}
-                  </q-item-label>
+                  <q-item-label class="text-vgreen">{{ status.net }}</q-item-label>
                 </q-item-section>
-                <q-item-section align="center">
+                <q-item-section align="right">
                   <q-item-label>
                     CPU
                     <sup>(avail)</sup>
                   </q-item-label>
-                  <q-item-label class="text-vgreen">
-                    {{
-                    status.cpu
-                    }}
-                  </q-item-label>
+                  <q-item-label :class="parseFloat(status.cpu) == 0 ? 'text-red' : 'text-vgreen'">{{ status.cpu }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-item>
