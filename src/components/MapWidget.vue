@@ -6,7 +6,7 @@
           <q-banner dense inline-actions class="text-vgrey bg-vdark q-px-md q-pt-md">
             <div class="text-subtitle2 text-uppercase">Live Nodes</div>
             <template v-slot:action>
-              <q-btn color="vgrey" size="sm" rounded outline @click="mapCentering()" label="Find my node" />
+              <q-btn color="vgreen" size="sm" rounded outline @click="mapCentering()" label="Find my node" />
             </template>
           </q-banner>
         </div>

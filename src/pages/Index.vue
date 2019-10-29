@@ -6,32 +6,34 @@
         <!-- Topbar -->
         <div class="row bg-vdark items-center q-mb-lg titilium">
           <div class="col q-py-sm q-px-md">
-            <div class="text-h6 text-uppercase text-vgrey border-right titilium">
-              <div class="row">
+            <div class="text-h6 text-uppercase text-weight-bolder text-vgrey border-right titilium">
+              <div class="row no-wrap">
                 <img src="@/statics/icons/logo.png" class="q-mr-sm" style="height: 32px; max-width: 32px" />
                 <div>
-                  <span class="text-weight-bolder">Volentix Node</span> Control Panel
+                  Volentix Node
                   <q-badge color="vgold" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
                 </div>
               </div>
             </div>
-            <div class="row items-center border-right">
+          </div>
+          <div class="col q-py-sm q-px-sm">
+            <div class="text-h6 text-vgreen text-weight-bolder text-uppercase titilium">
+              Volentix Node
+              <span class="text-vgrey text-weight-regular text-lowercase">Control Panel</span>
+            </div>
+            <div class="row items-center">
               <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
               <q-btn color="vgrey" size="7px" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true">
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
               </q-btn>
             </div>
           </div>
-          <div class="col q-py-sm q-px-lg">
-            <div class="text-h6 text-vgreen text-weight-bolder titilium">VDEXNODE</div>
-            <div class="text-vgrey titilium">Distributed in-memory data store</div>
-          </div>
 
           <div class="col q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
               <q-btn disable flat round color="vgold" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
-              <q-btn outline rounded color="vgold" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
+              <q-btn flat round color="vgold" class="q-mx-xs" icon="fas fa-sign-out-alt" @click="$configManager.logout()" />
             </div>
           </div>
         </div>
@@ -88,13 +90,13 @@
                   </q-item-label>
                 </q-item-section>
                 <q-item-section class="text-right">
-                  <q-item-label class="text-weight-bolder" :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-red' ">{{ identity.balance }}</q-item-label>
+                  <q-item-label class="text-weight-bolder" :class="parseFloat(identity.balance) > 0 ? 'text-vgrey' : 'text-vred' ">{{ identity.balance }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" />
               <q-item v-if="parseFloat(identity.balance) == 0">
                 <q-item-section>
-                  <q-btn label="Get VTX" outline rounded dense color="red" @click="$utils.openExternal('https://www.stex.com/')" />
+                  <q-btn label="Get VTX" outline rounded dense color="vred" @click="$utils.openExternal('https://www.stex.com/')" />
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" v-if="parseFloat(identity.balance) == 0" />
@@ -153,11 +155,11 @@
                     CPU
                     <sup>(avail)</sup>
                   </q-item-label>
-                  <q-item-label :class="parseFloat(status.cpu) == 0 ? 'text-red' : 'text-vgrey'">{{ status.cpu }}</q-item-label>
+                  <q-item-label :class="parseFloat(status.cpu) == 0 ? 'text-vred' : 'text-vgrey'">{{ status.cpu }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" />
-              <q-item v-if="parseFloat(status.cpu) == 0" class="bg-red text-vdark">
+              <q-item v-if="parseFloat(status.cpu) == 0" class="bg-vred text-vdark">
                 <q-item-section>
                   <q-item-label>Not enough CPU time to complete transactions! You can wait for the network to be less loaded or stake more CPU.</q-item-label>
                 </q-item-section>
@@ -197,13 +199,13 @@
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in registered_nodes" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge color="vgrey" class="text-vdark q-mx-xs" v-if="identity.voted_for.length > 0">
+                    <q-badge color="vgrey" class="text-vdark q-mr-xs" v-if="identity.voted_for.length > 0">
                       Voted for you: {{ this.identity.voted_for.length }}
                       <q-tooltip content-class="bg-grey text-dark">
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_for" :key="node">{{ node }}</q-badge>
                       </q-tooltip>
                     </q-badge>
-                    <q-badge color="vgrey" class="text-vdark q-mx-xs" v-if="identity.voted_i.length > 0">
+                    <q-badge color="vgrey" class="text-vdark q-mr-xs q-mb-sm" v-if="identity.voted_i.length > 0">
                       I voted for: {{ this.identity.voted_i.length }}
                       <q-tooltip content-class="bg-grey text-dark">
                         <q-badge color="vdark" class="text-vgrey q-pa-xs q-ma-xs" v-for="node in identity.voted_i" :key="node">{{ node }}</q-badge>
@@ -260,7 +262,7 @@
                   <div class="text-uppercase">Voting</div>
                 </div>
                 <div class="col">
-                  <q-btn size="sm" class="full-width" color="vgrey" dense outline rounded label="Rules" v-if="voting_list.length == 0" @click="rulesDialog = true">
+                  <q-btn size="sm" class="full-width" color="vgrey" dense flat rounded label="Rules ?" v-if="voting_list.length == 0" @click="rulesDialog = true">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
                   </q-btn>
                   <q-badge color="vgrey" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
