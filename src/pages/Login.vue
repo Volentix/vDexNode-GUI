@@ -7,7 +7,7 @@
           <div class="col-xs-12 col-sm-12 col-md col-lg text-center q-pa-xl">
             <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px" />
             <div class="text-h5 text-vdark">
-              <span class="text-weight-bolder">vDexNode</span> dashboard
+              <span class="text-weight-bolder">Volentix Node</span> Control Panel
             </div>
             <q-badge color="vdark" class text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
             <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>

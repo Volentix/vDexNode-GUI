@@ -7,12 +7,17 @@
         <div class="row bg-vdark items-center q-mb-lg titilium">
           <div class="col q-py-sm q-px-md">
             <div class="text-h6 text-uppercase text-vgrey border-right titilium">
-              <span class="text-weight-bolder">Volentix Node</span> Control Panel
-              <q-badge color="vgold" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
+              <div class="row">
+                <img src="@/statics/icons/logo.png" class="q-mr-sm" style="height: 32px; max-width: 32px" />
+                <div>
+                  <span class="text-weight-bolder">Volentix Node</span> Control Panel
+                  <q-badge color="vgold" class="q-mx-sm" text-color="vblack" align="top" transparent>{{ version }}</q-badge>
+                </div>
+              </div>
             </div>
             <div class="row items-center border-right">
               <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
-              <q-btn color="vgrey" size="xs" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true">
+              <q-btn color="vgrey" size="7px" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true">
                 <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
               </q-btn>
             </div>
