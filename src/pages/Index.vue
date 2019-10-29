@@ -49,7 +49,7 @@
             <q-list dense separator class="bg-vdark text-vgrey">
               <q-item v-if="!status.accountAdded">
                 <q-item-section>
-                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-user-plus" class="q-my-xs" @click="addNode()" label="Add">
+                  <q-btn outline rounded dense color="vgreen" icon="fas fa-user-plus" class="q-my-xs" @click="addNode()" label="Add">
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
                   </q-btn>
                 </q-item-section>
@@ -57,7 +57,7 @@
               <q-separator color="vseparator" v-if="!status.accountAdded" />
               <q-item v-if="!status.accountRegistered">
                 <q-item-section>
-                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-address-card" class="q-my-xs" @click="registerNode()" label="Register">
+                  <q-btn outline rounded dense color="vgreen" icon="fas fa-address-card" class="q-my-xs" @click="registerNode()" label="Register">
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
                   </q-btn>
                 </q-item-section>
@@ -65,7 +65,7 @@
               <q-separator color="vseparator" v-if="!status.accountRegistered" />
               <q-item v-if="!status.accountRun">
                 <q-item-section>
-                  <q-btn outline rounded size="sm" color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
+                  <q-btn outline rounded dense color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">
                       You need to init your node by pushing the retreive reward
                       action first time.
@@ -89,7 +89,7 @@
               <q-separator color="vseparator" />
               <q-item v-if="parseFloat(identity.balance) == 0">
                 <q-item-section>
-                  <q-btn label="Get VTX" outline rounded color="red" @click="$utils.openExternal('https://www.stex.com/')" />
+                  <q-btn label="Get VTX" outline rounded dense color="red" @click="$utils.openExternal('https://www.stex.com/')" />
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" v-if="parseFloat(identity.balance) == 0" />
@@ -152,6 +152,15 @@
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" />
+              <q-item v-if="parseFloat(status.cpu) == 0" class="bg-red text-vdark">
+                <q-item-section>
+                  <q-item-label>Not enough CPU time to complete transactions! You can wait for the network to be less loaded or stake more CPU.</q-item-label>
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-btn label="Stake CPU" outline rounded dense size="sm" class="q-px-sm" color="vdark" @click="$utils.openExternal('https://docs.bloks.io/wallet/staking-cpu-+-net')" />
+                </q-item-section>
+              </q-item>
+              <q-separator color="vseparator" v-if="parseFloat(status.cpu) == 0" />
               <q-item align="center">
                 <q-item-section>
                   <q-btn label="Retreive reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
