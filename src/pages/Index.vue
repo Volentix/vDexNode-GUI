@@ -24,7 +24,7 @@
             <div class="row items-center">
               <div class="text-italic text-vgrey titilium">Contribute to the Node Network and get VTX</div>
               <q-btn color="vgrey" size="7px" flat round icon="fas fa-question" class="q-mx-xs" @click="helpDialog = true">
-                <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
+                <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to know more</q-tooltip>
               </q-btn>
             </div>
           </div>
@@ -262,7 +262,8 @@
                   <div class="text-uppercase">Voting</div>
                 </div>
                 <div class="col">
-                  <q-btn size="sm" class="full-width" color="vgrey" dense flat rounded label="Rules ?" v-if="voting_list.length == 0" @click="rulesDialog = true">
+                  Rules:
+                  <q-btn size="7px" color="vgrey" dense flat round icon="fas fa-question" v-if="voting_list.length == 0" @click="rulesDialog = true">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
                   </q-btn>
                   <q-badge color="vgrey" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
@@ -327,7 +328,7 @@
               </q-list>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn outline rounded color="vgreen" label="Got it" v-close-popup />
+              <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -370,7 +371,7 @@
               </p>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn outline rounded color="vgreen" label="Got it" v-close-popup />
+              <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -407,7 +408,7 @@
               </ul>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn outline rounded color="vgreen" label="Got it" v-close-popup />
+              <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
@@ -440,7 +441,7 @@
               </ul>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn outline rounded color="vgreen" label="Got it" v-close-popup />
+              <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
             </q-card-actions>
           </q-card>
         </q-dialog>
