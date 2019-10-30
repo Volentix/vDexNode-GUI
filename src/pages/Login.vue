@@ -2,33 +2,35 @@
   <q-layout>
     <div class="titlebar"></div>
     <q-page-container>
-      <q-page class="bg-vblack">
-        <div class="row background-gradient window-height items-center">
-          <div class="col-xs-12 col-sm-12 col-md col-lg text-center q-pa-xl">
+      <q-page class="bg-vdark text-vgrey titilium">
+        <q-btn flat round color="vgrey" class="fixed-top-right q-ma-xl" icon="fas fa-link" @click="$utils.openExternal('https://volentix.io/')" />
+        <div class="fixed-top-left row q-pa-xl">
+          <img src="@/statics/icons/logo.png" style="height: 32px; max-width: 32px" />
+          <div class="text-weight-bolder text-uppercase q-px-sm text-h6">Volentix Node</div>
+        </div>
+        <div class="row window-height items-center q-pa-xl">
+          <div class="col-5 text-center q-pa-xl">
             <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px" />
-            <div class="text-h5 text-vdark">
+            <div class="text-h5 text-vgrey">
               <span class="text-weight-bolder">Volentix Node</span> Control Panel
+              <q-badge color="vgold" class text-color="vdark" align="top" transparent>{{ version }}</q-badge>
             </div>
-            <q-badge color="vdark" class text-color="vgrey" align="middle" transparent>{{ version }}</q-badge>
-            <div class="text-subtitle1 text-vdark">Rent your computer to earn VTX</div>
-
             <div class="q-mt-lg" v-show="progress > 0 && progress < 1">
-              <q-linear-progress :value="progress" rounded color="vdark" track-color="vgrey" style="height: 20px" />
-              <div class="text-subtitle1 text-vdark">Update downloading: {{ Math.round(progress*100) }} %</div>
+              <q-linear-progress :value="progress" rounded color="vgold" track-color="vdarkgrey" style="height: 20px" />
+              <div class="text-subtitle1 text-vgrey">Update downloading: {{ Math.round(progress*100) }} %</div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-12 col-md col-lg q-pa-xl">
+          <div class="col-7 q-pa-xl">
             <div class="text-h5">Import private key</div>
             <div class="text-subtitle2">Please enter your private key below to start working with vDexNode Dashboard. We will never save or transmit your your key.</div>
             <q-form @submit="login()">
-              <q-input dense v-model="privateKey" :type="isPwd ? 'password' : 'text'" counter color="vdark" ref="input" @keyup.enter="login" label="Your private key" :rules="[ val => val.length <= 51 || 'Wrong key']">
+              <q-input dark dense v-model="privateKey" :type="isPwd ? 'password' : 'text'" counter color="vgold" ref="input" @keyup.enter="login" label="Your private key" :rules="[ val => val.length <= 51 || 'Wrong key']">
                 <template v-slot:append>
                   <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
                 </template>
               </q-input>
-              <q-btn color="vdark" :disabled="privateKey ? false: true" unelevated rounded :outline="privateKey ? false: true" class="full-width q-mt-md" label="Continue" type="submit" />
+              <q-btn color="vgrey" :disabled="privateKey ? false: true" rounded class="full-width q-mt-md text-vdark" label="Continue" type="submit" />
             </q-form>
-            <q-btn flat round color="vdark" class="fixed-top-right q-ma-sm" icon="fas fa-link" @click="$utils.openExternal('https://volentix.io/')" />
             <!-- <q-btn outline rounded unelevated color="vdark" class="" label="Scatter" @click="scatterLogin()" /> -->
           </div>
         </div>
