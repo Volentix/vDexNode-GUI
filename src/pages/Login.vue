@@ -10,7 +10,7 @@
         </div>
         <div class="row window-height items-center q-pa-xl">
           <div class="col-5 text-center q-pa-xl">
-            <img src="@/statics/icons/icon-512x512.png" style="height: 150px; max-width: 150px" />
+            <img src="@/statics/icons/icon-512x512.png" style="height: 250px; max-width: 250px" />
             <div class="text-h5 text-vgrey">
               <span class="text-weight-bolder">Volentix Node</span> Control Panel
               <q-badge color="vgold" class text-color="vdark" align="top" transparent>{{ version }}</q-badge>
