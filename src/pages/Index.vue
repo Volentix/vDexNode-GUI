@@ -32,7 +32,7 @@
           <div class="col q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
-              <q-btn disable flat round color="vgold" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
+              <q-btn flat round color="vgold" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
               <q-btn flat round color="vgold" class="q-mx-xs" icon="fas fa-sign-out-alt" @click="$configManager.logout()" />
             </div>
           </div>
@@ -262,7 +262,7 @@
                   <div class="text-uppercase">Voting</div>
                 </div>
                 <div class="col">
-                  Rules:
+                  <span v-if="voting_list.length == 0">Rules:</span>
                   <q-btn size="7px" color="vgrey" dense flat round icon="fas fa-question" v-if="voting_list.length == 0" @click="rulesDialog = true">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
                   </q-btn>

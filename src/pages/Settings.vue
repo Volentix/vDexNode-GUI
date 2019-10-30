@@ -59,9 +59,33 @@
           </div>
           <div class="col">
             <q-banner dense class="text-vgrey bg-vdark q-pa-md">
-              <div class="text-subtitle2 text-uppercase">Additional</div>
+              <div class="text-subtitle2 text-uppercase">Stats</div>
             </q-banner>
             <q-list dark dense separator class="bg-vdark text-vgrey q-px-md">
+              <q-item>
+                <q-item-section>
+                  <q-item-label>Config file path</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="code">{{ $configStore.path }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label>RPC endpoint in use</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="code">{{ inUseRPC }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-item-label>EOS authority provider in use</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-item-label class="code">{{ inUseEOS }}</q-item-label>
+                </q-item-section>
+              </q-item>
               <q-item>
                 <q-item-section>
                   <q-item-label>Vue version</q-item-label>
@@ -98,7 +122,7 @@
             </q-card-section>
             <q-card-section align="right">
               <q-form @submit="updateEosEndpoint()">
-                <q-input dark dense v-model="newEosEndpoint" counter color="vgrey" ref="input" @keyup.enter="updateEosEndpoint" label="New EOS Endpoint" />
+                <q-input dark dense clearable v-model="newEosEndpoint" counter color="vgrey" ref="input" @keyup.enter="updateEosEndpoint" label="New EOS Endpoint"/>
                 <q-btn color="vgrey" :disabled="newEosEndpoint ? false: true" unelevated rounded outline class="q-mt-md" label="Continue" type="submit" v-close-popup />
               </q-form>
             </q-card-section>
@@ -139,7 +163,9 @@ export default {
       editEosEndpointDialog: false,
       editNodeApiDialog: false,
       newNodeApi: '',
-      newEosEndpoint: ''
+      newEosEndpoint: '',
+      inUseRPC: this.$rpc.rpc.endpoint,
+      inUseEOS: this.$eos.api.authorityProvider.endpoint
     }
   },
   computed: {
@@ -148,38 +174,43 @@ export default {
     }
   },
   mounted () {
-    this.checkStatus()
-    this.s1 = setInterval(() => this.checkStatus(), 60000)
+    this.checkNodeApiStatus()
+    this.checkEosEndpointStatus()
+    this.s1 = setInterval(() => { this.checkEosEndpointStatus(); this.checkNodeApiStatus() }, 300000)
   },
   beforeDestroy () {
     clearInterval(this.s1)
   },
   methods: {
-    checkStatus () {
+    checkEosEndpointStatus () {
       this.$utils.checkEosEndpoint(this.$configStore.get('eos_endpoint')).then(response => {
         this.eosEndpointStatus = response
       })
+    },
+    checkNodeApiStatus () {
       this.$utils.checkNodeApi(this.$configStore.get('node_api')).then(response => {
         this.nodeApiStatus = response
       })
     },
     updateNodeAPI () {
-      // TODO: to config manager
+      // TODO: if the / in the end of the new api then remove it
       this.$configStore.set('node_api', this.newNodeApi)
-      this.checkStatus()
+      this.checkNodeApiStatus()
     },
     updateEosEndpoint () {
       // TODO: to config manager
       this.$configStore.set('eos_endpoint', this.newEosEndpoint)
-      this.checkStatus()
+      this.checkEosEndpointStatus()
       try {
         Vue.prototype.$rpc = new EosRPC()
+        this.inUseRPC = this.$rpc.rpc.endpoint
       } catch (error) {
         this.$userError(error, 'RPC: Update EOS endpoint')
         throw error
       }
       try {
         Vue.prototype.$eos = new EosAPI(this.$rpc.rpc, this.$store.state.identity.privateKey)
+        this.inUseEOS = this.$eos.api.authorityProvider.endpoint
       } catch (error) {
         this.$userError(error, 'API: Update EOS endpoint')
         throw error

@@ -158,7 +158,7 @@ async function checkEosEndpoint (url) {
         else resolve(false)
       })
       .catch(error => {
-        userError(error, 'Check Node API')
+        // userError(error, 'Check EOS endpoint')
         resolve(false)
         throw error
       })
@@ -178,7 +178,7 @@ async function checkNodeApi (url) {
         else resolve(false)
       })
       .catch(error => {
-        userError(error, 'Check Node API')
+        // userError(error, 'Check Node API')
         resolve(false)
         throw error
       })
