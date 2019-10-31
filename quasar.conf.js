@@ -175,8 +175,8 @@ module.exports = function (ctx) {
 
       builder: {
         // https://www.electron.build/configuration/configuration
-        productName: 'vDexNode',
-        appId: 'io.volentix.vdexnode',
+        productName: 'Volentix Node',
+        appId: 'io.volentix.volentixnode',
         /* eslint-disable */
         artifactName: '${name}-${os}-${version}.${ext}',
         /* eslint-enable */
@@ -231,11 +231,11 @@ module.exports = function (ctx) {
         },
         linux: {
           category: 'Network',
-          description: 'vDexNode',
+          description: 'Volentix Node',
           desktop: {
-            Name: 'vDexNode',
-            GenericName: 'vDexNode',
-            'X-GNOME-FullName': 'vDexNode',
+            Name: 'Volentix Node',
+            GenericName: 'volentixnode',
+            'X-GNOME-FullName': 'Volentix Node',
             Comment: 'vDexNode',
             Type: 'Application',
             Terminal: 'false',
