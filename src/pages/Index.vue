@@ -183,7 +183,7 @@
                   <div class="col">
                     <div class="text-subtitle2 text-uppercase">
                       List of Nodes on the network
-                      <q-btn size="xs" class="q-mx-xs" dense flat round icon="fas fa-question">
+                      <q-btn size="7px" class="q-mx-xs" dense flat round icon="fas fa-question">
                         <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">
                           List of the nodes is automatically updated every 5
                           minutes
@@ -258,20 +258,21 @@
           <div class="col-3">
             <q-banner dense class="text-vgrey bg-vdark q-px-md q-pt-md">
               <div class="row items-center">
-                <div class="col-3">
-                  <div class="text-uppercase">Voting</div>
+                <div class="col">
+                  <div class="text-uppercase">
+                    Voting
+                    <q-btn size="7px" color="vgrey" dense flat round icon="fas fa-question" @click="rulesDialog = true">
+                      <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
+                    </q-btn>
+                  </div>
                 </div>
                 <div class="col">
-                  <span v-if="voting_list.length == 0">Rules:</span>
-                  <q-btn size="7px" color="vgrey" dense flat round icon="fas fa-question" v-if="voting_list.length == 0" @click="rulesDialog = true">
-                    <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to see the voting rules</q-tooltip>
-                  </q-btn>
                   <q-badge color="vgrey" class="text-vdark text-weight-bolder text-caption" v-if="voting_list.length > 0">{{ voting_list.length }}/21</q-badge>
-                  <q-btn size="sm" class="q-mx-xs" color="vgrey" flat round icon="fas fa-backspace" v-if="voting_list.length > 0" @click="voting_list = []">
+                  <q-btn size="xs" class="q-mx-xs" color="vgrey" flat round icon="fas fa-backspace" v-if="voting_list.length > 0" @click="voting_list = []">
                     <q-tooltip content-class="bg-vgrey text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Click to clear the voting list</q-tooltip>
                   </q-btn>
                 </div>
-                <div class="col-4 q-pa-sm text-right">
+                <div class="col q-pa-sm text-right">
                   <div class="text-caption" v-if="voting_list.length == 0">Choose nodes</div>
                   <q-btn color="vgold" rounded size="sm" dense class="text-vdark text-weight-bolder q-px-md" v-on:click="vote()" v-if="voting_list.length > 0">Vote now</q-btn>
                 </div>
@@ -661,7 +662,10 @@ export default {
         .vote(this.voting_list, this.identity.accountName)
         .then(() => {
           this.voting_list = []
-          setTimeout(() => this.getInfoOften(), 3000)
+          setTimeout(() => {
+            this.getInfoOften()
+            this.$configManager.getUserRank(this.identity.accountName)
+          }, 3000)
         })
         .catch(error => {
           throw new Error(error)
