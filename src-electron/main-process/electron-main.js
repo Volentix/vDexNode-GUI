@@ -1,10 +1,21 @@
 import { app, Notification, BrowserWindow, Menu, shell, Tray, ipcMain, nativeImage, dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
+const unhandled = require('electron-unhandled')
+const { openNewGitHubIssue, debugInfo } = require('electron-util')
 const path = require('path')
 const log = require('electron-log')
 import vdexnodeMenu from './electron-menu'
 const notifier = require('node-notifier')
 
+unhandled({
+  reportButton: error => {
+    openNewGitHubIssue({
+      user: 'volentix',
+      repo: 'vdexnode-gui',
+      body: `\`\`\`\n${error.stack}\n\`\`\`\n\n---\n\n${debugInfo()}`
+    })
+  }
+})
 /**
  * Set `__statics` path to static files in production;
  * The reason we are setting it here is that the path needs to be evaluated at runtime
@@ -38,19 +49,31 @@ function createWindow () {
   mainWindow.maximize()
   mainWindow.loadURL(process.env.APP_URL)
 
-  mainWindow.on('close', event => {
-    event.preventDefault()
-    toggleWindow()
-  })
+  // mainWindow.on('close', event => {
+  //   event.preventDefault()
+  //   toggleWindow()
+  // })
 
   mainWindow.on('closed', () => {
     mainWindow = null
-    app.quit()
   })
 
   const vdexMenu = vdexnodeMenu(app, shell, mainWindow)
   Menu.setApplicationMenu(Menu.buildFromTemplate(vdexMenu))
 }
+
+if (!app.requestSingleInstanceLock()) {
+  app.quit()
+}
+
+app.on('second-instance', () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore()
+    }
+    mainWindow.show()
+  }
+})
 
 let iconPath
 if (process.env.PROD) {
@@ -70,6 +93,18 @@ app.on('ready', () => {
       enabled: true,
       click: () => {
         autoUpdater.checkForUpdatesAndNotify()
+      }
+    },
+    { type: 'separator' },
+    {
+      label: 'Report an issue',
+      click: () => {
+        const body = `<!-- Please succinctly describe your issue and steps to reproduce it. --> --- ${debugInfo()}`
+        openNewGitHubIssue({
+          user: 'volentix',
+          repo: 'vdexnode-gui',
+          body
+        })
       }
     },
     { type: 'separator' },
@@ -107,11 +142,10 @@ app.on('ready', () => {
 })
 
 const toggleWindow = () => {
-  if (mainWindow.isVisible()) {
-    mainWindow.hide()
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore()
   } else {
-    mainWindow.show()
-    mainWindow.focus()
+    mainWindow.minimize()
   }
 }
 
@@ -119,6 +153,8 @@ app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    app.quit()
+  } else {
     app.quit()
   }
 })

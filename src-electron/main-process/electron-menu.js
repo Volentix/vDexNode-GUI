@@ -1,3 +1,4 @@
+const { openNewGitHubIssue, debugInfo } = require('electron-util')
 function vdexnodeMenu (app, shell, mainWindow) {
   const template = [
     {
@@ -107,6 +108,17 @@ function vdexnodeMenu (app, shell, mainWindow) {
           click () {
             require('electron').shell.openExternal('https://volentix.io/')
           }
+        },
+        {
+          label: 'Report an Issue…',
+          click () {
+            const body = `<!-- Please succinctly describe your issue and steps to reproduce it. --> --- ${debugInfo()}`
+            openNewGitHubIssue({
+              user: 'volentix',
+              repo: 'vdexnode-gui',
+              body
+            })
+          }
         }
       ]
     }
@@ -115,9 +127,17 @@ function vdexnodeMenu (app, shell, mainWindow) {
   if (!process.env.PROD) {
     template.unshift({
       label: 'Dev Tools',
-      submenu: [{
-        role: 'toggledevtools'
-      }]
+      submenu: [
+        {
+          role: 'toggledevtools'
+        },
+        {
+          label: 'Show App Data',
+          click () {
+            shell.openItem(app.getPath('userData'))
+          }
+        }
+      ]
     })
   }
 
@@ -172,12 +192,15 @@ function vdexnodeMenu (app, shell, mainWindow) {
       return m.role === 'window'
     })
     if (windowMenu) {
-      windowMenu.submenu.push({
-        type: 'separator'
-      }, {
-        label: 'Bring All to Front',
-        role: 'front'
-      })
+      windowMenu.submenu.push(
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Bring All to Front',
+          role: 'front'
+        }
+      )
     }
   }
 
