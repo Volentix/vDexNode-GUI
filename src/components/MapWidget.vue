@@ -86,8 +86,8 @@ export default {
   },
   methods: {
     async getNodesLocation () {
-      // await this.getLocationsData() // Real data
-      await this.getLocationsDataFake() // Fake data
+      await this.getLocationsData() // Real data
+      // await this.getLocationsDataFake() // Fake data
     },
     async getLocationsData () {
       return new Promise(resolve => {
@@ -138,15 +138,6 @@ export default {
             })
           }
           locations = this.$utils.getUniqueLocations(locations)
-          // console.log(locations)
-          // locations.forEach(item => {
-          //   for (let i = 0; i < item.ids.length; i++) {
-          //     if (this.nodes.includes(item.ids[i])) {
-          //       item.ids[i] = this.nodes[item.ids[i]].account
-          //     }
-          //   }
-          // })
-          // console.log(locations)
           /* eslint-disable */
           for (let i = 0; i < locations.length; i++) {
             this.nodeGeoData.push({
