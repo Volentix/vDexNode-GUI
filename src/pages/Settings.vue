@@ -14,7 +14,7 @@
           <div class="col-5 q-py-sm q-px-sm">
             <div class="row justify-end">
               <q-btn outline rounded color="vgold" class="q-mx-xs" label="Home" to="/" />
-              <q-btn outline rounded color="vgold" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
+              <q-btn v-if="loggedIn" outline rounded color="vgold" class="q-mx-xs" label="Logout" @click="$configManager.logout()" />
             </div>
           </div>
         </div>
@@ -171,6 +171,9 @@ export default {
   computed: {
     blur: function () {
       return this.editNodeApiDialog || this.editEosEndpointDialog
+    },
+    loggedIn: function () {
+      return this.$store.getters.isLoggedIn
     }
   },
   mounted () {

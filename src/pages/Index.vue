@@ -159,12 +159,12 @@
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" />
-              <q-item v-if="parseFloat(status.cpu) == 0" class="bg-vred text-vdark">
+              <q-item v-if="parseFloat(status.cpu) == 0" class="bg-vred text-white">
                 <q-item-section>
                   <q-item-label>Not enough CPU time to complete transactions! You can wait for the network to be less loaded or stake more CPU.</q-item-label>
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-btn label="Stake CPU" outline rounded dense size="sm" class="q-px-sm" color="vdark" @click="$utils.openExternal('https://docs.bloks.io/wallet/staking-cpu-+-net')" />
+                  <q-btn label="Stake CPU" outline rounded dense size="sm" class="q-px-sm" color="white" @click="$utils.openExternal('https://docs.bloks.io/wallet/staking-cpu-+-net')" />
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" v-if="parseFloat(status.cpu) == 0" />
