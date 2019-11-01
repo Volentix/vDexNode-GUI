@@ -8,10 +8,7 @@ const routes = [
   },
   {
     path: '/settings',
-    component: () => import('pages/Settings.vue'),
-    meta: {
-      requiresAuth: true
-    }
+    component: () => import('pages/Settings.vue')
   },
   {
     path: '/login',

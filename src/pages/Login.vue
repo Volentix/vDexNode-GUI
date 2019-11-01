@@ -3,7 +3,10 @@
     <div class="titlebar"></div>
     <q-page-container>
       <q-page class="bg-vdark text-vgrey titilium">
-        <q-btn flat round color="vgrey" class="fixed-top-right q-ma-xl" icon="fas fa-link" @click="$utils.openExternal('https://volentix.io/')" />
+        <div class="fixed-top-right q-pa-xl">
+          <q-btn flat round color="vgrey" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
+          <q-btn flat round color="vgrey" class="q-mx-xs" icon="fas fa-link" @click="$utils.openExternal('https://volentix.io/')" />
+        </div>
         <div class="fixed-top-left row q-pa-xl">
           <img src="@/statics/icons/logo.png" style="height: 32px; max-width: 32px" />
           <div class="text-weight-bolder text-uppercase q-px-sm text-h6">Volentix Node</div>
