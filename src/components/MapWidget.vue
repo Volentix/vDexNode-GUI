@@ -87,7 +87,6 @@ export default {
   methods: {
     async getNodesLocation () {
       await this.getLocationsData() // Real data
-      // await this.getLocationsDataFake() // Fake data
     },
     async getLocationsData () {
       return new Promise(resolve => {
@@ -123,35 +122,6 @@ export default {
           })
       })
     }, // end of getLocationsData
-    async getLocationsDataFake () {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          let raw = require('../assets/geoWidgetData/fake.json')
-          let locations = []
-          for (var key in raw) {
-            let coord = raw[key][1].split(',')
-            locations.push({
-              id: key,
-              city: raw[key][0],
-              lat: coord[0],
-              long: coord[1]
-            })
-          }
-          locations = this.$utils.getUniqueLocations(locations)
-          /* eslint-disable */
-          for (let i = 0; i < locations.length; i++) {
-            this.nodeGeoData.push({
-              lat: locations[i].lat,
-              long: locations[i].long,
-              mass: locations[i].ids.length,
-              city: locations[i].city,
-              nodes: locations[i].ids
-            })
-          }
-          /* eslint-enable */
-        }, 1000)
-      })
-    }, // end of getLocationsDataFake
     mapInit () {
       this.map = L.map('mapid').setView([51.505, -0.09], 1)
     },
