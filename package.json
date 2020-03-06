@@ -75,6 +75,7 @@
     "jsdoc": "^3.6.3",
     "jsdoc-vuejs": "^3.0.8",
     "minami": "^1.2.3",
+    "raw-loader": "^4.0.0",
     "vue-template-compiler": "^2.6.11"
   },
   "engines": {
