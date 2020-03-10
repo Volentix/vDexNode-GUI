@@ -28,6 +28,8 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QCheckbox',
+        'QOptionGroup',
         'QDialog',
         'QLayout',
         'QHeader',
@@ -87,10 +89,14 @@ module.exports = function (ctx) {
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /node_modules/,
+          exclude: /node_modules|assets/,
           options: {
             formatter: require('eslint').CLIEngine.getFormatter('stylish')
           }
+        })
+        cfg.module.rules.push({
+          test: /\.sh$/i,
+          use: 'raw-loader',
         })
       }
     },

@@ -31,7 +31,7 @@
 
           <div class="col q-py-sm q-px-sm">
             <div class="row justify-end">
-              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="$utils.openExternal($configStore.get('node_readme'))" />
+              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Get vDex node" @click="installDialog = true" />
               <q-btn flat round color="vgold" class="q-mx-xs" icon="fas fa-sliders-h" to="/settings" />
               <q-btn flat round color="vgold" class="q-mx-xs" icon="fas fa-sign-out-alt" @click="$configManager.logout()" />
             </div>
@@ -301,12 +301,10 @@
         <div class="row q-col-gutter-x-lg titilium">
           <!-- Map Widget -->
           <div class="col-7">
-            <q-banner dense inline-actions class="text-vgrey bg-vdarkgrey">The map widget is currently disabled, the data is artificial.</q-banner>
             <MapWidget v-bind:nodes="nodes" />
           </div>
           <!-- Chat -->
           <div class="col-5">
-            <q-banner dense inline-actions class="text-vgrey bg-vdarkgrey">The chat widget is currently disabled, the data is artificial.</q-banner>
             <ChatWidget />
           </div>
         </div>
@@ -370,6 +368,72 @@
                 To receive your reward for the running node click on the button
                 retreive reward.
               </p>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <!-- Install dialog -->
+        <q-dialog v-model="installDialog">
+          <q-card square style="min-width: 50vw; max-width: 70vw;" class="bg-vdark text-vgrey">
+            <q-card-section>
+              <div class="text-h6">Install VDEX Node</div>
+              <q-separator dark />
+            </q-card-section>
+            <q-card-section>
+              <div class="text-subtitle1">1. Choose your node's features</div>
+              <template>
+                <div class="q-pa-md">
+                  <q-option-group inline
+                    :options="options"
+                    label="Options"
+                    type="checkbox"
+                    v-model="group"
+                  />
+                </div>
+              </template>
+              <div class="text-subtitle2">Future features:</div>
+              <template>
+                <div class="q-pa-md">
+                  <q-option-group inline disabled
+                    :options="future_options"
+                    label="Options"
+                    type="checkbox"
+                    v-model="future_group"
+                  />
+                </div>
+              </template>
+              <div class="text-subtitle1">2. Get the install script</div>
+              <template>
+                <div class="q-pa-md" style="max-width: auto">
+                  <q-input
+                    v-model="script"
+                    filled
+                    color="vgreen"
+                    style="background-color: white;"
+                    type="textarea"
+                  />
+                </div>
+              </template>
+
+              <q-btn outline rounded color="vgreen" class="q-mx-xs" label="Copy script" @click="$utils.copyToClipboard(script)" >
+                <q-icon color="vgreen" style="margin-left: 20px" name="fas fa-copy" />
+              </q-btn>
+
+              <div class="text-subtitle1" style="margin-top: 20px" >3. Execute the script (replace parameters)</div>
+
+              <q-card-section>
+                <q-list bordered round class="bg-vgrey text-vdark">
+                  <q-item clickable v-ripple @click="$utils.copyToClipboard(commandLine)">
+                    <q-item-section>{{ commandLine }}</q-item-section>
+                    <q-item-section avatar>
+                      <q-icon color="vdark" name="fas fa-copy" />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-card-section>
+
             </q-card-section>
             <q-card-actions align="right">
               <q-btn outline rounded color="vgold" label="Got it" v-close-popup />
@@ -491,11 +555,27 @@ export default {
   data () {
     return {
       version: '',
+      commandLine: './install.sh ADDRESS NAMESPACE DOMAIN AUTH64',
       publicDialog: false,
       helpDialog: false,
+      installDialog: false,
       rankDialog: false,
       rulesDialog: false,
       voting_list: [],
+      group: [ 'vote' ],
+      options: [
+        { label: 'Vote', value: 'vote', color: 'vgreen' },
+        { label: 'MPT Bitcoin', value: 'btcmpt', color: 'vgreen' },
+        { label: 'Bitcoin host', value: 'btc', color: 'vgreen' }
+      ],
+      future_group: [],
+      future_options: [
+        { label: 'Gateway', value: 'gateway', color: 'vgreen', disable: true },
+        { label: 'Database', value: 'db', color: 'vgreen', disable: true },
+        { label: 'Oracle', value: 'oracle', color: 'vgreen', disable: true },
+        { label: 'MPT Ethereum', value: 'ethmpt', color: 'vgreen', disable: true },
+        { label: 'Chat server', value: 'chat', color: 'vgreen', disable: true }
+      ],
       voting_listColumns: [
         { name: 'account', align: 'left', label: 'Account', field: 'account' },
         { name: 'rank', align: 'center', label: 'Rank', field: 'rank' },
@@ -517,12 +597,13 @@ export default {
         rowsPerPage: 0,
         sortBy: 'rank',
         descending: false
-      }
+      },
+      script: ''
     }
   },
   computed: {
     blur: function () {
-      return this.helpDialog || this.rankDialog || this.rulesDialog || this.publicDialog
+      return this.helpDialog || this.rankDialog || this.rulesDialog || this.publicDialog || this.installDialog
     },
     loggedIn: function () {
       return this.$store.getters.isLoggedIn
@@ -553,6 +634,18 @@ export default {
     // this.m4 = setInterval(() => this.checkAccountRun(), 3600000)
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
     this.m6 = setInterval(() => this.$configManager.getUserResources(this.identity.accountName), 5000)
+    this.getInstallScript()
+  },
+  watch: {
+    group: function (val, oldVal) {
+      this.$nextTick(function () {
+        this.options.forEach(element => {
+          var re = `\n${element.value}=[0-1]\n`
+          var newValue = `\n${element.value}=${this.group.includes(element.value) ? '1' : '0' }\n`
+          this.script = this.script.replace(new RegExp(re, "g"), newValue)
+        })
+      })
+    }
   },
   beforeDestroy () {
     clearInterval(this.m3)
@@ -562,6 +655,9 @@ export default {
     clearInterval(this.m6)
   },
   methods: {
+    getInstallScript () {
+      this.script = require('../assets/install.sh').default // eslint-disable-line global-require
+    },
     checkAccountRun () {
       if (this.nodes.length > 0 && !this.nodes.some(item => item.account === this.identity.accountName)) {
         this.$userError(
