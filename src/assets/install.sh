@@ -4,47 +4,55 @@
 vote=1
 btcmpt=0
 btc=0
+eoskey="KEY"
 
-# Script for running the repo stuff without even cloning the repo.
 echo "Running the main install script."
 
-vtx_public_address="$1"
-namespace="$2"
-domain_name="$3"
-auth64="$4"
+bootstrap="198.50.136.143"
+bitcoin_user="admin"
+bitcoin_pass="test"
+bitcoin_endpoint="bitcoin"
+bitcoin_port="18443"
 
-if [ -z "$vtx_public_address" ]
-then
-    echo "You must supply an address, namespace, and domain_name."
-    exit 1
-fi
 
-if [ -z "$namespace" ]
-then
-    echo "You must supply a namespace and domain_name."
-    exit 1
-fi
+echo "Installing Vepo"
 
-if [ -z "$domain_name" ]
-then
-    echo "You must supply a domain_name."
-    exit 1
-fi
+wget https://github.com/rancher/k3s/releases/download/v1.17.3%2Bk3s1/k3s
 
-if [ -z "$auth64" ]
-then
-    echo "You must supply a the base 64 apache auth information."
-    exit 1
-fi
+chmod +x k3s
 
-cd src/vepo
+sudo mv k3s /bin
 
-sh ./install.sh $domain_name $auth64
+sudo nohup  k3s server --kube-apiserver-arg service-node-port-range=4000-10000  &>/dev/null &
+
+echo "Sleeping while k3s starts up..."
+sleep 15
+
+curl -LO https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+k3s kubectl apply -f local-path-storage.yaml
+
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+
+sudo chmod 777 ~/.kube/config
 
 echo "Installing vDexNode."
 
-cd ../vdexnode
+wget https://raw.githubusercontent.com/Volentix/vDexNode/master/Kubernetes/0.vdex.yaml.template
 
-sh ./install.sh $vtx_public_address $namespace $domain_name
+sed -i  's/eoskey/'"$eoskey"'/' 0.vdex.yaml.template
+sed -i  's/bootstrap/'"$bootstrap"'/' 0.vdex.yaml.template
+sed -i  's/bitcoin_user/'"$bitcoin_user"'/' 0.vdex.yaml.template
+sed -i  's/bitcoin_pass/'"$bitcoin_pass"'/' 0.vdex.yaml.template
+sed -i  's/bitcoin_endpoint/'"$bitcoin_endpoint"'/' 0.vdex.yaml.template
+sed -i  's/bitcoin_port/'"$bitcoin_port"'/' 0.vdex.yaml.template
+
+if [[ btc -eq 0 ]]
+then
+    sed -i '/bitcoin/d' 0.vdex.yaml.template
+fi
+
+k3s kubectl apply -f 0.vdex.yaml.template
 
 echo "Install fully complete"
+

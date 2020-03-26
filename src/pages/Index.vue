@@ -62,14 +62,6 @@
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" v-if="!status.accountAdded" />
-              <q-item v-if="!status.accountRegistered">
-                <q-item-section>
-                  <q-btn outline rounded dense color="vgreen" icon="fas fa-address-card" class="q-my-xs" @click="registerNode()" label="Register">
-                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-              <q-separator color="vseparator" v-if="!status.accountRegistered" />
               <q-item v-if="!status.accountRun">
                 <q-item-section>
                   <q-btn outline rounded dense color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
@@ -393,7 +385,7 @@
                   />
                 </div>
               </template>
-              <div class="text-subtitle2">Future features:</div>
+              <!--<div class="text-subtitle2">Future features:</div>
               <template>
                 <div class="q-pa-md">
                   <q-option-group inline disabled
@@ -403,8 +395,19 @@
                     v-model="future_group"
                   />
                 </div>
+              </template>-->
+              <div v-if="!status.accountRegistered">
+              <div class="text-subtitle1">2. Register node</div>
+              <template>
+                <div class="q-pa-md" style="max-width: auto">
+                  <q-btn outline rounded color="vgreen" icon="fas fa-address-card" class="q-mx-xs" @click="registerNode()" label="Register">
+                    <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Register the node</q-tooltip>
+                  </q-btn>
+                </div>
               </template>
-              <div class="text-subtitle1">2. Get the install script</div>
+              </div>
+              <div v-if="!status.accountRegistered" class="text-subtitle1">3. Get the install script</div>
+              <div v-if="status.accountRegistered" class="text-subtitle1">2. Get the install script</div>
               <template>
                 <div class="q-pa-md" style="max-width: auto">
                   <q-input
@@ -421,7 +424,8 @@
                 <q-icon color="vgreen" style="margin-left: 20px" name="fas fa-copy" />
               </q-btn>
 
-              <div class="text-subtitle1" style="margin-top: 20px" >3. Execute the script (replace parameters)</div>
+              <div v-if="!status.accountRegistered" class="text-subtitle1" style="margin-top: 20px" >4. Execute the script (replace parameters at the top)</div>
+              <div v-if="status.accountRegistered" class="text-subtitle1" style="margin-top: 20px" >3. Execute the script (replace parameters at the top)</div>
 
               <q-card-section>
                 <q-list bordered round class="bg-vgrey text-vdark">
@@ -555,7 +559,7 @@ export default {
   data () {
     return {
       version: '',
-      commandLine: './install.sh ADDRESS NAMESPACE DOMAIN AUTH64',
+      commandLine: './install.sh',
       publicDialog: false,
       helpDialog: false,
       installDialog: false,
@@ -635,14 +639,19 @@ export default {
     this.m5 = setInterval(() => this.refresh(), 300000) // 5 min
     this.m6 = setInterval(() => this.$configManager.getUserResources(this.identity.accountName), 5000)
     this.getInstallScript()
+
+    // Pass public key
+    var re = '\neoskey="KEY"\n'
+    var newValue = `\neoskey="${this.identity.publicKey }"\n` // eslint-disable-line
+    this.script = this.script.replace(new RegExp(re, 'g'), newValue)
   },
   watch: {
     group: function (val, oldVal) {
       this.$nextTick(function () {
         this.options.forEach(element => {
           var re = `\n${element.value}=[0-1]\n`
-          var newValue = `\n${element.value}=${this.group.includes(element.value) ? '1' : '0' }\n`
-          this.script = this.script.replace(new RegExp(re, "g"), newValue)
+          var newValue = `\n${element.value}=${this.group.includes(element.value) ? '1' : '0' }\n` // eslint-disable-line
+          this.script = this.script.replace(new RegExp(re, 'g'), newValue)
         })
       })
     }
@@ -736,7 +745,7 @@ export default {
     },
     registerNode () {
       this.$configManager
-        .registerNode(this.identity.accountName)
+        .registerNode(this.identity.accountName, this.group)
         .then(() => {})
         .catch(error => {
           throw new Error(error)
