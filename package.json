@@ -35,7 +35,7 @@
     "concurrently:dev:jest": "concurrently \"quasar dev\" \"jest --watch\""
   },
   "dependencies": {
-    "@quasar/extras": "^1.5.2",
+    "@quasar/extras": "^1.6.0",
     "@scatterjs/core": "^2.7.47",
     "@scatterjs/eosjs2": "^1.5.33",
     "axios": "^0.18.1",
@@ -50,9 +50,10 @@
     "leaflet": "^1.6.0",
     "node-fetch": "^2.6.0",
     "node-notifier": "^6.0.0",
-    "quasar": "^1.9.7",
+    "quasar": "^1.9.12",
     "stream-http": "^3.1.0",
     "streamdataio-js-sdk": "^2.0.2",
+    "vue-chat-widget": "^0.3.1",
     "vue-i18n": "^8.15.4"
   },
   "devDependencies": {

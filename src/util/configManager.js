@@ -97,7 +97,7 @@ function logout () {
 
 async function accountAdded (accountName) {
   try {
-    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'vdexnodes')
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
     let nodeStats = result.find(row => row.account === accountName)
     if (nodeStats) {
       store.commit('setAccountAdded', true)
