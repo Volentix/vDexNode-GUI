@@ -229,7 +229,6 @@ async function getUserVoted (accountName) {
 }
 
 async function getRegisteredNodes () {
-  // try {
   const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
   var registeredNodes = []
   result.forEach(function (item) {
@@ -240,9 +239,6 @@ async function getRegisteredNodes () {
   } else {
     throw Error
   }
-  // } catch (error) {
-  //   userError(error, 'get registered nodes')
-  // }
 }
 
 async function addNode (accountName) {
@@ -285,12 +281,16 @@ async function registerNode (accountName, options) {
   )
 }
 async function retreiveReward (accountName) {
+  var jobs = new Int32Array()
+  jobs[0] = 1
+  jobs[1] = 2
   await Vue.prototype.$eos.transaction(
     'vtxdistribut',
     'uptime',
     accountName,
     {
-      account: accountName
+      account: accountName,
+      job_ids: jobs
     },
     "Transaction 'Retreive reward' executed successfully!",
     'Retreive reward action'
