@@ -144,7 +144,7 @@ export default {
             return reader.read().then(read)
           })
       } catch (e) {
-        console.log('Stop streaming: ' + room)
+        // console.log('Stop streaming: ' + room)
       }
     },
     leaveRoom (room) {
@@ -176,7 +176,7 @@ export default {
           this.isSending = false
         }, (error) => {
           this.$userError(error, 'Get location data action')
-          console.log(error)
+          // console.log(error)
         })
     },
     getNodeId () {
@@ -186,7 +186,7 @@ export default {
           this.nodeId = response.data.public_key
         }, (error) => {
           this.$userError(error, 'Get node id')
-          console.log(error)
+          // console.log(error)
         })
     }
   } // end of methods
