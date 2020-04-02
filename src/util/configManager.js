@@ -241,7 +241,7 @@ async function getRegisteredNodes () {
       throw Error
     }
   } catch (error) {
-    userError(error, 'Get registered nodes action')
+    userError(error, registeredNodes.length)
   }
 }
 
@@ -259,13 +259,13 @@ async function addNode (accountName) {
 }
 
 async function registerNode (accountName, options) {
-  var jobs = []
+  var jobs = new Int32Array()
   options.forEach(element => {
     // cf https://github.com/Volentix/volentix_contracts/blob/216e81a4b916684bd361c6f6092f093dbce27a6d/vdexdposvote/vdexdposvote.hpp#L17
     if (element === 'vote') {
-      jobs.push(1)
+      jobs[0] = 1
     } else if (element === 'btc') {
-      jobs.push(2)
+      jobs[1] = 2
     }
   })
   await Vue.prototype.$eos.transaction(
@@ -278,13 +278,12 @@ async function registerNode (accountName, options) {
       url: 'test',
       key: 'test',
       node_id: 'test_node_1',
-      jobs: jobs
+      job_ids: jobs
     },
     'The account registered successfully!',
     'Register the account action'
   )
 }
-
 async function retreiveReward (accountName) {
   await Vue.prototype.$eos.transaction(
     'vtxdistribut',
