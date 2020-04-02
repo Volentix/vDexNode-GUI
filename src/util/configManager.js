@@ -229,20 +229,20 @@ async function getUserVoted (accountName) {
 }
 
 async function getRegisteredNodes () {
-  try {
-    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-    var registeredNodes = []
-    result.forEach(function (item) {
-      registeredNodes.push(item.owner)
-    })
-    if (registeredNodes.length) {
-      store.commit('setRegisteredNodes', registeredNodes)
-    } else {
-      throw Error
-    }
-  } catch (error) {
-    userError(error, registeredNodes.length)
+  // try {
+  const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+  var registeredNodes = []
+  result.forEach(function (item) {
+    registeredNodes.push(item.owner)
+  })
+  if (registeredNodes.length) {
+    store.commit('setRegisteredNodes', registeredNodes)
+  } else {
+    throw Error
   }
+  // } catch (error) {
+  //   userError(error, 'get registered nodes')
+  // }
 }
 
 async function addNode (accountName) {
