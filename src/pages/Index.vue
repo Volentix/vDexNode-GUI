@@ -54,7 +54,7 @@
             </q-banner>
             <q-separator dark />
             <q-list dense separator class="bg-vdark text-vgrey">
-              <q-item v-if="!status.accountAdded">
+              <q-item v-if="!status.accountRegistered">
                 <q-item-section>
                   <!-- <q-btn outline rounded dense color="vgreen" icon="fas fa-user-plus" class="q-my-xs" @click="addNode()" label="Add">
                     <q-tooltip content-class="bg-vgreen text-vdark" content-style="font-size: 16px" :offset="[10, 10]">Add the node</q-tooltip>
@@ -64,7 +64,7 @@
                   </q-btn>
                 </q-item-section>
               </q-item>
-              <q-separator color="vseparator" v-if="!status.accountAdded" />
+              <q-separator color="vseparator" v-if="!status.accountRegistered" />
               <q-item v-if="!status.accountRun">
                 <q-item-section>
                   <q-btn outline rounded dense color="vgreen" icon="fas fa-running" class="q-my-xs" @click="retreiveReward()" label="Run">
