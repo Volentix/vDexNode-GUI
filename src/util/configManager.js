@@ -129,8 +129,8 @@ async function accountRegistered (accountName) {
 
 async function accountRun (accountName) {
   try {
-    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
-    let nodeStats = result.find(row => row.account === accountName)
+    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
+    let nodeStats = result.find(row => row.owner === accountName)
     if (nodeStats) {
       store.commit('setAccountRun', true)
     } else {
