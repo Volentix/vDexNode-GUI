@@ -1,6 +1,6 @@
 {
   "name": "volentixnode",
-  "version": "0.4.0",
+  "version": "0.3.3",
   "description": "Volentix Node",
   "productName": "Volentix Node",
   "cordovaId": "org.cordova.volentixnode",
