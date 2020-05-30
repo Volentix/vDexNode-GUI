@@ -95,22 +95,6 @@ function logout () {
   })
 }
 
-async function accountAdded (accountName) {
-  try {
-    const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
-    let nodeStats = result.find(row => row.account === accountName)
-    if (nodeStats) {
-      store.commit('setAccountAdded', true)
-    } else {
-      userResult('Account: ' + accountName + ' is not added to the distribution contract. Please Add it.')
-      store.commit('setAccountAdded', false)
-    }
-  } catch (error) {
-    userError(error, 'Account add status check')
-    throw error
-  }
-}
-
 async function accountRegistered (accountName) {
   try {
     const result = await Vue.prototype.$rpc.getTable('vdexdposvote', 'vdexdposvote', 'producers')
@@ -137,7 +121,7 @@ async function accountRun (accountName) {
       userResult(
         'Account: ' +
           accountName +
-          ' is not initialized for getting the reward in the distribution contract. Please Init it by clicking the Run button.'
+          ' is not initialized for getting the reward in the voting contract. Please Init it by clicking the Run button.'
       )
       store.commit('setAccountRun', false)
     }
@@ -147,17 +131,28 @@ async function accountRun (accountName) {
   }
 }
 
-async function getUserUptime (accountName) {
+async function getRewardHistoryData () {
   try {
-    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'uptimes')
-    let nodeStats = result.find(row => row.account === accountName)
-    if (nodeStats) {
-      store.commit('setUptime', Math.floor((store.state.status.time - nodeStats.last_timestamp) / 86400))
-    } else {
-      store.commit('setUptime', 0)
-    }
+    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'rewardhistor')
+    let dailyRewardData = result.find(row => row.reward_id === 1)
+    let dailyRewardLastCalculation = dailyRewardData.last_timestamp
+    const rewardRules = await Vue.prototype.$rpc.getTable('vtxdistribut', 'vtxdistribut', 'rewards')
+    let dailyRewardRules = rewardRules.find(row => row.reward_id === 1)
+    let dailyRewardPeriod = dailyRewardRules.reward_period
+    let dailyRewardNextCalculation = dailyRewardLastCalculation && dailyRewardPeriod ? dailyRewardLastCalculation + dailyRewardPeriod : 0
+    store.commit('setDailyRewardNextCalculation', dailyRewardNextCalculation)
   } catch (error) {
-    userError(error, 'Get uptime action')
+    userError(error, 'Get last reward calculation timestaml')
+  }
+}
+
+async function getAvailbleForRetrieval (accountName) {
+  try {
+    const result = await Vue.prototype.$rpc.getTable('vtxdistribut', accountName, 'nodereward')
+    let amount = result.map(item => parseFloat(item.amount)).reduce((a, b) => a + b, 0).toFixed(4)
+    store.commit('setAvailbleForRetrieval', `${amount} VTX`)
+  } catch (error) {
+    userError(error, 'Get availble for retrieval')
   }
 }
 
@@ -281,20 +276,17 @@ async function registerNode (accountName, options) {
   )
 }
 async function retreiveReward (accountName) {
-  var jobs = new Int32Array()
-  jobs[0] = 1
-  jobs[1] = 2
   await Vue.prototype.$eos.transaction(
     'vtxdistribut',
-    'uptime',
+    'getreward',
     accountName,
     {
-      account: accountName,
-      job_ids: jobs
+      node: accountName
     },
     "Transaction 'Retreive reward' executed successfully!",
     'Retreive reward action'
   )
+  await getAvailbleForRetrieval()
 }
 
 async function vote (votingList, accountName) {
@@ -405,10 +397,8 @@ export {
   configStore,
   hasConfig,
   logout,
-  accountAdded,
   accountRegistered,
   accountRun,
-  getUserUptime,
   getUserRank,
   getUserBalance,
   getUserResources,
@@ -418,5 +408,7 @@ export {
   registerNode,
   retreiveReward,
   vote,
-  login
+  login,
+  getRewardHistoryData,
+  getAvailbleForRetrieval
 }
