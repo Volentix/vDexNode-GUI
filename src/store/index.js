@@ -15,7 +15,8 @@ function initialState () {
     method: '',
     identity: {
       voted_i: [],
-      voted_for: []
+      voted_for: [],
+      availble_for_retrieval: '0.0000 VTX'
     },
     status: {
       accountAdded: false,
@@ -25,7 +26,8 @@ function initialState () {
       cpu: '',
       net: ''
     },
-    registered_nodes: []
+    registered_nodes: [],
+    daily_reward_next_calculation: 0
   }
 }
 
@@ -37,7 +39,8 @@ const store = new Vuex.Store({
     getMethod: state => state.method,
     getIdentity: state => state.identity,
     getStatus: state => state.status,
-    getRegisteredNodes: state => state.registered_nodes
+    getRegisteredNodes: state => state.registered_nodes,
+    getDailyRewardNextCalculation: state => state.daily_reward_next_calculation
   },
   mutations: {
     logout: state => {
@@ -67,11 +70,14 @@ const store = new Vuex.Store({
     setTotalRanks: (state, total) => {
       state.identity.totalRanks = total
     },
-    setUptime: (state, uptime) => {
-      state.identity.uptime = uptime
+    setDailyRewardNextCalculation: (state, timestamp) => {
+      state.daily_reward_next_calculation = timestamp
     },
     setEarned: (state, earned) => {
       state.identity.earned = earned
+    },
+    setAvailbleForRetrieval: (state, amount) => {
+      state.identity.availble_for_retrieval = amount
     },
     setVotedI: (state, data) => {
       state.identity.voted_i = data

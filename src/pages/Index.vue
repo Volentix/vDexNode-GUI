@@ -113,11 +113,13 @@
               </q-item>
               <q-separator color="vseparator" />
               <q-item>
-                <q-item-section disabled>
-                  <q-item-label>Uptime:</q-item-label>
-                </q-item-section>
-                <q-item-section avatar disabled>
-                  <q-item-label>{{ identity.uptime }} days</q-item-label>
+                <q-item-section>
+                  <div align="center" class="text-subtitle2 text-vgreen text-uppercase">
+                    <div content-style="font-size: 12px"> daily reward countdown </div>
+                    <div content-style="font-size: 24px" class="text-weight-bolder">
+                      {{ daily_reward_calculation_countdown.hours }} : {{daily_reward_calculation_countdown.minutes}} : {{daily_reward_calculation_countdown.seconds}}
+                    </div>
+                  </div>
                 </q-item-section>
               </q-item>
               <q-separator color="vseparator" />
@@ -165,6 +167,12 @@
               <q-separator color="vseparator" v-if="parseFloat(status.cpu) == 0" />
               <q-item align="center">
                 <q-item-section>
+                    <div align="center" class="text-subtitle2  text-uppercase">
+                      <div content-style="font-size: 12px"> available for retrieval </div>
+                      <div content-style="font-size: 24px" class="text-weight-bolder">
+                        {{identity.availble_for_retrieval}}
+                      </div>
+                    </div>
                   <q-btn label="Retreive reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
                 </q-item-section>
               </q-item>
@@ -605,7 +613,13 @@ export default {
         sortBy: 'rank',
         descending: false
       },
-      script: ''
+      script: '',
+      now: '',
+      daily_reward_calculation_countdown: {
+        hours: '',
+        minutes: '',
+        seconds: ''
+      }
     }
   },
   computed: {
@@ -623,14 +637,21 @@ export default {
     },
     registered_nodes: function () {
       return this.$store.getters.getRegisteredNodes
+    },
+    daily_reward_next_calculation: function () {
+      return this.$store.getters.getDailyRewardNextCalculation
     }
   },
   mounted () {
+    // to load countdown faster call getRewardHistoryData firstly
+    this.$configManager.getRewardHistoryData()
+    this.$configManager.getAvailbleForRetrieval(this.identity.accountName)
+    this.int1 = setInterval(() => this.updateNow(), 1000)
+    this.int2 = setInterval(() => this.updateDailyRewardCountdown(), 1000)
+    this.int3 = setInterval(() => this.$configManager.getAvailbleForRetrieval(this.identity.accountName), 15000)
     this.version = this.$utils.getVersion()
-    this.$configManager.accountAdded(this.identity.accountName)
     this.$configManager.accountRegistered(this.identity.accountName)
     this.$configManager.accountRun(this.identity.accountName)
-    this.$configManager.getUserUptime(this.identity.accountName)
     // TODO: not implemented yet
     this.$store.commit('setEarned', '0.0000')
     this.$store.state.status.time = this.$utils.getTime()
@@ -665,8 +686,30 @@ export default {
     // clearInterval(this.m4)
     clearInterval(this.m5)
     clearInterval(this.m6)
+    clearInterval(this.m7)
+    clearInterval(this.int1)
+    clearInterval(this.int2)
+    clearInterval(this.int3)
   },
   methods: {
+    updateNow () {
+      this.now = Math.round(new Date().getTime() / 1000)
+    },
+    updateDailyRewardCountdown () {
+      let timeDelta = this.daily_reward_next_calculation > this.now ? this.daily_reward_next_calculation - this.now : 0
+      let hours = Math.floor(timeDelta / (60 * 60))
+      let minutes = Math.floor((timeDelta - hours * 60 * 60) / 60)
+      let seconds = timeDelta - hours * 60 * 60 - minutes * 60
+
+      function timeUnitToStr (unit) {
+        return unit < 10 ? '0' + unit : unit.toString()
+      }
+      this.daily_reward_calculation_countdown = {
+        hours: timeUnitToStr(hours),
+        minutes: timeUnitToStr(minutes),
+        seconds: timeUnitToStr(seconds)
+      }
+    },
     getInstallScript () {
       this.script = require('../assets/install.sh').default // eslint-disable-line global-require
     },
@@ -695,6 +738,7 @@ export default {
       this.voting_list = []
       this.getInfoRare()
       this.getInfoOften()
+      this.$configManager.getRewardHistoryData()
     },
     getInfoRare () {
       this.getListOfNodes()
@@ -759,7 +803,6 @@ export default {
         .retreiveReward(this.identity.accountName)
         .then(() => {
           setTimeout(() => this.getInfoOften(), 3000)
-          setTimeout(() => this.$configManager.getUserUptime(this.identity.accountName), 3000)
         })
         .catch(error => {
           throw new Error(error)
