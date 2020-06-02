@@ -173,7 +173,7 @@
                         {{identity.availble_for_retrieval}}
                       </div>
                     </div>
-                  <q-btn label="Retreive reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
+                  <q-btn label="Retrieve reward" outline rounded color="vgreen" class="q-my-xs" @click="retreiveReward()" />
                 </q-item-section>
               </q-item>
             </q-list>

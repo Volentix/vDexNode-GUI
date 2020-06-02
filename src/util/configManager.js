@@ -16,11 +16,13 @@ const fs = require('fs')
 const schema = {
   eos_endpoint: {
     type: 'string',
-    format: 'url'
+    format: 'url',
+    default: 'https://eos.greymass.com:443'
   },
   nodes_api: {
     type: 'string',
-    format: 'url'
+    format: 'url',
+    default: 'http://140.82.56.143:8000'
   },
   node_readme: {
     type: 'string',
