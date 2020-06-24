@@ -1,0 +1,29 @@
+version number
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   package.json
+#	modified:   src-electron/icons/Square107x107Logo.png
+#	modified:   src-electron/icons/Square142x142Logo.png
+#	modified:   src-electron/icons/Square150x150Logo.png
+#	modified:   src-electron/icons/Square284x284Logo.png
+#	modified:   src-electron/icons/Square30x30Logo.png
+#	modified:   src-electron/icons/Square310x310Logo.png
+#	modified:   src-electron/icons/Square44x44Logo.png
+#	modified:   src-electron/icons/Square71x71Logo.png
+#	modified:   src-electron/icons/Square89x89Logo.png
+#	modified:   src-electron/icons/StoreLogo.png
+#	modified:   src-electron/icons/icon.png
+#	modified:   src-electron/icons/linux-128x128.png
+#	modified:   src-electron/icons/linux-16x16.png
+#	modified:   src-electron/icons/linux-24x24.png
+#	modified:   src-electron/icons/linux-32x32.png
+#	modified:   src-electron/icons/linux-48x48.png
+#	modified:   src-electron/icons/linux-512x512.png
+#	modified:   src-electron/icons/linux-64x64.png
+#	modified:   src-electron/icons/linux-96x96.png
+#
