@@ -1,3 +1,6 @@
+import { Scatter } from 'ual-scatter'
+import ScatterJS from '@scatterjs/core'
+import ScatterEOS from '@scatterjs/eosjs2'
 import { Api, JsonRpc } from 'eosjs'
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
 import { userError } from '@/util/errorHandler'
@@ -5,12 +8,20 @@ import { userResult } from '@/util/resultHandler'
 import * as configManager from '@/util/configManager'
 import ecc from 'eosjs-ecc'
 const { TextEncoder, TextDecoder } = require('util')
-const fetch = require('node-fetch')
+// import isomorphic-fetch
+// var fetch = require('isomorphic-unfetch')
+// var fetch = require('node-fetch')
+var fetch = require('isomorphic-fetch')
+// var fetch = require('fetch')
+// import fetch from 'fetch'
 import * as utils from '@/util/utils'
-
+// import fetch from 'electron-fetch'
+ScatterJS.plugins(new ScatterEOS())
 class EosRPC {
-  constructor () {
-    this.rpc = new JsonRpc(configManager.configStore.get('eos_endpoint'), { fetch })
+  constructor (network) {
+    let address = configManager.configStore.get('eos_endpoint') + ':443'
+    this.rpc = new JsonRpc(address, { fetch })
+    // this.rpc = new JsonRpc('https:////api.eosio.cr', { fetch })
   }
 
   privateToPublic (wif) {
@@ -85,16 +96,8 @@ class EosRPC {
 }
 
 class EosAPI {
-  constructor (rpc, keyProvider) {
-    if (arguments.length) {
-      const signatureProvider = new JsSignatureProvider([keyProvider])
-      this.api = new Api({
-        rpc,
-        signatureProvider,
-        textDecoder: new TextDecoder(),
-        textEncoder: new TextEncoder()
-      })
-    }
+  constructor (network, rpc) {
+    this.api = ScatterJS.eos(network, Api, { rpc })
   }
 
   async transaction (contractAccount, action, authActor, data, successMessage, errorMessage) {

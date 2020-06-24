@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import Vue from 'vue'
 import { Dialog } from 'quasar'
 import { EosRPC, EosAPI } from '@/util/EosWrapper'
@@ -8,11 +9,15 @@ import store from '@/store'
 import router from '@/router'
 import path from 'path'
 import { config } from 'bluebird-lst'
+import ScatterJS from '@scatterjs/core'
+import ScatterEOS from '@scatterjs/eosjs2'
+import { Api, JsonRpc } from 'eosjs'
+var fetch = require('node-fetch')
+
 const Store = require('electron-store')
 const { app, dialog } = require('electron').remote
 const fs = require('fs')
-
-// const configFile = path.join(app.getPath('userData'), '/User/config.json')
+const configFile = path.join(app.getPath('userData'), '/User/config.json')
 const schema = {
   eos_endpoint: {
     type: 'string',
@@ -30,53 +35,59 @@ const schema = {
   }
 }
 const configStore = new Store({ schema, name: 'vdexnode' })
+const exampleNet = {
+  chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+  rpcEndpoints: [{
+    protocol: 'http',
+    host: 'localhost',
+    port: 8888
+  }]
+}
 
-// TODO:
-// import ScatterJS from '@scatterjs/core'
-// import ScatterEOS from '@scatterjs/eosjs2'
-// import { Api, JsonRpc } from 'eosjs'
-
-// ScatterJS.plugins(new ScatterEOS())
-
-// const network = ScatterJS.Network.fromJson({
-//   blockchain: 'eos',
-//   chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
-//   host: 'nodes.get-scatter.com',
-//   port: 443,
-//   protocol: 'https'
-// })
-
-// TODO:
-// function scatterLogin () {
-//   ScatterJS.connect('vdexnode', { network }).then(connected => {
-//     if (!connected) return console.error('No Scatter Running')
-//     const rpc = new JsonRpc(network.fullhost())
-//     const eos = ScatterJS.eos(network, Api, { rpc })
-
-//     ScatterJS.login().then(id => {
-//       if (!id) return console.error('no identity')
-//       const account = ScatterJS.account('eos')
-//       console.log(account)
-//       let balance = eos.transact({
-//         actions: [{
-//           account: 'vtxdistribut',
-//           name: 'uptime',
-//           authorization: [{
-//             actor: account.name,
-//             permission: 'active'
-//           }],
-//           data: {
-//             account: account.name
-//           }
-//         }]
-//       }, {
-//         blocksBehind: 3,
-//         expireSeconds: 30
-//       })
-//       console.log(balance)
-//     })
-//   })
-// }
+async function login () {
+  // privateKey = '5HtQsXDrUMtH8XEU6omNiUKZfiTM9YjG8Geiv4Qj78mYXD8mpwH'
+  // publicKey = 'EOS6PdTCWZgWMh4s5EDxYK3aL6DPC2ksDusTQpxE38QVmUzYLjLt9'// rpc.privateToPublic(privateKey)
+  //accountName = 'volentixtst2'
+  // try {
+  //   router.push('/')
+  //   var rpc = new EosRPC()
+  //   Vue.prototype.$rpc = rpc
+  // } catch (error) {
+  //   userError(error, 'Login action: instance of EosRPC')
+  //   throw error
+  // }
+  // try {
+  //   Vue.prototype.$eos = new EosAPI(rpc, identity.privateKey) 
+  // } catch (error) {
+  //   userError(error, 'Login action: instance of EosAPI')
+  //   throw error
+  // }
+  // try {
+  //   // publicKey = 'EOS6PdTCWZgWMh4s5EDxYK3aL6DPC2ksDusTQpxE38QVmUzYLjLt9'// rpc.privateToPublic(privateKey)
+  // } catch (error) {
+  //   userError(error, 'Login action: get public key')
+  //   throw error
+  // }
+  // try {
+    // let accounts = await rpc.getAccounts(publicKey)
+    // if (accounts.account_names.length === 1) {
+    //   // var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
+    //   if (accountName) auth(privateKey, publicKey, accountName)
+    //   else throw Error('There is no account for this key')
+    // } else if (accounts.account_names.length > 1) {
+    //   chooseAccount(accounts.account_names, result => {
+    //     var accountName = result
+    //     if (accountName) auth(privateKey, publicKey, accountName)
+    //     else throw Error('There is no account for this key')
+    //   })
+    // } else {
+    //   userError('Oops, no account found for this key. You have to create one.', 'Login action: Get accounts ')
+    // }
+  // } catch (error) {
+  //   userError(error, 'Login action: get account name')
+  //   throw error
+  // }
+}
 
 function hasConfig () {
   fs.access(configStore.path, error => {
@@ -310,51 +321,6 @@ async function vote (votingList, accountName) {
     )
   } else {
     userError('Oops, I can not build the voting object', 'Vote action')
-  }
-}
-
-async function login (privateKey) {
-  try {
-    var rpc = new EosRPC()
-    Vue.prototype.$rpc = rpc
-  } catch (error) {
-    userError(error, 'Login action: instance of EosRPC')
-    throw error
-  }
-
-  try {
-    var eos = new EosAPI(rpc.rpc, privateKey)
-    Vue.prototype.$eos = eos
-  } catch (error) {
-    userError(error, 'Login action: instance of EosAPI')
-    throw error
-  }
-
-  try {
-    var publicKey = rpc.privateToPublic(privateKey)
-  } catch (error) {
-    userError(error, 'Login action: get public key')
-    throw error
-  }
-
-  try {
-    let accounts = await rpc.getAccounts(publicKey)
-    if (accounts.account_names.length === 1) {
-      var accountName = accounts.account_names[0] ? accounts.account_names[0] : ''
-      if (accountName) auth(privateKey, publicKey, accountName)
-      else throw Error('There is no account for this key')
-    } else if (accounts.account_names.length > 1) {
-      chooseAccount(accounts.account_names, result => {
-        var accountName = result
-        if (accountName) auth(privateKey, publicKey, accountName)
-        else throw Error('There is no account for this key')
-      })
-    } else {
-      userError('Oops, no account found for this key. You have to create one.', 'Login action: Get accounts ')
-    }
-  } catch (error) {
-    userError(error, 'Login action: get account name')
-    throw error
   }
 }
 

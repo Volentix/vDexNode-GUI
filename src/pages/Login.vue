@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 <template>
   <q-layout>
     <div class="titlebar"></div>
@@ -22,19 +24,10 @@
               <q-linear-progress :value="progress" rounded color="vgold" track-color="vdarkgrey" style="height: 20px" />
               <div class="text-subtitle1 text-vgrey">Update downloading: {{ Math.round(progress*100) }} %</div>
             </div>
-          </div>
-          <div class="col-7 q-pa-xl">
-            <div class="text-h5">Import private key</div>
-            <div class="text-subtitle2">Please enter your private key below to start working with vDexNode Dashboard. We will never save or transmit your your key.</div>
             <q-form @submit="login()">
-              <q-input dark dense v-model="privateKey" :type="isPwd ? 'password' : 'text'" counter color="vgold" ref="input" @keyup.enter="login" label="Your private key" :rules="[ val => val.length <= 51 || 'Wrong key']">
-                <template v-slot:append>
-                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
-                </template>
-              </q-input>
-              <q-btn color="vgrey" :disabled="privateKey ? false: true" rounded class="full-width q-mt-md text-vdark" label="Continue" type="submit" />
+              <ual-trigger :options="opts" @login="userCallback" />
+              <pre style="text-align: left; width: 400px; margin: 30px auto; background: #eee; padding: 30px;"><code>UserInfo:{{stringify(user)}}</code></pre>
             </q-form>
-            <!-- <q-btn outline rounded unelevated color="vdark" class="" label="Scatter" @click="scatterLogin()" /> -->
           </div>
         </div>
       </q-page>
@@ -43,29 +36,90 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 const ipcRenderer = require('electron').ipcRenderer
-
+import { Scatter } from 'ual-scatter'
+import ScatterJS from '@scatterjs/core'
+import ScatterEOS from '@scatterjs/eosjs2'
+import { Api, JsonRpc, RpcError } from 'eosjs'
+import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
+import { ualTrigger } from 'ual-vuejs-renderer'
+import Vue from 'vue'
+import { Dialog } from 'quasar'
+import { EosRPC, EosAPI } from '@/util/EosWrapper'
+import { userError } from '@/util/errorHandler'
+import { userResult } from '@/util/resultHandler'
+import * as utils from '@/util/utils'
+import path from 'path'
+import { config } from 'bluebird-lst'
+import store from '@/store'
+import router from '@/router'
+import EosApi from 'eosjs-api'
+// EosApi = require('eosjs-api')
+ScatterJS.plugins(new ScatterEOS())
 export default {
-  data () {
+  name: 'index',
+  components: {
+    ualTrigger
+  },
+  data: function () {
     return {
       privateKey: '',
       isPwd: true,
       version: '',
-      progress: 0
+      progress: 0,
+      user: {
+        name: '',
+        chainId: ''
+      },
+      accountName: null,
+      accountBalance: 0,
+      opts: {
+        name: 'Connect To Wallet',
+        nets: [{
+          chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
+          rpcEndpoints: [{
+            protocol: 'https',
+            host: 'eos.greymass.com',
+            port: Number(443)
+          }]
+        }],
+        authenticators: [
+          { authenticator: Scatter, netChainIds: ['aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'], options: { appName: 'vDexNode-GUI' } }
+        ]
+      }
     }
   },
   mounted () {
     this.version = this.$utils.getVersion()
-    this.$refs.input.focus()
+    // this.$refs.input.focus()
     this.updater()
   },
   methods: {
-    login () {
-      this.$configManager.login(this.privateKey)
-      this.privateKey = ''
+    stringify (item) {
+      return JSON.stringify(item, null, 2)
     },
-    async scatterLogin () {
-      this.$configManager.scatterLogin()
+    async userCallback (users) {
+      const loggedInUser = users[0]
+      this.user.name = await loggedInUser.getAccountName()
+      this.user.chainId = await loggedInUser.getChainId()
+      this.name = await loggedInUser.getAccountName()
+      this.chainId = await loggedInUser.getChainId()
+      this.publicKey = loggedInUser.keys[0]
+      this.network = this.opts.nets
+      this.user.publicKey = loggedInUser.keys[0]
+      this.user.privateKey = loggedInUser.keys[1]
+      this.$store.commit('setAccountName', this.user.name)
+      this.$store.commit('setPublicKey', this.publicKey)
+      const rpc = new EosRPC()
+      Vue.prototype.$rpc = rpc
+      if (this.name) {
+        router.push('/')
+        this.$store.commit('setLoggedIn')
+      }
+      this.identity = await loggedInUser.scatter.getIdentity()
+      const eos = new EosAPI(this.network, Vue.prototype.$rpc)
+      Vue.prototype.$eos = eos
     },
     updater () {
       // TODO: Update
@@ -78,6 +132,9 @@ export default {
       ipcRenderer.on('message', (event, data) => {
         this.progress = data / 100
       })
+    },
+    login () {
+      this.$configManager.login()
     }
   }
 }

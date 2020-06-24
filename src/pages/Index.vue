@@ -533,6 +533,7 @@
 <script>
 import MapWidget from '../components/MapWidget.vue'
 import ChatWidget from '../components/ChatWidget.vue'
+import ualTrigger from '../components/ualTrigger.vue'
 
 /**
  * Main page. Loads other components
